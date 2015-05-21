@@ -16,12 +16,12 @@ See [doc.md][doc] and examples/api.html for more details
 
 License
 -------
-This plugin is licensed under the Apache Software License, Version 1.1, 
+This library is licensed under the Apache Software License, Version 1.1, 
 see LICENSE.md
 
 Background
 ----------
-This plugin is developed by Norkart on behalf of the Norwegian arts Council as
+This library is developed by Norkart on behalf of the Norwegian arts Council as
 part of the ["Kultur- og naturreise demo"-project][knreise]
 
 [knreise]: https://github.com/knreise/demonstratorer

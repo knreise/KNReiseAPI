@@ -1,4 +1,4 @@
-/*global L:false, toGeoJSON: false */
+/*global L:false, esri2geo: false*/
 
 var KR = this.KR || {};
 
@@ -16,11 +16,18 @@ KR.ArcgisAPI = function (BASE_URL) {
     }
 
     function _parseArcGisResponse(response, callback) {
+        /*
+        var esri2geo = window.esri2geo || {};
+        if (_.isFunction(window.toGeoJSON)) {
+            esri2geo.toGeoJSON = window.toGeoJSON;
+        }
+        */
+
         response = JSON.parse(response);
         if (_.has(response, 'error')) {
             callback(KR.Util.CreateFeatureCollection([]));
         }
-        toGeoJSON(response, function (err, data) {
+        esri2geo.toGeoJSON(response, function (err, data) {
             if (!err) {
                 callback(data);
             } else {

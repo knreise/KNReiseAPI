@@ -7,8 +7,8 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/github-gist.min.css" rel="stylesheet">
         <style type="text/css">
-            textarea, .map {
-                width: 500px;
+            textarea, .map, pre {
+                width: 100%;
                 height: 300px;
             }
 
@@ -18,11 +18,12 @@
 
         <h1>KNreise API - examples</h1>
 
-        <div id="demos"></div>
+        <div id="demos" class="container-fluid"></div>
 
         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/languages/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/languages/json.min.js"></script>
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="../bower_components/underscore/underscore-min.js"></script>
         <script src="../bower_components/esri2geo/esri2geo.js"></script>
@@ -34,25 +35,30 @@
 
         <script type="text/template" id="demo_template">
             <div>
-                <h2><%= title %></h2>
-                <button id="get_<%= id %>">Get data</button>
-                <table>
-                    <tr>
-                        <td>
-                            <textarea id="<%= id %>_data"></textarea>
-                        </td>
-                        <td>
-                            <div id="<%= id %>_map" class="map"></div>
-                        </td>
-                        <td>
-                            <pre>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2><%= title %></h2>
+                        <button id="get_<%= id %>">Get data</button>
+                    </div>
+                </div>
+                <div class="row">
+                <div class="col-md-4">
+                        <h3>Code</h3>
+                        <pre>
                             <code class="javascript" id="<%= id %>_code">
                             </code>
-                            </pre>
-                        </td>
-                    </tr>
-                </table>
-            <div>
+                        </pre>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>Returned data on map</h3>
+                        <div id="<%= id %>_map" class="map"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>Returned data (GeoJSON)</h3>
+                        <textarea id="<%= id %>_data"></textarea>
+                    </div>
+                </div>
+            </div>
         </script>
 
 
@@ -148,14 +154,22 @@
         <script type="text/javascript">
 
             function getMap(div) {
-                console.log(div);
                 var map = L.map(div);
                 L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>̈́'}).addTo(map);
                 return map;
             }
 
+            function stripSpaces(code) {
+                var split = code.split('\n');
+                var lines = split.slice(1, split.length - 1);
+                var spaces = Array(lines[0].search(/\S/) + 1).join(' ');
+                return _.map(lines, function (line) {
+                    return line.replace(spaces, '');
+                }).join('\n');
+            }
+
             (function () {
-                'use strict';
+                'use strict';   
 
                 var demoTemplate = _.template($('#demo_template').html());
 
@@ -169,14 +183,13 @@
                 var divs = _.map(demos, function (demo) {
                     var div = $(demoTemplate(demo));
                     var code = _.template($('#' + demo.id + '_code_template').html())(demo);
-                    div.find('#' + demo.id + '_code').html(code);
+                    div.find('#' + demo.id + '_code').html(stripSpaces(code));
                     return {div: div, code: code};
                 });
 
                 $('#demos').append(_.pluck(divs, 'div'));
 
                 $('pre code').each(function(i, block) {
-                    console.log(block)
                     hljs.highlightBlock(block);
                 });
                 _.each(_.pluck(divs, 'code'), function (code) {

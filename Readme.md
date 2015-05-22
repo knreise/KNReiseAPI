@@ -12,7 +12,7 @@ Either install using bower:
 
 or, download manually.
 
-See [doc.md][doc] and examples/api.html for more details
+See [doc.md][doc] and the [live example][example] for more details.
 
 License
 -------
@@ -26,3 +26,4 @@ part of the ["Kultur- og naturreise demo"-project][knreise]
 
 [knreise]: https://github.com/knreise/demonstratorer
 [doc]: https://github.com/knreise/KNReiseAPI/blob/master/doc.md
+[example]: http://knreise.github.io/KNReiseAPI/examples/api.html

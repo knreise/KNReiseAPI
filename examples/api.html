@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/github-gist.min.css" rel="stylesheet">
         <style type="text/css">
             textarea, .map {
                 width: 500px;
@@ -20,6 +21,8 @@
         <div id="demos"></div>
 
         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/languages/javascript.min.js"></script>
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="../bower_components/underscore/underscore-min.js"></script>
         <script src="../bower_components/esri2geo/esri2geo.js"></script>
@@ -36,13 +39,16 @@
                 <table>
                     <tr>
                         <td>
-                            <textarea id="<%= id %>"></textarea>
+                            <textarea id="<%= id %>_data"></textarea>
                         </td>
                         <td>
                             <div id="<%= id %>_map" class="map"></div>
                         </td>
                         <td>
-                            <pre id="<%= id %>_code"></pre>
+                            <pre>
+                            <code class="javascript" id="<%= id %>_code">
+                            </code>
+                            </pre>
                         </td>
                     </tr>
                 </table>
@@ -67,7 +73,7 @@
                 };
                 $('#get_norvegiana1').on('click', function () {
                     api.getBbox(digitaltFortalt, bbox, function (res) {
-                        $('#norvegiana1').html(JSON.stringify(res, null, 4));
+                        $('#norvegiana1_data').html(JSON.stringify(res, null, 4));
                         map.fitBounds(L.geoJson(res).addTo(map).getBounds());
                     });
                 });
@@ -88,7 +94,7 @@
                 };
                 $('#get_wikipedia').on('click', function () {
                     api.getBbox(wikipedia, bbox, function (res) {
-                        $('#wikipedia').html(JSON.stringify(res, null, 4));
+                        $('#wikipedia_data').html(JSON.stringify(res, null, 4));
                         map.fitBounds(L.geoJson(res).addTo(map).getBounds());
                     });
                 });
@@ -111,8 +117,7 @@
                 };
                 $('#get_kulturminnedata').on('click', function () {
                     api.getBbox(fangstgroper, bbox, function (res) {
-                        $('#kulturminnedata').html(JSON.stringify(res, null, 4));
-                        map.fitBounds(L.geoJson(res).addTo(map).getBounds());
+                        $('#kulturminnedata_data').html(JSON.stringify(res, null, 4));
                         map.fitBounds(L.geoJson(res).addTo(map).getBounds());
                     });
                 });
@@ -134,7 +139,7 @@
                 };
                 $('#get_verneomraader').on('click', function () {
                     api.getBbox(verneomraader, bbox, function (res) {
-                        $('#verneomraader').html(JSON.stringify(res, null, 4));
+                        $('#verneomraader_data').html(JSON.stringify(res, null, 4));
                         map.fitBounds(L.geoJson(res).addTo(map).getBounds());
                     });
                 });
@@ -169,6 +174,11 @@
                 });
 
                 $('#demos').append(_.pluck(divs, 'div'));
+
+                $('pre code').each(function(i, block) {
+                    console.log(block)
+                    hljs.highlightBlock(block);
+                });
                 _.each(_.pluck(divs, 'code'), function (code) {
                     (function () {
                         eval(code);

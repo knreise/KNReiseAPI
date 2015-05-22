@@ -30,6 +30,7 @@
         <script src="../bower_components/CryptoJS/build/components/core.js"></script>
         <script src="../bower_components/CryptoJS/build/components/md5.js"></script>
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../bower_components/togeojson/togeojson.js"></script>
 
         <script src="../dist/KNreiseAPI.min.js"></script>
 
@@ -174,6 +175,25 @@
                 });
         </script>
 
+        <script type="text/test" id="utno_code_template">
+                var api = new KR.API();
+                var map = getMap('utno_map');
+
+                var tur = {
+                    api: 'utno',
+                    id: '2.8158',
+                    type: 'gpx'
+                };
+
+                $('#get_utno').on('click', function () {
+                    api.getData(tur, function (res) {
+                        $('#utno_data').html(JSON.stringify(res, null, 4));
+
+                        map.fitBounds(L.geoJson(res).addTo(map).getBounds());
+                    })
+                });
+        </script>
+
         <script type="text/javascript">
 
             function getMap(div) {
@@ -201,7 +221,8 @@
                     {id: 'wikipedia', title: 'Wikipedia, dataset by bbox'},
                     {id: 'kulturminnedata', title: 'Kulturminnedata (ArcGIS REST), dataset by bbox'},
                     {id: 'verneomraader', title: 'Verneområder (CartoDB), dataset by bbox'},
-                    {id: 'bbox', 'title': 'Get bounding box for municipality'}
+                    {id: 'bbox', 'title': 'Get bounding box for municipality'},
+                    {id: 'utno', 'title': 'Get GPX file (from ut.no)'}
                 ];
 
                 var examples = _.map(demos, function (demo) {

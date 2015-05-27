@@ -16,22 +16,15 @@ KR.ArcgisAPI = function (BASE_URL) {
     }
 
     function _parseArcGisResponse(response, callback) {
-        /*
-        var esri2geo = window.esri2geo || {};
-        if (_.isFunction(window.toGeoJSON)) {
-            esri2geo.toGeoJSON = window.toGeoJSON;
-        }
-        */
-
         response = JSON.parse(response);
         if (_.has(response, 'error')) {
-            callback(KR.Util.CreateFeatureCollection([]));
+            callback(KR.Util.createFeatureCollection([]));
         }
         esri2geo.toGeoJSON(response, function (err, data) {
             if (!err) {
                 callback(data);
             } else {
-                callback(KR.Util.CreateFeatureCollection([]));
+                callback(KR.Util.createFeatureCollection([]));
             }
         });
     }

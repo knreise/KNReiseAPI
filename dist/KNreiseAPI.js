@@ -18,7 +18,17 @@ KR.Util = {};
             url: url,
             success: function (response) {
                 if (parser) {
-                    callback(parser(response));
+
+                    var d;
+                    try {
+                        d = parser(response);
+                    } catch (e) {
+                        if (errorCallback) {
+                            errorCallback({error: e, data: response});
+                        }
+                        return;
+                    }
+                    callback(d);
                 } else {
                     callback(response);
                 }
@@ -727,16 +737,21 @@ KR.SparqlAPI = function (BASE_URL) {
         ]
     ]);
 
-    function transformPoint(point) {
-
+    function _transform(coordinates) {
+        return proj4('EPSG:32633', 'EPSG:4326', coordinates);
     }
-
 
     function _parseGeom(geom) {
         var geom = wellknown.parse(geom.value);
-        console.log(geom);
+
         if (geom.type === 'Point') {
-            geom.coordinates = proj4('EPSG:32633', 'EPSG:4326', geom.coordinates);
+            geom.coordinates = _transform(geom.coordinates);
+        }
+        if (geom.type === 'Polygon') {
+
+            geom.coordinates = _.map(geom.coordinates, function (ring) {
+                return _.map(ring, _transform);
+            });
         }
 
         return geom;
@@ -765,7 +780,6 @@ KR.SparqlAPI = function (BASE_URL) {
             }
             return null;
         });
-
         return KR.Util.createFeatureCollection(_.compact(features));
     }
 
@@ -780,15 +794,36 @@ KR.SparqlAPI = function (BASE_URL) {
         }
 
 
-        var query = 'SELECT ?lokid ?label ?beskrivelse ?loklab ?punkt ?lokimg ' +
-                    'where {' +
-                    '?lok a <https://data.kulturminne.no/askeladden/schema/Lokalitet> .' +
-                    '?lok <http://www.w3.org/2000/01/rdf-schema#label> ?label .' +
-                    '?lok <https://data.kulturminne.no/askeladden/schema/i-kommune> ?kommune .' +
-                    '?lok <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?beskrivelse .' +
-                    '?lok <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?lokalitetskategori.' +
+        var fields = [
+            '?lokid',
+            '?label',
+            '?beskrivelse',
+            '?loklab',
+            '?lokimg'
+        ];
+
+        var where = [
+            '?lok a <https://data.kulturminne.no/askeladden/schema/Lokalitet> .',
+            '?lok <http://www.w3.org/2000/01/rdf-schema#label> ?label .',
+            '?lok <https://data.kulturminne.no/askeladden/schema/i-kommune> ?kommune .',
+            '?lok <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?beskrivelse .',
+            '?lok <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?lokalitetskategori.'
+        ];
+
+        if (dataset.geomType === 'point') {
+            fields.push('?punkt');
+            where.push('?lok <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?punkt .');
+        } else if (dataset.geomType === 'polygon') {
+            fields.push('?omraade');
+            where.push('?lok <https://data.kulturminne.no/askeladden/schema/geo/area/etrs89> ?omraade .');
+        } else {
+            throw new Error('Invalid geomType: ' + dataset.geomType);
+        }
+
+        var query = 'SELECT ' + fields.join(' ') +
+                    ' where {' +
+                    where.join('\n') +
                     '?lokalitetskategori rdfs:label ?loklab .' +
-                    '?lok <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?punkt .' +
                     'FILTER ' + filter +
                     'BIND(REPLACE(STR(?kommune), "http://psi.datanav.info/difi/geo/kommune/", "") AS ?kommuneid)' +
                     'BIND(REPLACE(STR(?lok), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
@@ -801,6 +836,7 @@ KR.SparqlAPI = function (BASE_URL) {
     }
 
     function getData(dataset, callback, errorCallback, options) {
+        dataset = _.extend({}, {geomType: 'point'}, dataset);
         var params = {
             'default-graph-uri': '',
             'query': _createQuery(dataset),

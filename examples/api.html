@@ -32,6 +32,8 @@
         <script src="../bower_components/CryptoJS/build/components/md5.js"></script>
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="../bower_components/togeojson/togeojson.js"></script>
+        <script src="../bower_components/wellknown/wellknown.js"></script>
+        <script src="../bower_components/proj4/dist/proj4.js"></script>
 
         <script src="../dist/KNreiseAPI.min.js"></script>
 
@@ -197,6 +199,45 @@
                 });
         </script>
 
+        <script type="text/test" id="sparql_point_code_template">
+                var api = new KR.API();
+                var map = getMap('sparql_point_map');
+
+                var sparql = {
+                    limit: 100,
+                    api: 'kulturminnedataSparql',
+                    fylke: '08'
+                };
+
+                $('#get_sparql_point').on('click', function () {
+                    api.getData(sparql, function (res) {
+                        $('#sparql_point_data').html(JSON.stringify(res, null, 4));
+
+                        map.fitBounds(L.geoJson(res).addTo(map).getBounds());
+                    })
+                });
+        </script>
+
+        <script type="text/test" id="sparql_polygon_code_template">
+                var api = new KR.API();
+                var map = getMap('sparql_polygon_map');
+
+                var sparql = {
+                    limit: 100,
+                    api: 'kulturminnedataSparql',
+                    fylke: '08',
+                    geomType: 'polygon'
+                };
+
+                $('#get_sparql_polygon').on('click', function () {
+                    api.getData(sparql, function (res) {
+                        $('#sparql_polygon_data').html(JSON.stringify(res, null, 4));
+
+                        map.fitBounds(L.geoJson(res).addTo(map).getBounds());
+                    })
+                });
+        </script>
+
         <script type="text/javascript">
 
             function getMap(div) {
@@ -225,7 +266,9 @@
                     {id: 'kulturminnedata', title: 'Kulturminnedata (ArcGIS REST), dataset by bbox'},
                     {id: 'verneomraader', title: 'Verneområder (CartoDB), dataset by bbox'},
                     {id: 'bbox', 'title': 'Get bounding box for municipality'},
-                    {id: 'utno', 'title': 'Get GPX file (from ut.no)'}
+                    {id: 'utno', 'title': 'Get GPX file (from ut.no)'},
+                    {id: 'sparql_point', 'title': 'Kulturminnedata, SPARQL, point'},
+                    {id: 'sparql_polygon', 'title': 'Kulturminnedata, SPARQL, polygon'}
                 ];
 
                 var examples = _.map(demos, function (demo) {

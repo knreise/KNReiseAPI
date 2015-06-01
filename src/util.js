@@ -18,7 +18,17 @@ KR.Util = {};
             url: url,
             success: function (response) {
                 if (parser) {
-                    callback(parser(response));
+
+                    var d;
+                    try {
+                        d = parser(response);
+                    } catch (e) {
+                        if (errorCallback) {
+                            errorCallback({error: e, data: response});
+                        }
+                        return;
+                    }
+                    callback(d);
                 } else {
                     callback(response);
                 }

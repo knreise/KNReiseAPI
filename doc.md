@@ -96,12 +96,14 @@ The datasets object passed to the api is a simple JavaScript object, but these d
 
 Other than the __api__ parameter, the parameters depend on the api, see the table below:
 
-| api             | parameters            |
-|-----------------|-----------------------|
-| norvegiana      | dataset, query        |
-| wikipedia       | -                     |
-| kulturminnedata | query, layer          |
-| cartodb         | table, columns, query |
+| api                   | parameters            |
+|-----------------------|-----------------------|
+| norvegiana            | dataset, query        |
+| wikipedia             | -                     |
+| kulturminnedata       | query, layer          |
+| kulturminnedataSparql | limit, filter, fylke  |
+| cartodb               | table, columns, query |
+
 
 #### norvegiana
 * **dataset**: ``<string> | <string[]>`` the name of the dataset in norvegiana (delving_spec: will be prepended). 
@@ -117,6 +119,11 @@ This dataset takes no parameters
 *  **query**:  ``<string>`` the query to run (string, f.ex: "Navn='Fangstgrop'")
 See [kulturminnedata.no][kulturminedata] for details on the api.
 
+#### kulturminnedataSparql
+* **filter**: ``<string>`` a SPARQL filter expression
+* **fylke**: ``<string>`` a [Fylkesnummer][fylkesnummer], (with leadding zero), used instead of filter for convenience
+* **limit**: ``<int>`` If presents, limits the number of responses
+
 #### cartodb
 To use this api you must provide a config-object when initializing the api.
 * **table** The table to query
@@ -130,3 +137,4 @@ To use this api you must provide a config-object when initializing the api.
 [norvegiana-doc]: https://norvegianablog.wordpress.com/api-eksempler/
 [kulturminedata]: http://www.kulturminnedata.no/api.html 
 [kommunenummer]: http://no.wikipedia.org/wiki/Kommunenummer
+[fylkesnummer]: http://no.wikipedia.org/wiki/Fylkesnummer

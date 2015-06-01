@@ -19,6 +19,8 @@
     "jquery": "~2.1.4",
     "CryptoJS": "~3.1.12",
     "togeojson": "~0.11.1",
-    "esri2geo": "https://github.com/calvinmetcalf/esri2geo.git"
+    "esri2geo": "https://github.com/calvinmetcalf/esri2geo.git",
+    "wellknown": "https://github.com/mapbox/wellknown.git#~0.3.1",
+    "proj4": "~2.3.6"
   }
 }

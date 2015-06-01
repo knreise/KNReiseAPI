@@ -38,6 +38,14 @@ KR.Util = {};
         };
     };
 
+    ns.createGeoJSONFeatureFromGeom = function (geom, properties) {
+        return {
+            'type': 'Feature',
+            'geometry': geom,
+            'properties': properties
+        };
+    };
+
     ns.createFeatureCollection = function (features) {
         return {
             'type': 'FeatureCollection',

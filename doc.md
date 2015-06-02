@@ -102,6 +102,7 @@ Other than the __api__ parameter, the parameters depend on the api, see the tabl
 | wikipedia       | -                     |
 | kulturminnedata | query, layer          |
 | cartodb         | table, columns, query |
+| folketelling    | dataset, limit        |
 
 #### norvegiana
 * **dataset**: ``<string> | <string[]>`` the name of the dataset in norvegiana (delving_spec: will be prepended). 
@@ -122,6 +123,11 @@ To use this api you must provide a config-object when initializing the api.
 * **table** The table to query
 * **columns** ``<string[]> `` a list of columns to fetch (default = ``*``)
 * **query** ``<string>`` A complete SQL query to CartoDB (must include a the_geom column in GeoJSON format)
+
+
+#### folketelling
+* ***dataset***: ``<string>`` Name of the dataset, currently only 'property'
+* ***limit***: ``<int>`` Number of hits, defaults to 1000
 
 
 [bbox]: http://en.wikipedia.org/wiki/Minimum_bounding_box

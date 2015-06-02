@@ -23,5 +23,13 @@ Kulturminnedata
 
 CartoDB
 -------
-
 * Naturvernområder (table: naturvernomrader_utm33_2)
+
+Ut.no
+-----
+* trips
+
+
+Folketelling
+------------
+* Properties (property)

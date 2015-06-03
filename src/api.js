@@ -34,6 +34,11 @@ KR.API = function (options) {
         utnoAPI = new KR.UtnoAPI();
     }
 
+    var folketellingAPI;
+    if (KR.FolketellingAPI) {
+        folketellingAPI = new KR.FolketellingAPI();
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -41,6 +46,7 @@ KR.API = function (options) {
         kulturminnedata: kulturminnedataAPI,
         kulturminnedataSparql: kulturminnedataSparqlAPI,
         utno: utnoAPI,
+        folketelling: folketellingAPI
     };
 
     var datasets = {

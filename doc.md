@@ -96,6 +96,7 @@ The datasets object passed to the api is a simple JavaScript object, but these d
 
 Other than the __api__ parameter, the parameters depend on the api, see the table below:
 
+<<<<<<< HEAD
 | api                   | parameters                      |
 |-----------------------|---------------------------------|
 | norvegiana            | dataset, query                  |
@@ -103,6 +104,8 @@ Other than the __api__ parameter, the parameters depend on the api, see the tabl
 | kulturminnedata       | query, layer                    |
 | kulturminnedataSparql | limit, filter, fylke, geomType  |
 | cartodb               | table, columns, query           |
+| folketelling          | dataset, limit                  |
+
 
 
 #### norvegiana
@@ -132,6 +135,11 @@ To use this api you must provide a config-object when initializing the api.
 * **table** The table to query
 * **columns** ``<string[]> `` a list of columns to fetch (default = ``*``)
 * **query** ``<string>`` A complete SQL query to CartoDB (must include a the_geom column in GeoJSON format)
+
+
+#### folketelling
+* ***dataset***: ``<string>`` Name of the dataset, currently only 'property'
+* ***limit***: ``<int>`` Number of hits, defaults to 1000
 
 
 [bbox]: http://en.wikipedia.org/wiki/Minimum_bounding_box

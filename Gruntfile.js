@@ -15,6 +15,7 @@ module.exports = function(grunt) {
           'src/norvegiana.js',
           'src/wikipedia.js',
           'src/utno.js',
+          'src/sparql.js',
           'src/api.js'
         ],
         dest: 'dist/<%= pkg.name %>.js'

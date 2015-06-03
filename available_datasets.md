@@ -25,3 +25,8 @@ CartoDB
 -------
 
 * Naturvernområder (table: naturvernomrader_utm33_2)
+
+
+kulturminnedataSparql
+---------------------
+* kulturminner (filter on 'fylke')

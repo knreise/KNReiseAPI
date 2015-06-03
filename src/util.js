@@ -12,37 +12,31 @@ KR.Util = {};
         }).join('&');
     };
 
-    ns.sendRequest = function (url, parser, callback, errorCallback) {
-        return $.ajax({
-            type: 'get',
-            url: url,
-            success: function (response) {
-                if (parser) {
-
-                    var d;
-                    try {
-                        d = parser(response);
-                    } catch (e) {
-                        if (errorCallback) {
-                            errorCallback({error: e, data: response});
-                        }
-                        return;
-                    }
-                    callback(d);
-                } else {
-                    callback(response);
-                }
-            },
-            error: errorCallback
-        });
-    };
-
     ns.handleError = function (errorCallback, error) {
         if (errorCallback) {
             errorCallback({'error': error});
             return;
         }
         throw new Error(error);
+    };
+
+    ns.sendRequest = function (url, parser, callback, errorCallback) {
+        return $.ajax({
+            type: 'get',
+            url: url,
+            success: function (response) {
+                if (parser) {
+                    try {
+                        callback(parser(response));
+                    } catch (e) {
+                        ns.handleError(errorCallback, {error: e.message, data: response});
+                    }
+                } else {
+                    callback(response);
+                }
+            },
+            error: errorCallback
+        });
     };
 
     ns.createGeoJSONFeature = function (latLng, properties) {

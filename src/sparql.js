@@ -1,22 +1,27 @@
+/*global proj4:false, wellknown:false */
 var KR = this.KR || {};
 
 KR.SparqlAPI = function (BASE_URL) {
     'use strict';
 
-    proj4.defs([
-        [
-            'EPSG:32633',
-            '+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs'
-        ]
-    ]);
+    if (typeof proj4 !== 'undefined') {
+        proj4.defs([
+            [
+                'EPSG:32633',
+                '+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs'
+            ]
+        ]);
+    }
 
     function _transform(coordinates) {
+        if (typeof proj4 === 'undefined') {
+            throw new Error('Proj4js not found!');
+        }
         return proj4('EPSG:32633', 'EPSG:4326', coordinates);
     }
 
     function _parseGeom(geom) {
-        var geom = wellknown.parse(geom.value);
-
+        geom = wellknown.parse(geom.value);
         if (geom.type === 'Point') {
             geom.coordinates = _transform(geom.coordinates);
         }
@@ -31,6 +36,7 @@ KR.SparqlAPI = function (BASE_URL) {
     }
 
     function _parseResponse(response) {
+
         response = JSON.parse(response);
         var features = _.map(response.results.bindings, function (item) {
             var keys = _.without(_.keys(item), 'punkt', 'omraade');
@@ -38,7 +44,6 @@ KR.SparqlAPI = function (BASE_URL) {
                 acc[key] = item[key].value;
                 return acc;
             }, {});
-
             if (_.has(item, 'punkt')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(
                     _parseGeom(item.punkt),
@@ -61,7 +66,7 @@ KR.SparqlAPI = function (BASE_URL) {
         if (dataset.filter) {
             filter = dataset.filter;
         } else if (dataset.fylke) {
-            filter = 'regex(?kommune, "^.*' + dataset.fylke + '[1-9]{2}")'
+            filter = 'regex(?kommune, "^.*' + dataset.fylke + '[1-9]{2}")';
         } else {
             throw new Error('not enough parameters to api!');
         }

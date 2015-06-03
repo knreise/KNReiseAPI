@@ -110,7 +110,7 @@ KR.WikipediaAPI = function () {
                 callback(KR.Util.createFeatureCollection(features));
             });
         } catch (error) {
-            errorCallback(response);
+            KR.Util.handleError(errorCallback, response.error.info);
         }
     }
 

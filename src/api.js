@@ -16,6 +16,13 @@ KR.API = function (options) {
         );
     }
 
+    var kulturminnedataSparqlAPI;
+    if (KR.SparqlAPI) {
+        kulturminnedataSparqlAPI = new KR.SparqlAPI(
+            'http://crossorigin.me/https://sparql.kulturminne.no/'
+        );
+    }
+
     var cartodbAPI;
     if (_.has(options, 'cartodb')) {
         cartodbAPI = new KR.CartodbAPI(options.cartodb.user, options.cartodb.apikey);
@@ -37,6 +44,7 @@ KR.API = function (options) {
         wikipedia: wikipediaAPI,
         cartodb: cartodbAPI,
         kulturminnedata: kulturminnedataAPI,
+        kulturminnedataSparql: kulturminnedataSparqlAPI,
         utno: utnoAPI,
         folketelling: folketellingAPI
     };

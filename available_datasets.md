@@ -29,7 +29,10 @@ Ut.no
 -----
 * trips
 
-
 Folketelling
 ------------
 * Properties (property)
+
+kulturminnedataSparql
+---------------------
+* kulturminner (filter on 'fylke')

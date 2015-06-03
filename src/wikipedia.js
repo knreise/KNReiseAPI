@@ -124,6 +124,7 @@ KR.WikipediaAPI = function () {
 
         if (distance > MAX_RADIUS) {
             KR.Util.handleError(errorCallback, 'to wide search radius (max is ' + MAX_RADIUS + ')');
+            return;
         }
 
         var params = {

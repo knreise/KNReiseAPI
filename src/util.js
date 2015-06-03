@@ -37,6 +37,14 @@ KR.Util = {};
         });
     };
 
+    ns.handleError = function (errorCallback, error) {
+        if (errorCallback) {
+            errorCallback({'error': error});
+            return;
+        }
+        throw new Error(error);
+    };
+
     ns.createGeoJSONFeature = function (latLng, properties) {
         return {
             'type': 'Feature',

@@ -7,6 +7,8 @@ KR.WikipediaAPI = function () {
 
     var BASE_URL = 'http://crossorigin.me/https://no.wikipedia.org/w/api.php';
 
+    var MAX_RADIUS = 10000;
+
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, null, function (response) {
@@ -110,7 +112,7 @@ KR.WikipediaAPI = function () {
                 callback(KR.Util.createFeatureCollection(features));
             });
         } catch (error) {
-            errorCallback(response);
+            KR.Util.handleError(errorCallback, response.error.info);
         }
     }
 
@@ -119,6 +121,11 @@ KR.WikipediaAPI = function () {
         Maps data to format similar to norvegiana api.
     */
     function getWithin(query, latLng, distance, callback, errorCallback) {
+
+        if (distance > MAX_RADIUS) {
+            KR.Util.handleError(errorCallback, 'to wide search radius (max is ' + MAX_RADIUS + ')');
+        }
+
         var params = {
             action: 'query',
             list: 'geosearch',

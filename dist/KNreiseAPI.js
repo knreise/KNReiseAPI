@@ -37,6 +37,14 @@ KR.Util = {};
         });
     };
 
+    ns.handleError = function (errorCallback, error) {
+        if (errorCallback) {
+            errorCallback({'error': error});
+            return;
+        }
+        throw new Error(error);
+    };
+
     ns.createGeoJSONFeature = function (latLng, properties) {
         return {
             'type': 'Feature',
@@ -575,6 +583,8 @@ KR.WikipediaAPI = function () {
 
     var BASE_URL = 'http://crossorigin.me/https://no.wikipedia.org/w/api.php';
 
+    var MAX_RADIUS = 10000;
+
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, null, function (response) {
@@ -678,7 +688,7 @@ KR.WikipediaAPI = function () {
                 callback(KR.Util.createFeatureCollection(features));
             });
         } catch (error) {
-            errorCallback(response);
+            KR.Util.handleError(errorCallback, response.error.info);
         }
     }
 
@@ -687,6 +697,11 @@ KR.WikipediaAPI = function () {
         Maps data to format similar to norvegiana api.
     */
     function getWithin(query, latLng, distance, callback, errorCallback) {
+
+        if (distance > MAX_RADIUS) {
+            KR.Util.handleError(errorCallback, 'to wide search radius (max is ' + MAX_RADIUS + ')');
+        }
+
         var params = {
             action: 'query',
             list: 'geosearch',
@@ -744,14 +759,6 @@ KR.FolketellingAPI = function () {
         }, {});
     }
 
-    function _err(errorCallback, error) {
-        if (errorCallback) {
-            errorCallback({'error': error});
-            return;
-        }
-        throw new Error(error);
-    }
-
     function _parser(response) {
         var features = _.map(response.results, function (item) {
             var properties = _dictWithout(item, 'latitude', 'longitude');
@@ -764,12 +771,12 @@ KR.FolketellingAPI = function () {
         var limit = dataset.limit || 1000;
 
         if (dataset.dataset !== 'property') {
-            _err(errorCallback, 'unknown dataset ' + dataset.dataset);
+            KR.Util.handleError(errorCallback, 'unknown dataset ' + dataset.dataset);
             return;
         }
 
         if (distance > MAX_DISTANCE) {
-            _err(errorCallback, 'to wide search radius');
+            KR.Util.handleError(errorCallback, 'to wide search radius');
             return;
         }
         var params = {

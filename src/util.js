@@ -27,7 +27,7 @@ KR.Util = {};
             success: function (response) {
                 if (parser) {
                     try {
-                        callback(parser(response));
+                        callback(parser(response, errorCallback));
                     } catch (e) {
                         ns.handleError(errorCallback, e.message, response);
                     }

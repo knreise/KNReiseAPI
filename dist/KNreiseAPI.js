@@ -27,7 +27,7 @@ KR.Util = {};
             success: function (response) {
                 if (parser) {
                     try {
-                        callback(parser(response));
+                        callback(parser(response, errorCallback));
                     } catch (e) {
                         ns.handleError(errorCallback, e.message, response);
                     }
@@ -833,9 +833,14 @@ KR.SparqlAPI = function (BASE_URL) {
         return geom;
     }
 
-    function _parseResponse(response) {
+    function _parseResponse(response, errorCallback) {
+        try {
+            response = JSON.parse(response);
+        } catch (e) {
+            KR.Util.handleError(errorCallback, response);
+            return;
+        }
 
-        response = JSON.parse(response);
         var features = _.map(response.results.bindings, function (item) {
             var keys = _.without(_.keys(item), 'punkt', 'omraade');
             var attrs = _.reduce(keys, function (acc, key) {

@@ -12,12 +12,12 @@ KR.Util = {};
         }).join('&');
     };
 
-    ns.handleError = function (errorCallback, error) {
+    ns.handleError = function (errorCallback, error, data) {
         if (errorCallback) {
-            errorCallback({'error': error});
+            errorCallback({'error': error, 'data': data});
             return;
         }
-        throw new Error(error);
+        throw new Error(error.error);
     };
 
     ns.sendRequest = function (url, parser, callback, errorCallback) {
@@ -29,7 +29,7 @@ KR.Util = {};
                     try {
                         callback(parser(response));
                     } catch (e) {
-                        ns.handleError(errorCallback, {error: e.message, data: response});
+                        ns.handleError(errorCallback, e.message, response);
                     }
                 } else {
                     callback(response);
@@ -723,11 +723,16 @@ KR.UtnoAPI = function () {
     'use strict';
 
     function getData(dataset, callback, errorCallback) {
+
+        if (typeof toGeoJSON === 'undefined') {
+            throw new Error('Proj4js not found!');
+        }
+
         if (dataset.type === 'gpx') {
             var url = 'http://ut.no/tur/' + dataset.id + '/gpx/';
             KR.Util.sendRequest(url, toGeoJSON.gpx, callback, errorCallback);
         } else {
-            errorCallback('unknown type');
+            KR.Util.handleError(errorCallback, 'Unknown type ' + dataset.type);
         }
     }
 

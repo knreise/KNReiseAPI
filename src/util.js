@@ -12,9 +12,9 @@ KR.Util = {};
         }).join('&');
     };
 
-    ns.handleError = function (errorCallback, error) {
+    ns.handleError = function (errorCallback, error, data) {
         if (errorCallback) {
-            errorCallback({'error': error});
+            errorCallback({'error': error, 'data': data});
             return;
         }
         throw new Error(error);
@@ -29,7 +29,7 @@ KR.Util = {};
                     try {
                         callback(parser(response));
                     } catch (e) {
-                        ns.handleError(errorCallback, {error: e.message, data: response});
+                        ns.handleError(errorCallback, e.message, response);
                     }
                 } else {
                     callback(response);

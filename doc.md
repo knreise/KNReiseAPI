@@ -96,7 +96,7 @@ The datasets object passed to the api is a simple JavaScript object, but these d
 
 Other than the __api__ parameter, the parameters depend on the api, see the table below:
 
-<<<<<<< HEAD
+
 | api                   | parameters                      |
 |-----------------------|---------------------------------|
 | norvegiana            | dataset, query                  |

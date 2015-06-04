@@ -105,7 +105,7 @@ Other than the __api__ parameter, the parameters depend on the api, see the tabl
 | kulturminnedataSparql | limit, filter, fylke, geomType  |
 | cartodb               | table, columns, query           |
 | folketelling          | dataset, limit                  |
-
+| utno                  | type, id                        |
 
 
 #### norvegiana
@@ -114,8 +114,10 @@ Other than the __api__ parameter, the parameters depend on the api, see the tabl
 
 See the [norvegiana documentation][norvegiana-doc] for further info.
 
+
 ####wikipedia
 This dataset takes no parameters
+
 
 #### kulturminnedata
 * **layer**:  ``<string>`` the Layer name to query
@@ -140,6 +142,10 @@ To use this api you must provide a config-object when initializing the api.
 #### folketelling
 * ***dataset***: ``<string>`` Name of the dataset, currently only 'property'
 * ***limit***: ``<int>`` Number of hits, defaults to 1000
+
+#### utno
+* ***type***: ``<string>`` Type of data, currently only ``gpx``
+* ***id***: ``<string>`` Id of the route, corresponds to id on ut.no (i.e. http://ut.no/tur/2.8158/ gives id=2.8158)
 
 
 [bbox]: http://en.wikipedia.org/wiki/Minimum_bounding_box

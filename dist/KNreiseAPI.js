@@ -274,6 +274,13 @@ KR.CartodbAPI = function (user, apikey) {
                distance + ');';
     }
 
+    function _getMapper(dataset) {
+        var mapper = dataset.mapper;
+        if (!mapper) {
+            mapper = mappers().cartodb_general;
+        }
+        return mapper;
+    }
 
     function getMunicipalityBounds(municipalities, callback, errorCallback) {
         if (!_.isArray(municipalities)) {
@@ -290,8 +297,9 @@ KR.CartodbAPI = function (user, apikey) {
     }
 
     function getData(dataset, callback, errorCallback) {
+        var mapper = _getMapper(dataset);
         if (dataset.query) {
-            _executeSQL(dataset.query, dataset.mapper, callback, errorCallback);
+            _executeSQL(dataset.query, mapper, callback, errorCallback);
         } else if (dataset.table) {
             var select = ['*'];
             if (_.has(columnList, dataset.table)) {
@@ -299,7 +307,7 @@ KR.CartodbAPI = function (user, apikey) {
             }
             select.push('ST_AsGeoJSON(the_geom) as geom');
             var sql = 'SELECT ' + select.join(', ') + ' FROM ' + dataset.table;
-            _executeSQL(sql, dataset.mapper, callback, errorCallback);
+            _executeSQL(sql, mapper, callback, errorCallback);
         }
     }
 
@@ -316,10 +324,7 @@ KR.CartodbAPI = function (user, apikey) {
             'ST_Intersects(the_geom, ST_MakeEnvelope(' + bbox + ', 4326))'
         );
 
-        var mapper = dataset.mapper;
-        if (!mapper) {
-            mapper = mappers().cartodb_general;
-        }
+        var mapper = _getMapper(dataset);
         _executeSQL(sql, mapper, callback, errorCallback);
     }
 

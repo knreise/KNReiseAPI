@@ -15,11 +15,13 @@ KR.ArcgisAPI = function (BASE_URL) {
         });
     }
 
-    function _parseArcGisResponse(response, callback) {
+    function _parseArcGisResponse(response, callback, errorCallback) {
         response = JSON.parse(response);
         if (_.has(response, 'error')) {
-            callback(KR.Util.createFeatureCollection([]));
+            KR.Util.handleError(errorCallback, response.error.message);
+            return;
         }
+
         esri2geo.toGeoJSON(response, function (err, data) {
             if (!err) {
                 callback(data);
@@ -52,7 +54,7 @@ KR.ArcgisAPI = function (BASE_URL) {
         var layer = dataset.layer;
         var url = BASE_URL + layer + '/query' +  '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, null, function (response) {
-            _parseArcGisResponse(response, callback);
+            _parseArcGisResponse(response, callback, errorCallback);
         }, errorCallback);
     }
 

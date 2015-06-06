@@ -167,6 +167,28 @@
                 });
         </script>
 
+        <script type="text/test" id="municipality_code_template">
+                var api = new KR.API({
+                    cartodb: {
+                        apikey: 'e6b96c1e6a71b8b2c6f8dbb611c08da5842f5ff5',
+                        user: 'knreise'
+                    }
+                });
+                var map = getMap('municipality_map');
+                var komm = '1601';
+                var verneomraader = {
+                    api: 'cartodb',
+                    query: 'SELECT navn, komm, ST_AsGeoJSON(the_geom) as geom from kommuner where komm = ' + komm
+                };
+                $('#get_municipality').on('click', function () {
+                    api.getData(verneomraader, function (res) {
+                        $('#municipality_data').html(JSON.stringify(res, null, 4));
+                        map.fitBounds(L.geoJson(res).addTo(map).getBounds());
+                    });
+                });
+        </script>
+
+
         <script type="text/test" id="bbox_code_template">
                 var api = new KR.API({
                     cartodb: {
@@ -297,6 +319,7 @@
                     {id: 'kulturminnedata', title: 'Kulturminnedata (ArcGIS REST), dataset by bbox'},
                     {id: 'verneomraader', title: 'Verneområder (CartoDB), dataset by bbox'},
                     {id: 'bbox', 'title': 'Get bounding box for municipality'},
+                    {id: 'municipality', 'title': 'Get geometry for municipality'},
                     {id: 'utno', 'title': 'Get GPX file (from ut.no)'},
                     {id: 'folketelling', 'title': 'Folketelling, properties by bbox'},
                     {id: 'sparql_point', 'title': 'Kulturminnedata, SPARQL, point'},

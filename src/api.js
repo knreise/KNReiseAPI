@@ -39,6 +39,11 @@ KR.API = function (options) {
         folketellingAPI = new KR.FolketellingAPI();
     }
 
+    var flickrAPI;
+    if (KR.FlickrAPI && _.has(options, 'flickr')) {
+        flickrAPI = new KR.FlickrAPI(options.flickr.apikey);
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -46,7 +51,8 @@ KR.API = function (options) {
         kulturminnedata: kulturminnedataAPI,
         kulturminnedataSparql: kulturminnedataSparqlAPI,
         utno: utnoAPI,
-        folketelling: folketellingAPI
+        folketelling: folketellingAPI,
+        flickr: flickrAPI
     };
 
     var datasets = {

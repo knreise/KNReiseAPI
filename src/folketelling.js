@@ -9,17 +9,9 @@ KR.FolketellingAPI = function () {
 
     var MAX_DISTANCE = 5000;
 
-    function _dictWithout(dict) {
-        var keys = _.without(_.keys(dict), Array.prototype.slice.call(arguments, 1));
-        return _.reduce(keys, function (acc, key) {
-            acc[key] = dict[key];
-            return acc;
-        }, {});
-    }
-
     function _parser(response) {
         var features = _.map(response.results, function (item) {
-            var properties = _dictWithout(item, 'latitude', 'longitude');
+            var properties = KR.Util.dictWithout(item, 'latitude', 'longitude');
             return KR.Util.createGeoJSONFeature({lat: item.latitude, lng: item.longitude}, properties);
         });
         return KR.Util.createFeatureCollection(features);

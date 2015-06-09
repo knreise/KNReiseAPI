@@ -6,6 +6,14 @@ KR.Util = {};
 (function (ns) {
     'use strict';
 
+    ns.dictWithout = function (dict) {
+        var keys = _.without(_.keys(dict), Array.prototype.slice.call(arguments, 1));
+        return _.reduce(keys, function (acc, key) {
+            acc[key] = dict[key];
+            return acc;
+        }, {});
+    };
+
     ns.createQueryParameterString = function (params) {
         return _.map(params, function (value, key) {
             return encodeURIComponent(key) + '=' + encodeURIComponent(value);
@@ -153,9 +161,7 @@ KR.ArcgisAPI = function (BASE_URL) {
         }
         var layer = dataset.layer;
         var url = BASE_URL + layer + '/query' +  '?'  + KR.Util.createQueryParameterString(params);
-        KR.Util.sendRequest(url, null, function (response) {
-            _parseArcGisResponse(response, callback, errorCallback);
-        }, errorCallback);
+        KR.Util.sendRequest(url, _parseResponse, callback, errorCallback);
     }
 
     return {
@@ -758,17 +764,9 @@ KR.FolketellingAPI = function () {
 
     var MAX_DISTANCE = 5000;
 
-    function _dictWithout(dict) {
-        var keys = _.without(_.keys(dict), Array.prototype.slice.call(arguments, 1));
-        return _.reduce(keys, function (acc, key) {
-            acc[key] = dict[key];
-            return acc;
-        }, {});
-    }
-
     function _parser(response) {
         var features = _.map(response.results, function (item) {
-            var properties = _dictWithout(item, 'latitude', 'longitude');
+            var properties = KR.Util.dictWithout(item, 'latitude', 'longitude');
             return KR.Util.createGeoJSONFeature({lat: item.latitude, lng: item.longitude}, properties);
         });
         return KR.Util.createFeatureCollection(features);
@@ -940,6 +938,54 @@ KR.SparqlAPI = function (BASE_URL) {
     };
 };
 
+/*global */
+
+var KR = this.KR || {};
+
+KR.FlickrAPI = function (apikey) {
+    'use strict';
+
+    var BASE_URL = 'http://crossorigin.me/https://api.flickr.com/services/rest/';
+
+    function _parser(response) {
+        response = JSON.parse(response);
+        var features = _.map(response.photos.photo, function (item) {
+            var properties = KR.Util.dictWithout(item, 'latitude', 'longitude');
+            return KR.Util.createGeoJSONFeature(
+                {
+                    lat: parseFloat(item.latitude),
+                    lng: parseFloat(item.longitude)
+                },
+                properties
+            );
+        });
+        return KR.Util.createFeatureCollection(features);
+    }
+
+    function getBbox(dataset, bbox, callback, errorCallback) {
+        var params = {
+            method: 'flickr.photos.search',
+            user_id: dataset.user_id,
+            api_key: apikey,
+            bbox: bbox,
+            has_geo: true,
+            extras: 'geo',
+            format: 'json',
+            nojsoncallback: 1,
+            pr_page: 10 //500
+        };
+        if (dataset.query) {
+            params.where = dataset.query;
+        }
+        var layer = dataset.layer;
+        var url = BASE_URL + '?' + KR.Util.createQueryParameterString(params);
+        KR.Util.sendRequest(url, _parser, callback, errorCallback);
+    }
+
+    return {
+        getBbox: getBbox
+    };
+};
 var KR = this.KR || {};
 
 KR.API = function (options) {
@@ -981,6 +1027,11 @@ KR.API = function (options) {
         folketellingAPI = new KR.FolketellingAPI();
     }
 
+    var flickrAPI;
+    if (KR.FlickrAPI && _.has(options, 'flickr')) {
+        flickrAPI = new KR.FlickrAPI(options.flickr.apikey);
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -988,7 +1039,8 @@ KR.API = function (options) {
         kulturminnedata: kulturminnedataAPI,
         kulturminnedataSparql: kulturminnedataSparqlAPI,
         utno: utnoAPI,
-        folketelling: folketellingAPI
+        folketelling: folketellingAPI,
+        flickr: flickrAPI
     };
 
     var datasets = {

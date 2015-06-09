@@ -291,6 +291,31 @@
 
         </script>
 
+        <script type="text/test" id="flickr_code_template">
+                var api = new KR.API({
+                    flickr: {
+                        apikey: '65a0d78867596f8ccfeb9718f4d915d0'
+                    }
+                });
+
+                var map = getMap('flickr_map');
+
+                var bbox = '10.309982,63.412734,10.498123,63.453578';
+
+                var dataset = {
+                    api: 'flickr',
+                    user_id: 'trondheim_byarkiv'
+                };
+
+                $('#get_flickr').on('click', function () {
+                    api.getBbox(dataset, bbox, function (geoJson) {
+                        $('#flickr_data').html(JSON.stringify(geoJson, null, 4));
+                        map.fitBounds(L.geoJson(geoJson).addTo(map).getBounds());
+                    })
+                });
+
+        </script>
+
         <script type="text/javascript">
 
             function getMap(div) {
@@ -323,7 +348,8 @@
                     {id: 'utno', 'title': 'Get GPX file (from ut.no)'},
                     {id: 'folketelling', 'title': 'Folketelling, properties by bbox'},
                     {id: 'sparql_point', 'title': 'Kulturminnedata, SPARQL, point'},
-                    {id: 'sparql_polygon', 'title': 'Kulturminnedata, SPARQL, polygon'}
+                    {id: 'sparql_polygon', 'title': 'Kulturminnedata, SPARQL, polygon'},
+                    {id: 'flickr', 'title': 'Flickr images'}
                 ];
 
                 var examples = _.map(demos, function (demo) {

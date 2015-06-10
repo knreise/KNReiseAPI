@@ -53,15 +53,26 @@
                 };
                 var map = getMap('map');
 
+                map.setView([63.43, 10.39], 14);
 
-                api.getBbox(dataset, bbox, function (geoJson) {
-                    console.log(geoJson);
+                api.getWithin(dataset, map.getCenter(), 1000, function (geoJson) {
                     map.fitBounds(L.geoJson(geoJson, {
                         onEachFeature: function (feature, layer) {
                             layer.bindPopup('<h3>' + feature.properties.title + '</h3><img src="' + feature.properties.image + '" />');
                         }
                     }).addTo(map).getBounds());
                 });
+
+                /*
+                api.getBbox(dataset, bbox, function (geoJson) {
+
+                    map.fitBounds(L.geoJson(geoJson, {
+                        onEachFeature: function (feature, layer) {
+                            layer.bindPopup('<h3>' + feature.properties.title + '</h3><img src="' + feature.properties.image + '" />');
+                        }
+                    }).addTo(map).getBounds());
+                });
+                */
 
             }());
 

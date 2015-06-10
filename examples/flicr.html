@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
         <style type="text/css">
             #map {
                 position: absolute;
@@ -21,6 +22,7 @@
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="../bower_components/underscore/underscore-min.js"></script>
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 
         <script src="../dist/KNreiseAPI.js"></script>
 
@@ -31,8 +33,6 @@
                 L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>̈́'}).addTo(map);
                 return map;
             }
-
-
 
             (function () {
                 'use strict';
@@ -47,11 +47,20 @@
 
                 var dataset = {
                     api: 'flickr',
-                    user_id: 'trondheim_byarkiv'
+                    user_id: 'trondheim_byarkiv',
+                    tags: ['nidaros', 'grave'],
+                    tag_mode: 'any'
                 };
+                var map = getMap('map');
+
 
                 api.getBbox(dataset, bbox, function (geoJson) {
                     console.log(geoJson);
+                    map.fitBounds(L.geoJson(geoJson, {
+                        onEachFeature: function (feature, layer) {
+                            layer.bindPopup('<h3>' + feature.properties.title + '</h3><img src="' + feature.properties.image + '" />');
+                        }
+                    }).addTo(map).getBounds());
                 });
 
             }());

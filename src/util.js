@@ -6,6 +6,14 @@ KR.Util = {};
 (function (ns) {
     'use strict';
 
+    ns.dictWithout = function (dict) {
+        var keys = _.without(_.keys(dict), Array.prototype.slice.call(arguments, 1));
+        return _.reduce(keys, function (acc, key) {
+            acc[key] = dict[key];
+            return acc;
+        }, {});
+    };
+
     ns.createQueryParameterString = function (params) {
         return _.map(params, function (value, key) {
             return encodeURIComponent(key) + '=' + encodeURIComponent(value);

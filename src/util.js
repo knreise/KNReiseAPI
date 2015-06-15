@@ -34,11 +34,14 @@ KR.Util = {};
             url: url,
             success: function (response) {
                 if (parser) {
+                    var parsed;
                     try {
-                        callback(parser(response, errorCallback));
+                        parsed = parser(response, errorCallback);
                     } catch (e) {
                         ns.handleError(errorCallback, e.message, response);
+                        return;
                     }
+                    callback(parsed);
                 } else {
                     callback(response);
                 }

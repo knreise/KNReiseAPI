@@ -36,7 +36,7 @@
 
             function getMap(div) {
                 var map = L.map(div);
-                L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>̈́'}).addTo(map);
+                L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>'}).addTo(map);
                 return map;
             }
 
@@ -46,13 +46,15 @@
                 var api = new KR.API();
 
                 var sparql = {
-                    limit: 100,
+                    //limit: 100,
                     api: 'kulturminnedataSparql',
-                    fylke: '08',
-                    geomType: 'polygon'
+                    //fylke: '08',
+                    kommune: '1601',
+                    geomType: 'point'
                 };
 
                 api.getData(sparql, function (geoJson) {
+                    console.log(geoJson);
                     var l = L.geoJson(geoJson).addTo(map);
 
                     map.fitBounds(l.getBounds());

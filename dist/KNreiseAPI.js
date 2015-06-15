@@ -161,7 +161,9 @@ KR.ArcgisAPI = function (BASE_URL) {
         }
         var layer = dataset.layer;
         var url = BASE_URL + layer + '/query' +  '?'  + KR.Util.createQueryParameterString(params);
-        KR.Util.sendRequest(url, _parseResponse, callback, errorCallback);
+        KR.Util.sendRequest(url, null, function (response) {
+             _parseArcGisResponse(response, callback, errorCallback);
+         }, errorCallback);
     }
 
     return {

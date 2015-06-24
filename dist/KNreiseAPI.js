@@ -857,6 +857,7 @@ KR.FolketellingAPI = function () {
         getWithin: getWithin
     };
 };
+
 /*global proj4:false, wellknown:false */
 var KR = this.KR || {};
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/github-gist.min.css" rel="stylesheet">
+        <style type="text/css">
+            #map {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div><pre id="res1"></pre></div>
+        <div><pre id="res2"></pre></div>
+        <div><pre id="res3"></pre></div>
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../bower_components/underscore/underscore-min.js"></script>
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../dist/KNreiseAPI.js"></script>
+
+        <script type="text/javascript">
+
+
+            (function () {
+                'use strict';
+
+                var api = new KR.API();
+
+                //by
+                var folketelling1 = {
+                    api: 'folketelling',
+                    type: 'propertyData',
+                    propertyId: 'gf01036806021333'
+                };
+
+                api.getData(folketelling1, function (geoJson) {
+                    $('#res1').html(JSON.stringify(geoJson, null, 2));
+                });
+
+            }());
+        </script>
+    </body>
+</html>

@@ -44,6 +44,11 @@ KR.API = function (options) {
         flickrAPI = new KR.FlickrAPI(options.flickr.apikey);
     }
 
+    var kmlAPI;
+    if (KR.KmlAPI) {
+        kmlAPI = new KR.KmlAPI();
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -52,7 +57,8 @@ KR.API = function (options) {
         kulturminnedataSparql: kulturminnedataSparqlAPI,
         utno: utnoAPI,
         folketelling: folketellingAPI,
-        flickr: flickrAPI
+        flickr: flickrAPI,
+        kml: kmlAPI,
     };
 
     var datasets = {

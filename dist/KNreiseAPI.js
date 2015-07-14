@@ -911,12 +911,6 @@ KR.SparqlAPI = function (BASE_URL) {
     }
 
     function _parseResponse(response, errorCallback) {
-        try {
-            response = JSON.parse(response);
-        } catch (e) {
-            KR.Util.handleError(errorCallback, response);
-            return;
-        }
 
         var features = _.map(response.results.bindings, function (item) {
             var keys = _.without(_.keys(item), 'point', 'omraade');
@@ -1186,7 +1180,7 @@ KR.API = function (options) {
     var kulturminnedataSparqlAPI;
     if (KR.SparqlAPI) {
         kulturminnedataSparqlAPI = new KR.SparqlAPI(
-            'http://crossorigin.me/https://sparql.kulturminne.no/'
+            'https://sparql.kulturminne.no/'
         );
     }
 

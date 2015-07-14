@@ -19,7 +19,7 @@ KR.API = function (options) {
     var kulturminnedataSparqlAPI;
     if (KR.SparqlAPI) {
         kulturminnedataSparqlAPI = new KR.SparqlAPI(
-            'http://crossorigin.me/https://sparql.kulturminne.no/'
+            'https://sparql.kulturminne.no/'
         );
     }
 

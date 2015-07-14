@@ -150,12 +150,26 @@ KR.API = function (options) {
         );
     }
 
+    function getCountyBounds(counties, callback, errorCallback) {
+        if (!cartodbAPI) {
+            throw new Error('CartoDB api not configured!');
+        }
+        cartodbAPI.getCountyBounds(
+            counties,
+            callback,
+            errorCallback
+        );
+    }
+
     return {
-        getWithin: getWithin,
-        datasets: function () {return _.extend({}, datasets); },
-        getMunicipalityBounds: getMunicipalityBounds,
         getData: getData,
+        getWithin: getWithin,
         getBbox: getBbox,
+        getMunicipalityBounds: getMunicipalityBounds,
+        getCountyBounds: getCountyBounds,
+        datasets: function () {
+            return _.extend({}, datasets);
+        },
         getNorvegianaItem: function (item, callback) {
             apis.norvegiana.getItem(item, callback);
         }

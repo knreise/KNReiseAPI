@@ -85,7 +85,7 @@ KR.CartodbAPI = function (user, apikey) {
         KR.Util.sendRequest(url, mapper, callback, errorCallback);
     }
 
-    function _parseMunicipalities(response) {
+    function _parseExtent(response) {
         var extent = response.rows[0].st_extent;
         return extent.replace('BOX(', '').replace(')', '').replace(/ /g, ',');
     }
@@ -128,7 +128,21 @@ KR.CartodbAPI = function (user, apikey) {
             'komm in (' + municipalities.join(', ') + ')'
         );
 
-        _executeSQL(sql, _parseMunicipalities, callback, errorCallback);
+        _executeSQL(sql, _parseExtent, callback, errorCallback);
+    }
+
+    function getCountyBounds(counties, callback, errorCallback) {
+        if (!_.isArray(counties)) {
+            counties = [counties];
+        }
+
+        var sql = _createSelect(
+            'ST_Extent(the_geom)',
+            'fylker',
+            'fylkesnr in (' + counties.join(', ') + ')'
+        );
+
+        _executeSQL(sql, _parseExtent, callback, errorCallback);
     }
 
     function getData(dataset, callback, errorCallback) {
@@ -181,6 +195,7 @@ KR.CartodbAPI = function (user, apikey) {
         getData: getData,
         getWithin: getWithin,
         getMunicipalityBounds: getMunicipalityBounds,
+        getCountyBounds: getCountyBounds,
         mappers: mappers
     };
 };

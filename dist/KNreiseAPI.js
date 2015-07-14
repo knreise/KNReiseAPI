@@ -325,15 +325,30 @@ KR.CartodbAPI = function (user, apikey) {
 
     function getData(dataset, callback, errorCallback) {
         var mapper = _getMapper(dataset);
+        var sql;
         if (dataset.query) {
-            _executeSQL(dataset.query, mapper, callback, errorCallback);
+            sql = dataset.query;
         } else if (dataset.table) {
             var select = ['*'];
             if (_.has(columnList, dataset.table)) {
                 select = _.keys(columnList[dataset.table]);
             }
             select.push('ST_AsGeoJSON(the_geom) as geom');
-            var sql = 'SELECT ' + select.join(', ') + ' FROM ' + dataset.table;
+            sql = 'SELECT ' + select.join(', ') + ' FROM ' + dataset.table;
+        } else if (dataset.county) {
+            sql = _createSelect(
+                'ST_AsGeoJSON(the_geom) as geom',
+                'fylker',
+                'fylkesnr = ' + dataset.county
+            );
+        } else if (dataset.municipality) {
+            sql = _createSelect(
+                'ST_AsGeoJSON(the_geom) as geom',
+                'kommuner',
+                'komm = ' + dataset.county
+            );
+        }
+        if (sql) {
             _executeSQL(sql, mapper, callback, errorCallback);
         }
     }

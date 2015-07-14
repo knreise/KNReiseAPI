@@ -287,27 +287,6 @@
                 });
         </script>
 
-        <script type="text/test" id="sparql_polygon_code_template">
-                var api = new KR.API();
-                var map = getMap('sparql_polygon_map');
-
-                var sparql = {
-                    limit: 100,
-                    api: 'kulturminnedataSparql',
-                    fylke: '08',
-                    geomType: 'polygon'
-                };
-
-                $('#get_sparql_polygon').on('click', function () {
-                    api.getData(sparql, function (res) {
-                        $('#sparql_polygon_data').html(JSON.stringify(res, null, 4));
-
-                        map.fitBounds(L.geoJson(res).addTo(map).getBounds());
-                    })
-                });
-
-        </script>
-
         <script type="text/test" id="flickr_code_template">
                 var api = new KR.API({
                     flickr: {
@@ -367,7 +346,6 @@
                     {id: 'kml', 'title': 'Get  KML file from url'},
                     {id: 'folketelling', 'title': 'Folketelling, properties by bbox'},
                     {id: 'sparql_point', 'title': 'Kulturminnedata, SPARQL, point'},
-                    {id: 'sparql_polygon', 'title': 'Kulturminnedata, SPARQL, polygon'},
                     {id: 'flickr', 'title': 'Flickr images'}
                 ];
 

@@ -24,8 +24,12 @@ KR.API = function (options) {
     }
 
     var cartodbAPI;
-    if (_.has(options, 'cartodb')) {
-        cartodbAPI = new KR.CartodbAPI(options.cartodb.user, options.cartodb.apikey);
+    if (KR.CartodbAPI) {
+        var cartouser = 'knreise';
+        if (_.has(options, 'cartodb')) {
+            cartouser = options.cartodb.user;
+        }
+        cartodbAPI = new KR.CartodbAPI(cartouser);
         _.extend(KR.API.mappers, cartodbAPI.mappers());
     }
 

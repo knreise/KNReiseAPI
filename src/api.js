@@ -106,12 +106,19 @@ KR.API = function (options) {
         throw new Error('Unknown API');
     }
 
+    /*
+        Get all features from a dataset
+    */
     function getData(dataset, callback, errorCallback, options) {
         options = options || {};
         var api = _getAPI(dataset.api);
         api.getData(dataset, callback, errorCallback, options);
     }
 
+
+    /*
+        Get features from a dataset within a bbox
+    */
     function getBbox(dataset, bbox, callback, errorCallback, options) {
         options = options || {};
         var api = _getAPI(dataset.api);
@@ -129,6 +136,9 @@ KR.API = function (options) {
         }
     }
 
+    /*
+        Get features from a dataset within a radius of a given point
+    */
     function getWithin(dataset, latLng, distance, callback, errorCallback, options) {
         options = options || {};
         distance = distance || 5000;
@@ -143,6 +153,9 @@ KR.API = function (options) {
         );
     }
 
+    /*
+        Get bbox-string for one or more norwegian municipalies
+    */
     function getMunicipalityBounds(municipalities, callback, errorCallback) {
         if (!cartodbAPI) {
             throw new Error('CartoDB api not configured!');
@@ -154,6 +167,9 @@ KR.API = function (options) {
         );
     }
 
+    /*
+        Get bbox-string for one or more norwegian counties
+    */
     function getCountyBounds(counties, callback, errorCallback) {
         if (!cartodbAPI) {
             throw new Error('CartoDB api not configured!');
@@ -182,15 +198,3 @@ KR.API = function (options) {
 };
 
 KR.API.mappers = {};
-
-/*
-    properties:
-        thumbnail: string (full link to thumbnail-image),
-        images: string[] (full link to fullsize image),
-        title: string (title)
-        content: string (possibly HTML formatted content)
-        link: string (url to origin)
-        dataset: string (name of the dataset)
-        provider: string (name of dataset provider)
-        contentType: string (type of content)
-*/

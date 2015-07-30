@@ -6,6 +6,10 @@ KR.Util = {};
 (function (ns) {
     'use strict';
 
+
+    /*
+        Takes a dictionary and a keys, returns a dict without the keys
+    */
     ns.dictWithout = function (dict) {
         var keys = _.without(_.keys(dict), Array.prototype.slice.call(arguments, 1));
         return _.reduce(keys, function (acc, key) {
@@ -14,12 +18,20 @@ KR.Util = {};
         }, {});
     };
 
+
+    /*
+        Creates a urlescaped query parameter string based on a dict
+    */
     ns.createQueryParameterString = function (params) {
         return _.map(params, function (value, key) {
             return encodeURIComponent(key) + '=' + encodeURIComponent(value);
         }).join('&');
     };
 
+
+    /*
+        Handles an error, either by calling a callback or throwing an Error
+    */
     ns.handleError = function (errorCallback, error, data) {
         if (errorCallback) {
             errorCallback({'error': error, 'data': data});
@@ -28,6 +40,11 @@ KR.Util = {};
         throw new Error(error);
     };
 
+
+    /*
+        Sends a GET-request, optionally runs the result through a parser and 
+        calls a callback
+    */
     ns.sendRequest = function (url, parser, callback, errorCallback) {
         return $.ajax({
             type: 'get',
@@ -52,7 +69,12 @@ KR.Util = {};
         });
     };
 
+
+    /*
+        Creates a GeoJSON feature from a L.LatLng and optionally a properties dict
+    */
     ns.createGeoJSONFeature = function (latLng, properties) {
+        properties = properties || {};
         return {
             'type': 'Feature',
             'geometry': {
@@ -63,7 +85,11 @@ KR.Util = {};
         };
     };
 
+    /*
+        Creates a GeoJSON feature from a GeoJSON Geometry and optionally a properties dict
+    */
     ns.createGeoJSONFeatureFromGeom = function (geom, properties) {
+        properties = properties || {};
         return {
             'type': 'Feature',
             'geometry': geom,
@@ -71,6 +97,10 @@ KR.Util = {};
         };
     };
 
+
+    /*
+        GeoJSON FeatureCollection from an array of GeoJSON features
+    */
     ns.createFeatureCollection = function (features) {
         return {
             'type': 'FeatureCollection',
@@ -91,6 +121,10 @@ KR.Util = {};
         return value * Math.PI / 180;
     }
 
+
+    /*
+        Calculates the Haversine distance between two points
+    */
     ns.haversine = function (lat1, lon1, lat2, lon2) {
         var R = 6371000; // metres
         var phi1 = _toRad(lat1);
@@ -105,6 +139,10 @@ KR.Util = {};
         return R * c;
     };
 
+
+    /*
+        Split a bbox-string to an array
+    */
     ns.splitBbox = function (bbox) {
         return bbox.split(',').map(parseFloat);
     };

@@ -12,7 +12,9 @@ KR.WikipediaAPI = function () {
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, null, function (response) {
-            response = JSON.parse(response);
+            try {
+                response = JSON.parse(response);
+            } catch (ignore) {}
             callback(response);
         });
     }
@@ -89,7 +91,7 @@ KR.WikipediaAPI = function () {
 
         var images = null;
         if (extraData.pageimage) {
-            images = [_getWikimediaImageUrl(extraData.pageimage)]
+            images = [_getWikimediaImageUrl(extraData.pageimage)];
         }
 
         var params = {
@@ -106,7 +108,10 @@ KR.WikipediaAPI = function () {
     }
 
     function _parseWikimediaItems(response, callback, errorCallback) {
-        response = JSON.parse(response);
+        try {
+            response = JSON.parse(response);
+        } catch (ignore) {}
+
 
         try {
             //since the wikipedia API does not include details, we have to ask for 

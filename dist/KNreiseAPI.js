@@ -473,9 +473,27 @@ KR.NorvegianaAPI = function () {
             .value();
     }
 
+    function _fixThumbnail(imageLink) {
+        var thumbSize = 75; //px
+
+        if (!imageLink) {
+            return imageLink;
+        }
+
+        if (imageLink.indexOf('width=') > -1 && imageLink.indexOf('height=') > -1) {
+            return imageLink
+                .replace(/(width=)(\d+)/g, '$1' + thumbSize)
+                .replace(/(height=)(\d+)/g, '$1' + thumbSize);
+        }
+        return imageLink;
+    }
+
     function _createProperties(allProperties) {
+
+        var thumbUrl = _firstOrNull(allProperties.delving_thumbnail);
+
         return {
-            thumbnail: _firstOrNull(allProperties.delving_thumbnail),
+            thumbnail: _fixThumbnail(thumbUrl),
             images: allProperties.delving_thumbnail,
             title: _firstOrNull(allProperties.dc_title),
             content: _firstOrNull(allProperties.dc_description),

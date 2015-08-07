@@ -129,23 +129,25 @@ KR.SparqlAPI = function (BASE_URL) {
             fylke = '0' + fylke;
         }
 
-        var query = 'select  ?id ?name ?description ?loklab as ?loccatlabel ?point ?img ?thumbnail {' +
+
+
+        var query = 'select  ?id ?name ?description ?loccatlabel (SAMPLE(?point) as ?point) ?img ?thumbnail  {' +
             ' ?id a ?type .' +
             ' ?id rdfs:label ?name .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/i-kommune> ?kommune .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?lokalitetskategori .' +
-            ' ?lokalitetskategori rdfs:label ?loklab .' +
+            ' ?lokalitetskategori rdfs:label ?loccatlabel .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point .' +
             ' optional {' +
             '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id .' +
             '  ?picture <https://data.kulturminne.no/schema/source-link> ?link' +
             '  BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
-            '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=600&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
+            '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=400&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
-            ' }' +
+            '  }' +
             ' FILTER regex(?kommune, "^.*' + fylke + '[1-9]{2}") .' +
-            '} order by ?img';
+            ' } order by ?img';
 
         if (dataset.limit) {
             query += 'LIMIT ' + dataset.limit;

@@ -6,7 +6,11 @@ KR.API = function (options) {
     var norvegianaAPI = new KR.NorvegianaAPI();
     var wikipediaAPI;
     if (KR.WikipediaAPI) {
-        wikipediaAPI = new KR.WikipediaAPI();
+        wikipediaAPI = new KR.WikipediaAPI(
+            'http://crossorigin.me/https://no.wikipedia.org/w/api.php',
+            null,
+            'http://no.wikipedia.org/?curid='
+        );
     }
 
     var kulturminnedataAPI;
@@ -53,6 +57,15 @@ KR.API = function (options) {
         kmlAPI = new KR.KmlAPI();
     }
 
+    var lokalwikiAPI;
+    if (KR.WikipediaAPI) {
+        lokalwikiAPI = new KR.WikipediaAPI(
+            'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php',
+            null,
+            'http://lokalhistoriewiki.no/?curid='
+        );
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -63,6 +76,7 @@ KR.API = function (options) {
         folketelling: folketellingAPI,
         flickr: flickrAPI,
         kml: kmlAPI,
+        lokalhistoriewiki: lokalwikiAPI
     };
 
     var datasets = {

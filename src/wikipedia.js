@@ -2,12 +2,9 @@
 
 var KR = this.KR || {};
 
-KR.WikipediaAPI = function () {
+KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase) {
     'use strict';
-
-    var BASE_URL = 'http://crossorigin.me/https://no.wikipedia.org/w/api.php';
-
-    var MAX_RADIUS = 10000;
+    MAX_RADIUS = MAX_RADIUS || 10000;
 
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
@@ -99,7 +96,7 @@ KR.WikipediaAPI = function () {
             images: images,
             title: item.title,
             content: extraData.extract,
-            link: 'http://no.wikipedia.org/?curid=' + item.pageid,
+            link: linkBase + item.pageid,
             dataset: 'Wikipedia',
             provider: 'Wikipedia',
             contentType: 'TEXT'

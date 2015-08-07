@@ -45,9 +45,15 @@ KR.Util = {};
         Sends a GET-request, optionally runs the result through a parser and 
         calls a callback
     */
-    ns.sendRequest = function (url, parser, callback, errorCallback) {
+    ns.sendRequest = function (url, parser, callback, errorCallback, headers) {
+        headers = headers || {};
         return $.ajax({
             type: 'get',
+            beforeSend: function (request){
+                _.each(headers, function (value, key) {
+                    request.setRequestHeader(key, value);
+                });
+            },
             url: url,
             success: function (response) {
                 if (parser) {

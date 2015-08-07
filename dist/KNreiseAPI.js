@@ -45,9 +45,15 @@ KR.Util = {};
         Sends a GET-request, optionally runs the result through a parser and 
         calls a callback
     */
-    ns.sendRequest = function (url, parser, callback, errorCallback) {
+    ns.sendRequest = function (url, parser, callback, errorCallback, headers) {
+        headers = headers || {};
         return $.ajax({
             type: 'get',
+            beforeSend: function (request){
+                _.each(headers, function (value, key) {
+                    request.setRequestHeader(key, value);
+                });
+            },
             url: url,
             success: function (response) {
                 if (parser) {
@@ -603,6 +609,7 @@ KR.NorvegianaAPI = function () {
             format: 'json',
             rows: 1000,
         }, params);
+        params.query += ' delving_hasGeoHash:true';
 
         var requestId = dataset;
         if (parameters.query) {
@@ -651,6 +658,12 @@ KR.NorvegianaAPI = function () {
         _get(params, parameters, callback, errorCallback, options);
     }
 
+    function getData(parameters, callback, errorCallback, options) {
+
+        var params = {};
+        _get(params, parameters, callback, errorCallback, options);
+    }
+
     function getItem(id, callback) {
         var params = {
             id: id,
@@ -669,7 +682,8 @@ KR.NorvegianaAPI = function () {
     return {
         getWithin: getWithin,
         getItem: getItem,
-        getBbox: getBbox
+        getBbox: getBbox,
+        getData: getData
     };
 };
 
@@ -1287,6 +1301,43 @@ KR.KmlAPI = function () {
         getData: getData
     };
 };
+/*global toGeoJSON: false */
+var KR = this.KR || {};
+
+KR.JernbanemuseetAPI = function (API_KEY) {
+    'use strict';
+
+    var BASE_URL = 'https://api.kulturpunkt.org/v2/owners/54/groups/192';
+
+    function _getHeaders() {
+        return {
+            'api-key': API_KEY
+        };
+    }
+
+    function _parser(response) {
+
+        console.log(response);
+        return KR.Util.createFeatureCollection([]);
+    }
+
+    function getWithin(dataset, latLng, distance, callback, errorCallback, options) {
+
+    }
+
+    function getData(dataset, callback, errorCallback) {
+
+        var url = BASE_URL + '/geography';
+
+        console.log(url);
+
+        KR.Util.sendRequest(url, _parser, callback, errorCallback, _getHeaders());
+    }
+
+    return {
+        getData: getData
+    };
+};
 var KR = this.KR || {};
 
 KR.API = function (options) {
@@ -1355,6 +1406,13 @@ KR.API = function (options) {
         );
     }
 
+    var jernbanemuseetAPI;
+    if (KR.JernbanemuseetAPI && _.has(options, 'jernbanemuseet')) {
+        jernbanemuseetAPI = new KR.JernbanemuseetAPI(
+            options.jernbanemuseet.apikey
+        );
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -1365,7 +1423,8 @@ KR.API = function (options) {
         folketelling: folketellingAPI,
         flickr: flickrAPI,
         kml: kmlAPI,
-        lokalhistoriewiki: lokalwikiAPI
+        lokalhistoriewiki: lokalwikiAPI,
+        jernbanemuseet: jernbanemuseetAPI
     };
 
     var datasets = {

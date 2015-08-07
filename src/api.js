@@ -66,6 +66,13 @@ KR.API = function (options) {
         );
     }
 
+    var jernbanemuseetAPI;
+    if (KR.JernbanemuseetAPI && _.has(options, 'jernbanemuseet')) {
+        jernbanemuseetAPI = new KR.JernbanemuseetAPI(
+            options.jernbanemuseet.apikey
+        );
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -76,7 +83,8 @@ KR.API = function (options) {
         folketelling: folketellingAPI,
         flickr: flickrAPI,
         kml: kmlAPI,
-        lokalhistoriewiki: lokalwikiAPI
+        lokalhistoriewiki: lokalwikiAPI,
+        jernbanemuseet: jernbanemuseetAPI
     };
 
     var datasets = {

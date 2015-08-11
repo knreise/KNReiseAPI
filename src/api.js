@@ -3,27 +3,30 @@ var KR = this.KR || {};
 KR.API = function (options) {
     'use strict';
 
-    var norvegianaAPI = new KR.NorvegianaAPI();
+    var norvegianaAPI = new KR.NorvegianaAPI('norvegiana');
     var wikipediaAPI;
     if (KR.WikipediaAPI) {
         wikipediaAPI = new KR.WikipediaAPI(
             'http://crossorigin.me/https://no.wikipedia.org/w/api.php',
             null,
-            'http://no.wikipedia.org/?curid='
+            'http://no.wikipedia.org/?curid=',
+            'wikipedia'
         );
     }
 
     var kulturminnedataAPI;
     if (KR.ArcgisAPI) {
         kulturminnedataAPI = new KR.ArcgisAPI(
-            'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/'
+            'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/',
+            'husmann'
         );
     }
 
     var kulturminnedataSparqlAPI;
     if (KR.SparqlAPI) {
         kulturminnedataSparqlAPI = new KR.SparqlAPI(
-            'https://sparql.kulturminne.no/'
+            'https://sparql.kulturminne.no/',
+            'kulturminne-sparql'
         );
     }
 
@@ -33,23 +36,23 @@ KR.API = function (options) {
         if (_.has(options, 'cartodb')) {
             cartouser = options.cartodb.user;
         }
-        cartodbAPI = new KR.CartodbAPI(cartouser);
+        cartodbAPI = new KR.CartodbAPI(cartouser, 'cartodb-' + cartouser);
         _.extend(KR.API.mappers, cartodbAPI.mappers());
     }
 
     var utnoAPI;
     if (KR.UtnoAPI) {
-        utnoAPI = new KR.UtnoAPI();
+        utnoAPI = new KR.UtnoAPI('utno');
     }
 
     var folketellingAPI;
     if (KR.FolketellingAPI) {
-        folketellingAPI = new KR.FolketellingAPI();
+        folketellingAPI = new KR.FolketellingAPI('folketelling1910');
     }
 
     var flickrAPI;
     if (KR.FlickrAPI && _.has(options, 'flickr')) {
-        flickrAPI = new KR.FlickrAPI(options.flickr.apikey);
+        flickrAPI = new KR.FlickrAPI(options.flickr.apikey, 'flickr');
     }
 
     var kmlAPI;
@@ -62,7 +65,8 @@ KR.API = function (options) {
         lokalwikiAPI = new KR.WikipediaAPI(
             'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php',
             null,
-            'http://lokalhistoriewiki.no/?curid='
+            'http://lokalhistoriewiki.no/?curid=',
+            'lokalhistoriewiki'
         );
     }
 

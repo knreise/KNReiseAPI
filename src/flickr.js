@@ -2,7 +2,7 @@
 
 var KR = this.KR || {};
 
-KR.FlickrAPI = function (apikey) {
+KR.FlickrAPI = function (apikey, apiName) {
     'use strict';
 
     var BASE_URL = 'https://api.flickr.com/services/rest/';
@@ -25,7 +25,8 @@ KR.FlickrAPI = function (apikey) {
                     lat: parseFloat(item.latitude),
                     lng: parseFloat(item.longitude)
                 },
-                properties
+                properties,
+                apiName + '_' + item.id
             );
         });
         return KR.Util.createFeatureCollection(features);

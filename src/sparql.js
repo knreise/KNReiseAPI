@@ -1,7 +1,7 @@
 /*global proj4:false, wellknown:false */
 var KR = this.KR || {};
 
-KR.SparqlAPI = function (BASE_URL) {
+KR.SparqlAPI = function (BASE_URL, apiName) {
     'use strict';
 
     if (typeof proj4 !== 'undefined') {
@@ -52,13 +52,15 @@ KR.SparqlAPI = function (BASE_URL) {
             if (_.has(item, 'point')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(
                     _parseGeom(item.point),
-                    attrs
+                    attrs,
+                    apiName + '_' + attrs.id
                 );
             }
             if (_.has(item, 'omraade')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(
                     _parseGeom(item.omraade),
-                    attrs
+                    attrs,
+                    apiName + '_' + attrs.id
                 );
             }
             return null;

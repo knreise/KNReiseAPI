@@ -98,7 +98,7 @@ KR.SparqlAPI = function (BASE_URL, apiName) {
             return;
         }
 
-        var query = 'select distinct ?id ?name ?description ?loccatlabel ?img ?thumbnail (SAMPLE(?point) as ?point)  {' +
+        var query = 'select distinct ?id ?name ?description ?loccatlabel ?img ?thumbnail (SAMPLE(?point) as ?point) ?url as ?link {' +
             ' ?id a ?type ;' +
             ' rdfs:label ?name ;' +
             ' <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description ;' +
@@ -106,6 +106,8 @@ KR.SparqlAPI = function (BASE_URL, apiName) {
             ' ?p <https://data.kulturminne.no/difi/geo/kommune/' + dataset.kommune + '> ;' +
             ' <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point .' +
             ' ?loccat rdfs:label ?loccatlabel .' +
+            ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
+            ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url)' +
             ' optional {' +
             '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id .' +
             '  ?picture <https://data.kulturminne.no/schema/source-link> ?link' +
@@ -131,15 +133,15 @@ KR.SparqlAPI = function (BASE_URL, apiName) {
             fylke = '0' + fylke;
         }
 
-
-
-        var query = 'select  ?id ?name ?description ?loccatlabel (SAMPLE(?point) as ?point) ?img ?thumbnail  {' +
+        var query = 'select  ?id ?name ?description ?loccatlabel (SAMPLE(?point) as ?point) ?img ?thumbnail ?url  as ?link {' +
             ' ?id a ?type .' +
             ' ?id rdfs:label ?name .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/i-kommune> ?kommune .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?lokalitetskategori .' +
             ' ?lokalitetskategori rdfs:label ?loccatlabel .' +
+            ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
+            ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url)' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point .' +
             ' optional {' +
             '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id .' +

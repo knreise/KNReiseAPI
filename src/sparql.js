@@ -1,7 +1,7 @@
 /*global proj4:false, wellknown:false */
 var KR = this.KR || {};
 
-KR.SparqlAPI = function (BASE_URL) {
+KR.SparqlAPI = function (BASE_URL, apiName) {
     'use strict';
 
     if (typeof proj4 !== 'undefined') {
@@ -52,13 +52,15 @@ KR.SparqlAPI = function (BASE_URL) {
             if (_.has(item, 'point')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(
                     _parseGeom(item.point),
-                    attrs
+                    attrs,
+                    apiName + '_' + attrs.id
                 );
             }
             if (_.has(item, 'omraade')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(
                     _parseGeom(item.omraade),
-                    attrs
+                    attrs,
+                    apiName + '_' + attrs.id
                 );
             }
             return null;
@@ -96,7 +98,7 @@ KR.SparqlAPI = function (BASE_URL) {
             return;
         }
 
-        var query = 'select distinct ?id ?name ?description ?loccatlabel ?img ?thumbnail (SAMPLE(?point) as ?point)  {' +
+        var query = 'select distinct ?id ?name ?description ?loccatlabel ?img ?thumbnail (SAMPLE(?point) as ?point) ?url as ?link {' +
             ' ?id a ?type ;' +
             ' rdfs:label ?name ;' +
             ' <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description ;' +
@@ -104,6 +106,8 @@ KR.SparqlAPI = function (BASE_URL) {
             ' ?p <https://data.kulturminne.no/difi/geo/kommune/' + dataset.kommune + '> ;' +
             ' <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point .' +
             ' ?loccat rdfs:label ?loccatlabel .' +
+            ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
+            ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url)' +
             ' optional {' +
             '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id .' +
             '  ?picture <https://data.kulturminne.no/schema/source-link> ?link' +
@@ -129,15 +133,15 @@ KR.SparqlAPI = function (BASE_URL) {
             fylke = '0' + fylke;
         }
 
-
-
-        var query = 'select  ?id ?name ?description ?loccatlabel (SAMPLE(?point) as ?point) ?img ?thumbnail  {' +
+        var query = 'select  ?id ?name ?description ?loccatlabel (SAMPLE(?point) as ?point) ?img ?thumbnail ?url  as ?link {' +
             ' ?id a ?type .' +
             ' ?id rdfs:label ?name .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/i-kommune> ?kommune .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?lokalitetskategori .' +
             ' ?lokalitetskategori rdfs:label ?loccatlabel .' +
+            ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
+            ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url)' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point .' +
             ' optional {' +
             '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id .' +
@@ -146,7 +150,7 @@ KR.SparqlAPI = function (BASE_URL) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=400&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             '  }' +
-            ' FILTER regex(?kommune, "^.*' + fylke + '[1-9]{2}") .' +
+            ' FILTER regex(?kommune, "^.*' + fylke + '[0-9]{2}") .' +
             ' } order by ?img';
 
         if (dataset.limit) {

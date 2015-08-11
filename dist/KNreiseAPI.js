@@ -79,7 +79,7 @@ KR.Util = {};
     /*
         Creates a GeoJSON feature from a L.LatLng and optionally a properties dict
     */
-    ns.createGeoJSONFeature = function (latLng, properties) {
+    ns.createGeoJSONFeature = function (latLng, properties, id) {
         properties = properties || {};
         return {
             'type': 'Feature',
@@ -87,19 +87,21 @@ KR.Util = {};
                 'type': 'Point',
                 'coordinates': [latLng.lng, latLng.lat]
             },
-            'properties': properties
+            'properties': properties,
+            'id': id
         };
     };
 
     /*
         Creates a GeoJSON feature from a GeoJSON Geometry and optionally a properties dict
     */
-    ns.createGeoJSONFeatureFromGeom = function (geom, properties) {
+    ns.createGeoJSONFeatureFromGeom = function (geom, properties, id) {
         properties = properties || {};
         return {
             'type': 'Feature',
             'geometry': geom,
-            'properties': properties
+            'properties': properties,
+            'id': id
         };
     };
 
@@ -159,7 +161,7 @@ KR.Util = {};
 
 var KR = this.KR || {};
 
-KR.ArcgisAPI = function (BASE_URL) {
+KR.ArcgisAPI = function (BASE_URL, apiName) {
     'use strict';
 
     function _parseBbox(bbox) {
@@ -224,7 +226,7 @@ KR.ArcgisAPI = function (BASE_URL) {
 
 var KR = this.KR || {};
 
-KR.CartodbAPI = function (user) {
+KR.CartodbAPI = function (user, apiName) {
     'use strict';
 
     var BASE_URL = 'http://' + user + '.cartodb.com/api/v2/sql';
@@ -438,7 +440,7 @@ KR.CartodbAPI = function (user) {
 
 var KR = this.KR || {};
 
-KR.NorvegianaAPI = function () {
+KR.NorvegianaAPI = function (apiName) {
     'use strict';
 
     var requests = [];
@@ -527,7 +529,8 @@ KR.NorvegianaAPI = function () {
                 lat: position[0],
                 lng: position[1]
             },
-            properties
+            properties,
+            apiName + '_' + allProperties.delving_hubId[0]
         );
         return feature;
     }
@@ -718,7 +721,7 @@ KR.NorvegianaAPI = function () {
 
 var KR = this.KR || {};
 
-KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase) {
+KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
     'use strict';
     MAX_RADIUS = MAX_RADIUS || 10000;
 
@@ -806,18 +809,22 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase) {
         if (extraData.pageimage) {
             images = [_getWikimediaImageUrl(extraData.pageimage)];
         }
-
+        var link = linkBase + item.pageid;
         var params = {
             thumbnail: thumbnail,
             images: images,
             title: item.title,
             content: extraData.extract,
-            link: linkBase + item.pageid,
+            link: link,
             dataset: 'Wikipedia',
             provider: 'Wikipedia',
             contentType: 'TEXT'
         };
-        return KR.Util.createGeoJSONFeature({lat: item.lat, lng: item.lon}, params);
+        return KR.Util.createGeoJSONFeature(
+            {lat: item.lat, lng: item.lon},
+            params,
+            apiName + '_' + link
+        );
     }
 
     function _parseWikimediaItems(response, callback, errorCallback) {
@@ -879,7 +886,7 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase) {
 /*global toGeoJSON: false */
 var KR = this.KR || {};
 
-KR.UtnoAPI = function () {
+KR.UtnoAPI = function (apiName) {
     'use strict';
 
     function getData(dataset, callback, errorCallback) {
@@ -904,7 +911,7 @@ KR.UtnoAPI = function () {
 
 var KR = this.KR || {};
 
-KR.FolketellingAPI = function () {
+KR.FolketellingAPI = function (apiName) {
     'use strict';
 
     var BASE_URL = 'http://api.digitalarkivet.arkivverket.no/v1/census/1910/';
@@ -914,7 +921,11 @@ KR.FolketellingAPI = function () {
     function _parser(response) {
         var features = _.map(response.results, function (item) {
             var properties = KR.Util.dictWithout(item, 'latitude', 'longitude');
-            return KR.Util.createGeoJSONFeature({lat: item.latitude, lng: item.longitude}, properties);
+            var geom = {
+                lat: item.latitude,
+                lng: item.longitude
+            };
+            return KR.Util.createGeoJSONFeature(geom, properties, apiName + '_' + item.autoid);
         });
         return KR.Util.createFeatureCollection(features);
     }
@@ -1010,7 +1021,7 @@ KR.FolketellingAPI = function () {
 /*global proj4:false, wellknown:false */
 var KR = this.KR || {};
 
-KR.SparqlAPI = function (BASE_URL) {
+KR.SparqlAPI = function (BASE_URL, apiName) {
     'use strict';
 
     if (typeof proj4 !== 'undefined') {
@@ -1061,13 +1072,15 @@ KR.SparqlAPI = function (BASE_URL) {
             if (_.has(item, 'point')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(
                     _parseGeom(item.point),
-                    attrs
+                    attrs,
+                    apiName + '_' + attrs.id
                 );
             }
             if (_.has(item, 'omraade')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(
                     _parseGeom(item.omraade),
-                    attrs
+                    attrs,
+                    apiName + '_' + attrs.id
                 );
             }
             return null;
@@ -1105,7 +1118,7 @@ KR.SparqlAPI = function (BASE_URL) {
             return;
         }
 
-        var query = 'select distinct ?id ?name ?description ?loccatlabel ?img ?thumbnail (SAMPLE(?point) as ?point)  {' +
+        var query = 'select distinct ?id ?name ?description ?loccatlabel ?img ?thumbnail (SAMPLE(?point) as ?point) ?url as ?link {' +
             ' ?id a ?type ;' +
             ' rdfs:label ?name ;' +
             ' <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description ;' +
@@ -1113,6 +1126,8 @@ KR.SparqlAPI = function (BASE_URL) {
             ' ?p <https://data.kulturminne.no/difi/geo/kommune/' + dataset.kommune + '> ;' +
             ' <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point .' +
             ' ?loccat rdfs:label ?loccatlabel .' +
+            ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
+            ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url)' +
             ' optional {' +
             '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id .' +
             '  ?picture <https://data.kulturminne.no/schema/source-link> ?link' +
@@ -1138,15 +1153,15 @@ KR.SparqlAPI = function (BASE_URL) {
             fylke = '0' + fylke;
         }
 
-
-
-        var query = 'select  ?id ?name ?description ?loccatlabel (SAMPLE(?point) as ?point) ?img ?thumbnail  {' +
+        var query = 'select  ?id ?name ?description ?loccatlabel (SAMPLE(?point) as ?point) ?img ?thumbnail ?url  as ?link {' +
             ' ?id a ?type .' +
             ' ?id rdfs:label ?name .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/i-kommune> ?kommune .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description .' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?lokalitetskategori .' +
             ' ?lokalitetskategori rdfs:label ?loccatlabel .' +
+            ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
+            ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url)' +
             ' ?id <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point .' +
             ' optional {' +
             '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id .' +
@@ -1155,7 +1170,7 @@ KR.SparqlAPI = function (BASE_URL) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=400&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             '  }' +
-            ' FILTER regex(?kommune, "^.*' + fylke + '[1-9]{2}") .' +
+            ' FILTER regex(?kommune, "^.*' + fylke + '[0-9]{2}") .' +
             ' } order by ?img';
 
         if (dataset.limit) {
@@ -1220,7 +1235,7 @@ KR.SparqlAPI = function (BASE_URL) {
 
 var KR = this.KR || {};
 
-KR.FlickrAPI = function (apikey) {
+KR.FlickrAPI = function (apikey, apiName) {
     'use strict';
 
     var BASE_URL = 'https://api.flickr.com/services/rest/';
@@ -1243,7 +1258,8 @@ KR.FlickrAPI = function (apikey) {
                     lat: parseFloat(item.latitude),
                     lng: parseFloat(item.longitude)
                 },
-                properties
+                properties,
+                apiName + '_' + item.id
             );
         });
         return KR.Util.createFeatureCollection(features);
@@ -1312,7 +1328,7 @@ KR.FlickrAPI = function (apikey) {
 /*global toGeoJSON: false */
 var KR = this.KR || {};
 
-KR.KmlAPI = function () {
+KR.KmlAPI = function (apiName) {
     'use strict';
 
     function getData(dataset, callback, errorCallback) {
@@ -1370,27 +1386,30 @@ var KR = this.KR || {};
 KR.API = function (options) {
     'use strict';
 
-    var norvegianaAPI = new KR.NorvegianaAPI();
+    var norvegianaAPI = new KR.NorvegianaAPI('norvegiana');
     var wikipediaAPI;
     if (KR.WikipediaAPI) {
         wikipediaAPI = new KR.WikipediaAPI(
             'http://crossorigin.me/https://no.wikipedia.org/w/api.php',
             null,
-            'http://no.wikipedia.org/?curid='
+            'http://no.wikipedia.org/?curid=',
+            'wikipedia'
         );
     }
 
     var kulturminnedataAPI;
     if (KR.ArcgisAPI) {
         kulturminnedataAPI = new KR.ArcgisAPI(
-            'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/'
+            'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/',
+            'husmann'
         );
     }
 
     var kulturminnedataSparqlAPI;
     if (KR.SparqlAPI) {
         kulturminnedataSparqlAPI = new KR.SparqlAPI(
-            'https://sparql.kulturminne.no/'
+            'https://sparql.kulturminne.no/',
+            'kulturminne-sparql'
         );
     }
 
@@ -1400,23 +1419,23 @@ KR.API = function (options) {
         if (_.has(options, 'cartodb')) {
             cartouser = options.cartodb.user;
         }
-        cartodbAPI = new KR.CartodbAPI(cartouser);
+        cartodbAPI = new KR.CartodbAPI(cartouser, 'cartodb-' + cartouser);
         _.extend(KR.API.mappers, cartodbAPI.mappers());
     }
 
     var utnoAPI;
     if (KR.UtnoAPI) {
-        utnoAPI = new KR.UtnoAPI();
+        utnoAPI = new KR.UtnoAPI('utno');
     }
 
     var folketellingAPI;
     if (KR.FolketellingAPI) {
-        folketellingAPI = new KR.FolketellingAPI();
+        folketellingAPI = new KR.FolketellingAPI('folketelling1910');
     }
 
     var flickrAPI;
     if (KR.FlickrAPI && _.has(options, 'flickr')) {
-        flickrAPI = new KR.FlickrAPI(options.flickr.apikey);
+        flickrAPI = new KR.FlickrAPI(options.flickr.apikey, 'flickr');
     }
 
     var kmlAPI;
@@ -1429,7 +1448,8 @@ KR.API = function (options) {
         lokalwikiAPI = new KR.WikipediaAPI(
             'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php',
             null,
-            'http://lokalhistoriewiki.no/?curid='
+            'http://lokalhistoriewiki.no/?curid=',
+            'lokalhistoriewiki'
         );
     }
 

@@ -79,7 +79,7 @@ KR.Util = {};
     /*
         Creates a GeoJSON feature from a L.LatLng and optionally a properties dict
     */
-    ns.createGeoJSONFeature = function (latLng, properties) {
+    ns.createGeoJSONFeature = function (latLng, properties, id) {
         properties = properties || {};
         return {
             'type': 'Feature',
@@ -87,19 +87,21 @@ KR.Util = {};
                 'type': 'Point',
                 'coordinates': [latLng.lng, latLng.lat]
             },
-            'properties': properties
+            'properties': properties,
+            'id': id
         };
     };
 
     /*
         Creates a GeoJSON feature from a GeoJSON Geometry and optionally a properties dict
     */
-    ns.createGeoJSONFeatureFromGeom = function (geom, properties) {
+    ns.createGeoJSONFeatureFromGeom = function (geom, properties, id) {
         properties = properties || {};
         return {
             'type': 'Feature',
             'geometry': geom,
-            'properties': properties
+            'properties': properties,
+            'id': id
         };
     };
 

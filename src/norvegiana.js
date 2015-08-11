@@ -1,6 +1,6 @@
 var KR = this.KR || {};
 
-KR.NorvegianaAPI = function () {
+KR.NorvegianaAPI = function (apiName) {
     'use strict';
 
     var requests = [];
@@ -89,7 +89,8 @@ KR.NorvegianaAPI = function () {
                 lat: position[0],
                 lng: position[1]
             },
-            properties
+            properties,
+            apiName + '_' + allProperties.delving_hubId[0]
         );
         return feature;
     }

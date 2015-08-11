@@ -1,7 +1,7 @@
 /*global toGeoJSON: false */
 var KR = this.KR || {};
 
-KR.KmlAPI = function () {
+KR.KmlAPI = function (apiName) {
     'use strict';
 
     function getData(dataset, callback, errorCallback) {

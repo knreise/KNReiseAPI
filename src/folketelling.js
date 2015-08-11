@@ -2,7 +2,7 @@
 
 var KR = this.KR || {};
 
-KR.FolketellingAPI = function () {
+KR.FolketellingAPI = function (apiName) {
     'use strict';
 
     var BASE_URL = 'http://api.digitalarkivet.arkivverket.no/v1/census/1910/';
@@ -12,7 +12,11 @@ KR.FolketellingAPI = function () {
     function _parser(response) {
         var features = _.map(response.results, function (item) {
             var properties = KR.Util.dictWithout(item, 'latitude', 'longitude');
-            return KR.Util.createGeoJSONFeature({lat: item.latitude, lng: item.longitude}, properties);
+            var geom = {
+                lat: item.latitude,
+                lng: item.longitude
+            };
+            return KR.Util.createGeoJSONFeature(geom, properties, apiName + '_' + item.autoid);
         });
         return KR.Util.createFeatureCollection(features);
     }

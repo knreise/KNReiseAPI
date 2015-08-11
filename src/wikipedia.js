@@ -2,7 +2,7 @@
 
 var KR = this.KR || {};
 
-KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase) {
+KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
     'use strict';
     MAX_RADIUS = MAX_RADIUS || 10000;
 
@@ -90,18 +90,22 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase) {
         if (extraData.pageimage) {
             images = [_getWikimediaImageUrl(extraData.pageimage)];
         }
-
+        var link = linkBase + item.pageid;
         var params = {
             thumbnail: thumbnail,
             images: images,
             title: item.title,
             content: extraData.extract,
-            link: linkBase + item.pageid,
+            link: link,
             dataset: 'Wikipedia',
             provider: 'Wikipedia',
             contentType: 'TEXT'
         };
-        return KR.Util.createGeoJSONFeature({lat: item.lat, lng: item.lon}, params);
+        return KR.Util.createGeoJSONFeature(
+            {lat: item.lat, lng: item.lon},
+            params,
+            apiName + '_' + link
+        );
     }
 
     function _parseWikimediaItems(response, callback, errorCallback) {

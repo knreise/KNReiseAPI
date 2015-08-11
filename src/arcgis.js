@@ -2,7 +2,7 @@
 
 var KR = this.KR || {};
 
-KR.ArcgisAPI = function (BASE_URL) {
+KR.ArcgisAPI = function (BASE_URL, apiName) {
     'use strict';
 
     function _parseBbox(bbox) {

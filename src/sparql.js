@@ -150,7 +150,7 @@ KR.SparqlAPI = function (BASE_URL, apiName) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=400&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             '  }' +
-            ' FILTER regex(?kommune, "^.*' + fylke + '[1-9]{2}") .' +
+            ' FILTER regex(?kommune, "^.*' + fylke + '[0-9]{2}") .' +
             ' } order by ?img';
 
         if (dataset.limit) {

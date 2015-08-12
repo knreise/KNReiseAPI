@@ -50,9 +50,8 @@
                 };
 
                 /*
-                var pos = {lng: 10.7461, lat: 59.912}
-
-                api.getWithin(wikipedia, pos, 10000, function (geoJson) {
+                var pos = {lng: 10.730291, lat: 63.43189};
+                api.getWithin(jernbanemuseet, pos, 20000, function (geoJson) {
                     console.log(geoJson);
                     if (geoJson.features.length) {
                         var l = L.geoJson(geoJson).addTo(map);
@@ -60,14 +59,20 @@
                     }
                 }, function (e) {console.log(e);});
                 */
-
+                console.time("timer 1");
                 api.getData(jernbanemuseet, function (geoJson) {
+                    console.timeEnd("timer 1");
                     console.log(geoJson);
                     if (geoJson.features.length) {
                         var l = L.geoJson(geoJson).addTo(map);
                         map.fitBounds(l.getBounds());
                     }
                 }, function (e) {console.log(e);});
+                /*
+                api.getJernbaneItem(2581, function (data) {
+                    console.log(data);
+                });
+                */
             }());
 
         </script>

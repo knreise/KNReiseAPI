@@ -73,7 +73,9 @@ KR.API = function (options) {
     var jernbanemuseetAPI;
     if (KR.JernbanemuseetAPI && _.has(options, 'jernbanemuseet')) {
         jernbanemuseetAPI = new KR.JernbanemuseetAPI(
-            options.jernbanemuseet.apikey
+            options.jernbanemuseet.apikey,
+            'no',
+            'jernbanemuseet'
         );
     }
 
@@ -218,6 +220,9 @@ KR.API = function (options) {
         },
         getNorvegianaItem: function (item, callback) {
             apis.norvegiana.getItem(item, callback);
+        },
+        getJernbaneItem: function (item, callback) {
+            apis.jernbanemuseet.getItem(item, callback);
         }
     };
 

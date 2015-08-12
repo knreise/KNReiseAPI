@@ -598,6 +598,7 @@ KR.NorvegianaAPI = function (apiName) {
         );
     }
 
+
     function _get(params, parameters, callback, errorCallback, options) {
         var dataset = _fixDataset(parameters.dataset);
 
@@ -680,7 +681,24 @@ KR.NorvegianaAPI = function (apiName) {
 
     function getData(parameters, callback, errorCallback, options) {
         if (parameters.query && _.isArray(parameters.query)) {
-            _getOrQuery(parameters, callback, errorCallback, options);
+            var query = 'delving_spec:' + parameters.dataset + 
+                ' AND (' + parameters.query.join(' OR ') + ')' +
+                ' AND delving_hasGeoHash:true';
+            var params = {
+                query: query,
+                format: 'json',
+                rows: 1000,
+            };
+
+            var requestId = query;
+            _checkCancel(requestId);
+
+            var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
+            if (options.allPages) {
+                requests[requestId] = _getAllPages(url, callback, errorCallback);
+            } else {
+                requests[requestId] = _getFirstPage(url, callback, errorCallback);
+            }
             return;
         }
 

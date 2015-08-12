@@ -26,7 +26,8 @@
         <script src="../bower_components/wellknown/wellknown.js"></script>
         <script src="../bower_components/proj4/dist/proj4.js"></script>
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-
+        <script src="../bower_components/CryptoJS/build/components/core.js"></script>
+        <script src="../bower_components/CryptoJS/build/components/md5.js"></script>
 
         <script src="../dist/KNreiseAPI.js"></script>
 
@@ -51,16 +52,22 @@
                     api: 'wikipedia'
                 };
 
-                var pos = {lng: 60.0878752729637, lat: 6.4112091064453125}
-
-                api.getWithin(wikipedia, pos, 50, function (geoJson) {
+                var pos = {lng:16.575658 , lat:  68.833909}
+/*
+                api.getWithin(wikipedia, pos, 1000, function (geoJson) {
                     console.log(geoJson);
                     if (geoJson.features.length) {
                         var l = L.geoJson(geoJson).addTo(map);
                         map.fitBounds(l.getBounds());
                     }
                 }, function (e) {console.log(e);});
-
+*/
+    
+                var api = new KR.API();
+        
+                var dataset = {api: 'wikipedia', category: 'Kulturminner_i_Norge_fra_andre_verdenskrig'};
+                api.getData(dataset, function (res) {console.log(res)});
+            
             }());
 
         </script>

@@ -79,23 +79,27 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
     }
 
     function _parseWikimediaItem(item, extdaDataDict) {
-
+        extdaDataDict = extdaDataDict || {};
         var extraData = extdaDataDict[item.pageid];
+        if (extraData) {
+            item = _.extend(item, extraData);
+        }
+
         var thumbnail;
-        if (_.has(extraData, 'thumbnail')) {
-            thumbnail = extraData.thumbnail.source;
+        if (_.has(item, 'thumbnail')) {
+            thumbnail = item.thumbnail.source;
         }
 
         var images = null;
-        if (extraData.pageimage) {
-            images = [_getWikimediaImageUrl(extraData.pageimage)];
+        if (item.pageimage) {
+            images = [_getWikimediaImageUrl(item.pageimage)];
         }
         var link = linkBase + item.pageid;
         var params = {
             thumbnail: thumbnail,
             images: images,
             title: item.title,
-            content: extraData.extract,
+            content: item.extract,
             link: link,
             dataset: 'Wikipedia',
             provider: 'Wikipedia',
@@ -159,7 +163,61 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
         }, errorCallback);
     }
 
+    function _parseCategoryResult(results) {
+
+        var features = _.chain(results)
+            .reduce(function (acc, dict) {
+                _.each(dict, function (parameters, key) {
+                    if (_.has(acc, key)) {
+                        acc[key] = _.extend(acc[key], parameters);
+                    } else {
+                        acc[key] = parameters;
+                    }
+                });
+
+                return acc;
+            }, {})
+            .filter(function (item) {
+                return _.has(item, 'coordinates');
+            }).map(function (item) {
+                item.lat = item.coordinates[0].lat;
+                item.lon = item.coordinates[0].lon;
+                return item;
+            })
+            .map(_parseWikimediaItem)
+            .value();
+        return KR.Util.createFeatureCollection(features);
+    }
+
+
+    function getData(parameters, callback, errorCallback, options) {
+        var params = {
+            'action': 'query',
+            'generator': 'categorymembers',
+            'gcmtitle': 'Kategori:' + parameters.category,
+            'prop': 'coordinates|pageimages|extracts',
+            'format': 'json'
+        };
+
+        var result = [];
+        function sendRequest(cont) {
+            var mergedParams = _.extend({}, params, cont);
+            var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(mergedParams);
+            KR.Util.sendRequest(url, null, function (response) {
+                result.push(response.query.pages);
+                if (_.has(response, 'continue')) {
+                    sendRequest(response['continue']);
+                } else {
+
+                    callback(_parseCategoryResult(result));
+                }
+            }, errorCallback);
+        }
+        sendRequest({'continue': ''});
+    }
+
     return {
-        getWithin: getWithin
+        getWithin: getWithin,
+        getData: getData
     };
 };

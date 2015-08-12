@@ -70,6 +70,15 @@ KR.API = function (options) {
         );
     }
 
+    var jernbanemuseetAPI;
+    if (KR.JernbanemuseetAPI && _.has(options, 'jernbanemuseet')) {
+        jernbanemuseetAPI = new KR.JernbanemuseetAPI(
+            options.jernbanemuseet.apikey,
+            'no',
+            'jernbanemuseet'
+        );
+    }
+
     var apis = {
         norvegiana: norvegianaAPI,
         wikipedia: wikipediaAPI,
@@ -80,7 +89,8 @@ KR.API = function (options) {
         folketelling: folketellingAPI,
         flickr: flickrAPI,
         kml: kmlAPI,
-        lokalhistoriewiki: lokalwikiAPI
+        lokalhistoriewiki: lokalwikiAPI,
+        jernbanemuseet: jernbanemuseetAPI
     };
 
     var datasets = {
@@ -210,6 +220,9 @@ KR.API = function (options) {
         },
         getNorvegianaItem: function (item, callback) {
             apis.norvegiana.getItem(item, callback);
+        },
+        getJernbaneItem: function (item, callback) {
+            apis.jernbanemuseet.getItem(item, callback);
         }
     };
 

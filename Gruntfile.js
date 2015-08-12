@@ -19,6 +19,7 @@ module.exports = function(grunt) {
           'src/sparql.js',
           'src/flickr.js',
           'src/kml.js',
+          'src/jernbanemuseet.js',
           'src/api.js'
         ],
         dest: 'dist/<%= pkg.name %>.js'

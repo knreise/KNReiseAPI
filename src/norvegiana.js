@@ -6,6 +6,7 @@ KR.NorvegianaAPI = function (apiName) {
     var requests = [];
 
     var BASE_URL = 'http://kulturnett2.delving.org/api/search';
+    var BASE_COLLECTION_URL = 'http://acc.norvegiana.delving.org/en/api/knreise-collection/';
 
     function _formatLatLng(latLng) {
         return latLng.lat + ',' + latLng.lng;
@@ -269,10 +270,33 @@ KR.NorvegianaAPI = function (apiName) {
         );
     }
 
+    function _collectionParser(data) {
+
+        var features = _.map(data.features, function (feature) {
+                var properties = _createProperties(feature.properties);
+                var id;
+                if (_.has(properties.allProps, 'delving_hubId')) {
+                    id = apiName + '_' + properties.allProps.delving_hubId;
+                }
+                feature.properties = properties;
+                feature.id = id;
+                return feature;
+        });
+
+        data.features = KR.Util.createFeatureCollection(features);
+        return data;
+    }
+
+    function getCollection(collectionName, callback, errorCallback) {
+        var url = BASE_COLLECTION_URL + collectionName;
+        KR.Util.sendRequest(url, _collectionParser, callback, errorCallback);
+    }
+
     return {
         getWithin: getWithin,
         getItem: getItem,
         getBbox: getBbox,
-        getData: getData
+        getData: getData,
+        getCollection: getCollection
     };
 };

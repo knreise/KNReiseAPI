@@ -229,7 +229,8 @@ KR.API = function (options) {
         datasets: function () {
             return _.extend({}, datasets);
         },
-        getItem: getItem
+        getItem: getItem,
+        getCollection: norvegianaAPI.getCollection
     };
 
 };

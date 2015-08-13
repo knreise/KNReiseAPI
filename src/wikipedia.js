@@ -109,7 +109,7 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
         return KR.Util.createGeoJSONFeature(
             {lat: item.lat, lng: item.lon},
             params,
-            apiName + '_' + link
+            apiName + '_' + item.pageid
         );
     }
 

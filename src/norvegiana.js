@@ -272,7 +272,7 @@ KR.NorvegianaAPI = function (apiName) {
 
     function _collectionParser(data) {
 
-        var features = _.map(data.features, function (feature) {
+        var features = _.map(data.geo_json.features, function (feature) {
                 var properties = _createProperties(feature.properties);
                 var id;
                 if (_.has(properties.allProps, 'delving_hubId')) {
@@ -283,7 +283,7 @@ KR.NorvegianaAPI = function (apiName) {
                 return feature;
         });
 
-        data.features = KR.Util.createFeatureCollection(features);
+        data.geo_json = KR.Util.createFeatureCollection(features);
         return data;
     }
 

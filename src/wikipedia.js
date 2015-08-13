@@ -103,7 +103,8 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
             link: link,
             dataset: 'Wikipedia',
             provider: 'Wikipedia',
-            contentType: 'TEXT'
+            contentType: 'TEXT',
+            id: item.pageid
         };
         return KR.Util.createGeoJSONFeature(
             {lat: item.lat, lng: item.lon},
@@ -195,7 +196,7 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
             'action': 'query',
             'generator': 'categorymembers',
             'gcmtitle': 'Kategori:' + parameters.category,
-            'prop': 'coordinates|pageimages|extracts',
+            'prop': 'coordinates',
             'format': 'json'
         };
 
@@ -216,8 +217,22 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
         sendRequest({'continue': ''});
     }
 
+    function getItem(id, callback) {
+        var params = {
+            'action': 'query',
+            'pageids': id,
+            'prop': 'coordinates|pageimages|extracts',
+            'format': 'json'
+        };
+        var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
+        KR.Util.sendRequest(url, function (res) {
+            return _parseWikimediaItem(res.query.pages[id]);
+        }, callback);
+    }
+
     return {
         getWithin: getWithin,
-        getData: getData
+        getData: getData,
+        getItem: getItem
     };
 };

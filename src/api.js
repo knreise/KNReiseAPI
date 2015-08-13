@@ -223,6 +223,9 @@ KR.API = function (options) {
         },
         getJernbaneItem: function (item, callback) {
             apis.jernbanemuseet.getItem(item, callback);
+        },
+        getWikipediaItem: function (item, callback) {
+            apis.wikipedia.getItem(item, callback);
         }
     };
 

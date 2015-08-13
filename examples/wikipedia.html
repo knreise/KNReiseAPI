@@ -65,9 +65,15 @@
     
                 var api = new KR.API();
         
+                console.time("a");
                 var dataset = {api: 'wikipedia', category: 'Kulturminner_i_Norge_fra_andre_verdenskrig'};
-                api.getData(dataset, function (res) {console.log(res)});
-            
+                api.getData(dataset, function (res) {
+                    console.timeEnd("a");
+                    console.log(res)
+                });
+        
+                api.getWikipediaItem(246167, function (res) {console.log(res)});
+
             }());
 
         </script>

@@ -217,7 +217,7 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
         sendRequest({'continue': ''});
     }
 
-    function getItem(id, callback) {
+    function getItem(id, callback, errorCallback) {
         var params = {
             'action': 'query',
             'pageids': id,
@@ -227,7 +227,7 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, function (res) {
             return _parseWikimediaItem(res.query.pages[id]);
-        }, callback);
+        }, callback, errorCallback);
     }
 
     return {

@@ -209,6 +209,17 @@ KR.API = function (options) {
         );
     }
 
+    function getItem(dataset, callback, errorCallback) {
+        var api = _getAPI(dataset.api);
+        if (_.has(api, 'getItem')) {
+            api.getItem(dataset.id, callback, errorCallback);
+        } else if (errorCallback) {
+            errorCallback('No getItem function for api ' + dataset.api);
+        } else {
+            throw new Error('No getItem function for api ' + dataset.api);
+        }
+    }
+
     return {
         getData: getData,
         getWithin: getWithin,
@@ -218,15 +229,7 @@ KR.API = function (options) {
         datasets: function () {
             return _.extend({}, datasets);
         },
-        getNorvegianaItem: function (item, callback) {
-            apis.norvegiana.getItem(item, callback);
-        },
-        getJernbaneItem: function (item, callback) {
-            apis.jernbanemuseet.getItem(item, callback);
-        },
-        getWikipediaItem: function (item, callback) {
-            apis.wikipedia.getItem(item, callback);
-        }
+        getItem: getItem
     };
 
 };

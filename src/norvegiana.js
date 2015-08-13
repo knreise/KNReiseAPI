@@ -272,7 +272,7 @@ KR.NorvegianaAPI = function (apiName) {
         _get(params, parameters, callback, errorCallback, options);
     }
 
-    function getItem(id, callback) {
+    function getItem(id, callback, errorCallback) {
         var params = {
             id: id,
             format: 'json'
@@ -283,7 +283,8 @@ KR.NorvegianaAPI = function (apiName) {
             function (response) {
                 return _parseNorvegianaItem(response.result);
             },
-            callback
+            callback,
+            errorCallback
         );
     }
 

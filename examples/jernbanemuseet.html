@@ -58,7 +58,7 @@
                         map.fitBounds(l.getBounds());
                     }
                 }, function (e) {console.log(e);});
-                */
+                /*
                 console.time("timer 1");
                 api.getData(jernbanemuseet, function (geoJson) {
                     console.timeEnd("timer 1");
@@ -68,11 +68,13 @@
                         map.fitBounds(l.getBounds());
                     }
                 }, function (e) {console.log(e);});
-                /*
-                api.getJernbaneItem(2581, function (data) {
+                */
+
+
+                api.getItem({'api': 'jernbanemuseet', id: 2581}, function (data) {
                     console.log(data);
                 });
-                */
+                
             }());
 
         </script>

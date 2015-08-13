@@ -72,7 +72,7 @@
                     console.log(res)
                 });
         
-                api.getWikipediaItem(246167, function (res) {console.log(res)});
+                api.getItem({'api': 'wikipedia', id: 246167}, function (res) {console.log(res)});
 
             }());
 

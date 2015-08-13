@@ -712,7 +712,7 @@ KR.NorvegianaAPI = function (apiName) {
         _get(params, parameters, callback, errorCallback, options);
     }
 
-    function getItem(id, callback) {
+    function getItem(id, callback, errorCallback) {
         var params = {
             id: id,
             format: 'json'
@@ -723,7 +723,8 @@ KR.NorvegianaAPI = function (apiName) {
             function (response) {
                 return _parseNorvegianaItem(response.result);
             },
-            callback
+            callback,
+            errorCallback
         );
     }
 
@@ -954,7 +955,7 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
         sendRequest({'continue': ''});
     }
 
-    function getItem(id, callback) {
+    function getItem(id, callback, errorCallback) {
         var params = {
             'action': 'query',
             'pageids': id,
@@ -964,7 +965,7 @@ KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, function (res) {
             return _parseWikimediaItem(res.query.pages[id]);
-        }, callback);
+        }, callback, errorCallback);
     }
 
     return {
@@ -1807,6 +1808,17 @@ KR.API = function (options) {
         );
     }
 
+    function getItem(dataset, callback, errorCallback) {
+        var api = _getAPI(dataset.api);
+        if (_.has(api, 'getItem')) {
+            api.getItem(dataset.id, callback, errorCallback);
+        } else if (errorCallback) {
+            errorCallback('No getItem function for api ' + dataset.api);
+        } else {
+            throw new Error('No getItem function for api ' + dataset.api);
+        }
+    }
+
     return {
         getData: getData,
         getWithin: getWithin,
@@ -1816,15 +1828,7 @@ KR.API = function (options) {
         datasets: function () {
             return _.extend({}, datasets);
         },
-        getNorvegianaItem: function (item, callback) {
-            apis.norvegiana.getItem(item, callback);
-        },
-        getJernbaneItem: function (item, callback) {
-            apis.jernbanemuseet.getItem(item, callback);
-        },
-        getWikipediaItem: function (item, callback) {
-            apis.wikipedia.getItem(item, callback);
-        }
+        getItem: getItem
     };
 
 };

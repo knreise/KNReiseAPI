@@ -114,8 +114,11 @@ KR.SparqlAPI = function (BASE_URL, apiName) {
             '  BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=600&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
-            ' }' +
-            '}';
+            ' }';
+            if (dataset.filter) {
+                query += ' ' + dataset.filter;
+            }
+            query += '}';
         if (dataset.limit) {
             query += 'LIMIT ' + dataset.limit;
         }
@@ -150,8 +153,11 @@ KR.SparqlAPI = function (BASE_URL, apiName) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=400&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             '  }' +
-            ' FILTER regex(?kommune, "^.*' + fylke + '[0-9]{2}") .' +
-            ' } order by ?img';
+            ' FILTER regex(?kommune, "^.*' + fylke + '[0-9]{2}") .';
+            if (dataset.filter) {
+                query += ' ' + dataset.filter;
+            }
+            query += ' } order by ?img';
 
         if (dataset.limit) {
             query += 'LIMIT ' + dataset.limit;

@@ -50,7 +50,8 @@
                     api: 'kulturminnedataSparql',
                     //fylke: '08',
                     kommune: '1601',
-                    geomType: 'point'
+                   // filter: 'FILTER regex(?loccatlabel, "^Arkeologisk", "i") .'
+                   filter: 'FILTER (!regex(?loccatlabel, "^Arkeologisk", "i"))'
                 };
 
                 api.getData(sparql, function (geoJson) {

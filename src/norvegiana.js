@@ -84,13 +84,19 @@ KR.NorvegianaAPI = function (apiName) {
             item.item.fields.abm_latLong[0].split(','),
             parseFloat
         );
+
+        var id;
+        if (_.has(allProperties, 'delving_hubId')) {
+            id = apiName + '_' + allProperties.delving_hubId[0];
+        }
+
         var feature = KR.Util.createGeoJSONFeature(
             {
                 lat: position[0],
                 lng: position[1]
             },
             properties,
-            apiName + '_' + allProperties.delving_hubId[0]
+            id
         );
         return feature;
     }
@@ -222,32 +228,9 @@ KR.NorvegianaAPI = function (apiName) {
         _get(params, parameters, callback, errorCallback, options);
     }
 
-
-    function _getOrQuery(parameters, callback, errorCallback, options) {
-        var queries = parameters.query;
-        var features = [];
-
-        var sum = _.after(queries.length, function () {
-            var unique = _.uniq(features, false, function (feature) {
-                return feature.properties.allProps.europeana_uri[0];
-            });
-            callback(KR.Util.createFeatureCollection(unique));
-        });
-
-        var finished = function (geoJson) {
-            features = features.concat(geoJson.features);
-            sum();
-        };
-
-        _.each(queries, function (query) {
-            parameters.query = query;
-            getData(parameters, finished, errorCallback, options);
-        });
-    }
-
     function getData(parameters, callback, errorCallback, options) {
         if (parameters.query && _.isArray(parameters.query)) {
-            var query = 'delving_spec:' + parameters.dataset + 
+            var query = 'delving_spec:' + parameters.dataset +
                 ' AND (' + parameters.query.join(' OR ') + ')' +
                 ' AND delving_hasGeoHash:true';
             var params = {
@@ -267,9 +250,7 @@ KR.NorvegianaAPI = function (apiName) {
             }
             return;
         }
-
-        var params = {};
-        _get(params, parameters, callback, errorCallback, options);
+        _get({}, parameters, callback, errorCallback, options);
     }
 
     function getItem(id, callback, errorCallback) {

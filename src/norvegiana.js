@@ -65,7 +65,7 @@ KR.NorvegianaAPI = function (apiName) {
             thumbnail: _fixThumbnail(thumbUrl),
             images: allProperties.delving_thumbnail,
             title: _firstOrNull(allProperties.dc_title),
-            content: _firstOrNull(allProperties.dc_description),
+            content: _.map(allProperties.dc_description, function (d) { return '<p>' + d + '</p>' }).join('\n'),
             link: _firstOrNull(allProperties.europeana_isShownAt),
             dataset: _firstOrNull(allProperties.europeana_collectionTitle),
             provider: _firstOrNull(allProperties.abm_contentProvider),

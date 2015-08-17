@@ -175,7 +175,9 @@ KR.ArcgisAPI = function (BASE_URL, apiName) {
     }
 
     function _parseArcGisResponse(response, callback, errorCallback) {
-        response = JSON.parse(response);
+        try {
+            response = JSON.parse(response);
+        } catch (ignore) {}
         if (_.has(response, 'error')) {
             KR.Util.handleError(errorCallback, response.error.message);
             return;

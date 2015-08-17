@@ -515,7 +515,7 @@ KR.NorvegianaAPI = function (apiName) {
             thumbnail: _fixThumbnail(thumbUrl),
             images: allProperties.delving_thumbnail,
             title: _firstOrNull(allProperties.dc_title),
-            content: _.map(allProperties.dc_description, function (d) { return '<p>' + d + '</p>' }).join('\n'),
+            content: _.map(allProperties.dc_description, function (d) { return '<p>' + d + '</p>'; }).join('\n'),
             link: _firstOrNull(allProperties.europeana_isShownAt),
             dataset: _firstOrNull(allProperties.europeana_collectionTitle),
             provider: _firstOrNull(allProperties.abm_contentProvider),
@@ -723,14 +723,14 @@ KR.NorvegianaAPI = function (apiName) {
     function _collectionParser(data) {
 
         var features = _.map(data.geo_json.features, function (feature) {
-                var properties = _createProperties(feature.properties);
-                var id;
-                if (_.has(properties.allProps, 'delving_hubId')) {
-                    id = apiName + '_' + properties.allProps.delving_hubId;
-                }
-                feature.properties = properties;
-                feature.id = id;
-                return feature;
+            var properties = _createProperties(feature.properties);
+            var id;
+            if (_.has(properties.allProps, 'delving_hubId')) {
+                id = apiName + '_' + properties.allProps.delving_hubId;
+            }
+            feature.properties = properties;
+            feature.id = id;
+            return feature;
         });
 
         data.geo_json = KR.Util.createFeatureCollection(features);
@@ -760,7 +760,7 @@ KR.WikipediaAPI = function (apiName, options) {
 
     var MAX_RADIUS = options.maxRadius || 10000;
     var BASE_URL = options.url;
-    var linkBase = options.linkBase
+    var linkBase = options.linkBase;
 
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
@@ -1247,10 +1247,10 @@ KR.SparqlAPI = function (apiName, options) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=600&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             ' }';
-            if (dataset.filter) {
-                query += ' ' + dataset.filter;
-            }
-            query += '}';
+        if (dataset.filter) {
+            query += ' ' + dataset.filter;
+        }
+        query += '}';
         if (dataset.limit) {
             query += 'LIMIT ' + dataset.limit;
         }
@@ -1286,10 +1286,11 @@ KR.SparqlAPI = function (apiName, options) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             '  }' +
             ' FILTER regex(?kommune, "^.*' + fylke + '[0-9]{2}") .';
-            if (dataset.filter) {
-                query += ' ' + dataset.filter;
-            }
-            query += ' } order by ?img';
+
+        if (dataset.filter) {
+            query += ' ' + dataset.filter;
+        }
+        query += ' } order by ?img';
 
         if (dataset.limit) {
             query += 'LIMIT ' + dataset.limit;

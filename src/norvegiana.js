@@ -65,7 +65,7 @@ KR.NorvegianaAPI = function (apiName) {
             thumbnail: _fixThumbnail(thumbUrl),
             images: allProperties.delving_thumbnail,
             title: _firstOrNull(allProperties.dc_title),
-            content: _.map(allProperties.dc_description, function (d) { return '<p>' + d + '</p>' }).join('\n'),
+            content: _.map(allProperties.dc_description, function (d) { return '<p>' + d + '</p>'; }).join('\n'),
             link: _firstOrNull(allProperties.europeana_isShownAt),
             dataset: _firstOrNull(allProperties.europeana_collectionTitle),
             provider: _firstOrNull(allProperties.abm_contentProvider),
@@ -273,14 +273,14 @@ KR.NorvegianaAPI = function (apiName) {
     function _collectionParser(data) {
 
         var features = _.map(data.geo_json.features, function (feature) {
-                var properties = _createProperties(feature.properties);
-                var id;
-                if (_.has(properties.allProps, 'delving_hubId')) {
-                    id = apiName + '_' + properties.allProps.delving_hubId;
-                }
-                feature.properties = properties;
-                feature.id = id;
-                return feature;
+            var properties = _createProperties(feature.properties);
+            var id;
+            if (_.has(properties.allProps, 'delving_hubId')) {
+                id = apiName + '_' + properties.allProps.delving_hubId;
+            }
+            feature.properties = properties;
+            feature.id = id;
+            return feature;
         });
 
         data.geo_json = KR.Util.createFeatureCollection(features);

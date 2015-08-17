@@ -117,10 +117,10 @@ KR.SparqlAPI = function (apiName, options) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=600&rs=0&pg=0&sr=", ?lokid) AS ?img)' +
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             ' }';
-            if (dataset.filter) {
-                query += ' ' + dataset.filter;
-            }
-            query += '}';
+        if (dataset.filter) {
+            query += ' ' + dataset.filter;
+        }
+        query += '}';
         if (dataset.limit) {
             query += 'LIMIT ' + dataset.limit;
         }
@@ -156,10 +156,11 @@ KR.SparqlAPI = function (apiName, options) {
             '  BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=75&rs=0&pg=0&sr=", ?lokid) AS ?thumbnail)' +
             '  }' +
             ' FILTER regex(?kommune, "^.*' + fylke + '[0-9]{2}") .';
-            if (dataset.filter) {
-                query += ' ' + dataset.filter;
-            }
-            query += ' } order by ?img';
+
+        if (dataset.filter) {
+            query += ' ' + dataset.filter;
+        }
+        query += ' } order by ?img';
 
         if (dataset.limit) {
             query += 'LIMIT ' + dataset.limit;

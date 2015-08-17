@@ -7,7 +7,7 @@ KR.WikipediaAPI = function (apiName, options) {
 
     var MAX_RADIUS = options.maxRadius || 10000;
     var BASE_URL = options.url;
-    var linkBase = options.linkBase
+    var linkBase = options.linkBase;
 
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);

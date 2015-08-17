@@ -2,96 +2,66 @@ var KR = this.KR || {};
 
 KR.API = function (options) {
     'use strict';
+    options = options || {};
 
-    var norvegianaAPI = new KR.NorvegianaAPI('norvegiana');
-    var wikipediaAPI;
-    if (KR.WikipediaAPI) {
-        wikipediaAPI = new KR.WikipediaAPI(
-            'http://crossorigin.me/https://no.wikipedia.org/w/api.php',
-            null,
-            'http://no.wikipedia.org/?curid=',
-            'wikipedia'
-        );
-    }
-
-    var kulturminnedataAPI;
-    if (KR.ArcgisAPI) {
-        kulturminnedataAPI = new KR.ArcgisAPI(
-            'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/',
-            'husmann'
-        );
-    }
-
-    var kulturminnedataSparqlAPI;
-    if (KR.SparqlAPI) {
-        kulturminnedataSparqlAPI = new KR.SparqlAPI(
-            'https://sparql.kulturminne.no/',
-            'kulturminne-sparql'
-        );
-    }
-
-    var cartodbAPI;
-    if (KR.CartodbAPI) {
-        var cartouser = 'knreise';
-        if (_.has(options, 'cartodb')) {
-            cartouser = options.cartodb.user;
+    var apiConfig = {
+        norvegiana: {
+            api: KR.NorvegianaAPI,
+            params: {}
+        },
+        wikipedia: {
+            api: KR.WikipediaAPI,
+            params: {url: 'http://crossorigin.me/https://no.wikipedia.org/w/api.php', linkBase: 'http://no.wikipedia.org/?curid='}
+        },
+        cartodb: {
+            api: KR.CartodbAPI,
+            params: {user: 'knreise'}
+        },
+        kulturminnedata: {
+            api: KR.ArcgisAPI,
+            params: {url: 'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/'}
+        },
+        kulturminnedataSparql: {
+            api: KR.SparqlAPI,
+            params: {url: 'https://sparql.kulturminne.no/'}
+        },
+        utno: {
+            api: KR.UtnoAPI,
+            params: {}
+        },
+        folketelling: {
+            api: KR.FolketellingAPI,
+            params: {}
+        },
+        flickr: {
+            api: KR.FlickrAPI,
+            extend: true,
+            params: {}
+        },
+        kml: {
+            api: KR.KmlAPI,
+            params: {}
+        },
+        lokalhistoriewiki: {
+            api: KR.WikipediaAPI,
+            params: {url: 'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php', linkBase: 'http://lokalhistoriewiki.no/?curid='}
+        },
+        jernbanemuseet: {
+            api: KR.JernbanemuseetAPI,
+            extend: true,
+            params: {lang: 'no'}
         }
-        cartodbAPI = new KR.CartodbAPI(cartouser, 'cartodb-' + cartouser);
-        _.extend(KR.API.mappers, cartodbAPI.mappers());
-    }
-
-    var utnoAPI;
-    if (KR.UtnoAPI) {
-        utnoAPI = new KR.UtnoAPI('utno');
-    }
-
-    var folketellingAPI;
-    if (KR.FolketellingAPI) {
-        folketellingAPI = new KR.FolketellingAPI('folketelling1910');
-    }
-
-    var flickrAPI;
-    if (KR.FlickrAPI && _.has(options, 'flickr')) {
-        flickrAPI = new KR.FlickrAPI(options.flickr.apikey, 'flickr');
-    }
-
-    var kmlAPI;
-    if (KR.KmlAPI) {
-        kmlAPI = new KR.KmlAPI();
-    }
-
-    var lokalwikiAPI;
-    if (KR.WikipediaAPI) {
-        lokalwikiAPI = new KR.WikipediaAPI(
-            'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php',
-            null,
-            'http://lokalhistoriewiki.no/?curid=',
-            'lokalhistoriewiki'
-        );
-    }
-
-    var jernbanemuseetAPI;
-    if (KR.JernbanemuseetAPI && _.has(options, 'jernbanemuseet')) {
-        jernbanemuseetAPI = new KR.JernbanemuseetAPI(
-            options.jernbanemuseet.apikey,
-            'no',
-            'jernbanemuseet'
-        );
-    }
-
-    var apis = {
-        norvegiana: norvegianaAPI,
-        wikipedia: wikipediaAPI,
-        cartodb: cartodbAPI,
-        kulturminnedata: kulturminnedataAPI,
-        kulturminnedataSparql: kulturminnedataSparqlAPI,
-        utno: utnoAPI,
-        folketelling: folketellingAPI,
-        flickr: flickrAPI,
-        kml: kmlAPI,
-        lokalhistoriewiki: lokalwikiAPI,
-        jernbanemuseet: jernbanemuseetAPI
     };
+
+
+    var apis = _.reduce(apiConfig, function (acc, params, key) {
+        var apiOptions = params.params;
+        if (params.extend) {
+            apiOptions = _.extend(apiOptions, options[key]);
+        }
+        acc[key] = new params.api(key, apiOptions);
+        return acc;
+    }, {});
 
 
     function _distanceFromBbox(api, dataset, bbox, callback, errorCallback, options) {
@@ -173,6 +143,7 @@ KR.API = function (options) {
         Get bbox-string for one or more norwegian municipalies
     */
     function getMunicipalityBounds(municipalities, callback, errorCallback) {
+        var cartodbAPI = _getAPI('cartodb');
         if (!cartodbAPI) {
             throw new Error('CartoDB api not configured!');
         }
@@ -187,6 +158,7 @@ KR.API = function (options) {
         Get bbox-string for one or more norwegian counties
     */
     function getCountyBounds(counties, callback, errorCallback) {
+        var cartodbAPI = _getAPI('cartodb');
         if (!cartodbAPI) {
             throw new Error('CartoDB api not configured!');
         }
@@ -215,7 +187,10 @@ KR.API = function (options) {
         getMunicipalityBounds: getMunicipalityBounds,
         getCountyBounds: getCountyBounds,
         getItem: getItem,
-        getCollection: norvegianaAPI.getCollection
+        getCollection: function (collectionName, callback, errorCallback) {
+            var norvegianaAPI = _getAPI('norvegiana');
+            norvegianaAPI.getCollection(collectionName, callback, errorCallback);
+        }
     };
 
 };

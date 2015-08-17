@@ -1,13 +1,13 @@
 /*global toGeoJSON: false */
 var KR = this.KR || {};
 
-KR.JernbanemuseetAPI = function (API_KEY, lang, apiName) {
+KR.JernbanemuseetAPI = function (apiName, options) {
     'use strict';
 
-    lang = lang || 'no';
+    var lang = options.lang || 'no';
 
     var BASE_URL = 'https://api.kulturpunkt.org/v2/owners/54/groups/192';
-
+    var API_KEY = options.apikey;
     function _getHeaders() {
         return {
             'api-key': API_KEY

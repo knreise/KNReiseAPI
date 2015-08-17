@@ -2,8 +2,9 @@
 
 var KR = this.KR || {};
 
-KR.ArcgisAPI = function (BASE_URL, apiName) {
+KR.ArcgisAPI = function (apiName, options) {
     'use strict';
+    var BASE_URL = options.url;
 
     function _parseBbox(bbox) {
         bbox = KR.Util.splitBbox(bbox);

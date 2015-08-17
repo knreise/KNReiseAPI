@@ -46,10 +46,11 @@ KR.Util = {};
         calls a callback
     */
     ns.sendRequest = function (url, parser, callback, errorCallback, headers) {
+
         headers = headers || {};
         return $.ajax({
             type: 'get',
-            beforeSend: function (request){
+            beforeSend: function (request) {
                 _.each(headers, function (value, key) {
                     request.setRequestHeader(key, value);
                 });
@@ -161,8 +162,9 @@ KR.Util = {};
 
 var KR = this.KR || {};
 
-KR.ArcgisAPI = function (BASE_URL, apiName) {
+KR.ArcgisAPI = function (apiName, options) {
     'use strict';
+    var BASE_URL = options.url;
 
     function _parseBbox(bbox) {
         bbox = KR.Util.splitBbox(bbox);
@@ -233,9 +235,10 @@ KR.ArcgisAPI = function (BASE_URL, apiName) {
 
 var KR = this.KR || {};
 
-KR.CartodbAPI = function (user, apiName) {
+KR.CartodbAPI = function (apiName, options) {
     'use strict';
 
+    var user = options.user;
     var BASE_URL = 'http://' + user + '.cartodb.com/api/v2/sql';
 
 
@@ -752,9 +755,12 @@ KR.NorvegianaAPI = function (apiName) {
 
 var KR = this.KR || {};
 
-KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
+KR.WikipediaAPI = function (apiName, options) {
     'use strict';
-    MAX_RADIUS = MAX_RADIUS || 10000;
+
+    var MAX_RADIUS = options.maxRadius || 10000;
+    var BASE_URL = options.url;
+    var linkBase = options.linkBase
 
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
@@ -1125,8 +1131,10 @@ KR.FolketellingAPI = function (apiName) {
 /*global proj4:false, wellknown:false */
 var KR = this.KR || {};
 
-KR.SparqlAPI = function (BASE_URL, apiName) {
+KR.SparqlAPI = function (apiName, options) {
     'use strict';
+
+    var BASE_URL = options.url;
 
     if (typeof proj4 !== 'undefined') {
         proj4.defs([
@@ -1346,10 +1354,11 @@ KR.SparqlAPI = function (BASE_URL, apiName) {
 
 var KR = this.KR || {};
 
-KR.FlickrAPI = function (apikey, apiName) {
+KR.FlickrAPI = function (apiName, options) {
     'use strict';
 
     var BASE_URL = 'https://api.flickr.com/services/rest/';
+    var apikey = options.apikey;
 
     var imageTemplate = _.template('https://farm<%= farm %>.staticflickr.com/<%= server %>/<%= id %>_<%= secret %>_<%= size %>.jpg');
 
@@ -1458,13 +1467,13 @@ KR.KmlAPI = function (apiName) {
 /*global toGeoJSON: false */
 var KR = this.KR || {};
 
-KR.JernbanemuseetAPI = function (API_KEY, lang, apiName) {
+KR.JernbanemuseetAPI = function (apiName, options) {
     'use strict';
 
-    lang = lang || 'no';
+    var lang = options.lang || 'no';
 
     var BASE_URL = 'https://api.kulturpunkt.org/v2/owners/54/groups/192';
-
+    var API_KEY = options.apikey;
     function _getHeaders() {
         return {
             'api-key': API_KEY
@@ -1619,96 +1628,66 @@ var KR = this.KR || {};
 
 KR.API = function (options) {
     'use strict';
+    options = options || {};
 
-    var norvegianaAPI = new KR.NorvegianaAPI('norvegiana');
-    var wikipediaAPI;
-    if (KR.WikipediaAPI) {
-        wikipediaAPI = new KR.WikipediaAPI(
-            'http://crossorigin.me/https://no.wikipedia.org/w/api.php',
-            null,
-            'http://no.wikipedia.org/?curid=',
-            'wikipedia'
-        );
-    }
-
-    var kulturminnedataAPI;
-    if (KR.ArcgisAPI) {
-        kulturminnedataAPI = new KR.ArcgisAPI(
-            'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/',
-            'husmann'
-        );
-    }
-
-    var kulturminnedataSparqlAPI;
-    if (KR.SparqlAPI) {
-        kulturminnedataSparqlAPI = new KR.SparqlAPI(
-            'https://sparql.kulturminne.no/',
-            'kulturminne-sparql'
-        );
-    }
-
-    var cartodbAPI;
-    if (KR.CartodbAPI) {
-        var cartouser = 'knreise';
-        if (_.has(options, 'cartodb')) {
-            cartouser = options.cartodb.user;
+    var apiConfig = {
+        norvegiana: {
+            api: KR.NorvegianaAPI,
+            params: {}
+        },
+        wikipedia: {
+            api: KR.WikipediaAPI,
+            params: {url: 'http://crossorigin.me/https://no.wikipedia.org/w/api.php', linkBase: 'http://no.wikipedia.org/?curid='}
+        },
+        cartodb: {
+            api: KR.CartodbAPI,
+            params: {user: 'knreise'}
+        },
+        kulturminnedata: {
+            api: KR.ArcgisAPI,
+            params: {url: 'http://crossorigin.me/http://husmann.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/'}
+        },
+        kulturminnedataSparql: {
+            api: KR.SparqlAPI,
+            params: {url: 'https://sparql.kulturminne.no/'}
+        },
+        utno: {
+            api: KR.UtnoAPI,
+            params: {}
+        },
+        folketelling: {
+            api: KR.FolketellingAPI,
+            params: {}
+        },
+        flickr: {
+            api: KR.FlickrAPI,
+            extend: true,
+            params: {}
+        },
+        kml: {
+            api: KR.KmlAPI,
+            params: {}
+        },
+        lokalhistoriewiki: {
+            api: KR.WikipediaAPI,
+            params: {url: 'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php', linkBase: 'http://lokalhistoriewiki.no/?curid='}
+        },
+        jernbanemuseet: {
+            api: KR.JernbanemuseetAPI,
+            extend: true,
+            params: {lang: 'no'}
         }
-        cartodbAPI = new KR.CartodbAPI(cartouser, 'cartodb-' + cartouser);
-        _.extend(KR.API.mappers, cartodbAPI.mappers());
-    }
-
-    var utnoAPI;
-    if (KR.UtnoAPI) {
-        utnoAPI = new KR.UtnoAPI('utno');
-    }
-
-    var folketellingAPI;
-    if (KR.FolketellingAPI) {
-        folketellingAPI = new KR.FolketellingAPI('folketelling1910');
-    }
-
-    var flickrAPI;
-    if (KR.FlickrAPI && _.has(options, 'flickr')) {
-        flickrAPI = new KR.FlickrAPI(options.flickr.apikey, 'flickr');
-    }
-
-    var kmlAPI;
-    if (KR.KmlAPI) {
-        kmlAPI = new KR.KmlAPI();
-    }
-
-    var lokalwikiAPI;
-    if (KR.WikipediaAPI) {
-        lokalwikiAPI = new KR.WikipediaAPI(
-            'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php',
-            null,
-            'http://lokalhistoriewiki.no/?curid=',
-            'lokalhistoriewiki'
-        );
-    }
-
-    var jernbanemuseetAPI;
-    if (KR.JernbanemuseetAPI && _.has(options, 'jernbanemuseet')) {
-        jernbanemuseetAPI = new KR.JernbanemuseetAPI(
-            options.jernbanemuseet.apikey,
-            'no',
-            'jernbanemuseet'
-        );
-    }
-
-    var apis = {
-        norvegiana: norvegianaAPI,
-        wikipedia: wikipediaAPI,
-        cartodb: cartodbAPI,
-        kulturminnedata: kulturminnedataAPI,
-        kulturminnedataSparql: kulturminnedataSparqlAPI,
-        utno: utnoAPI,
-        folketelling: folketellingAPI,
-        flickr: flickrAPI,
-        kml: kmlAPI,
-        lokalhistoriewiki: lokalwikiAPI,
-        jernbanemuseet: jernbanemuseetAPI
     };
+
+
+    var apis = _.reduce(apiConfig, function (acc, params, key) {
+        var apiOptions = params.params;
+        if (params.extend) {
+            apiOptions = _.extend(apiOptions, options[key]);
+        }
+        acc[key] = new params.api(key, apiOptions);
+        return acc;
+    }, {});
 
 
     function _distanceFromBbox(api, dataset, bbox, callback, errorCallback, options) {
@@ -1790,6 +1769,7 @@ KR.API = function (options) {
         Get bbox-string for one or more norwegian municipalies
     */
     function getMunicipalityBounds(municipalities, callback, errorCallback) {
+        var cartodbAPI = _getAPI('cartodb');
         if (!cartodbAPI) {
             throw new Error('CartoDB api not configured!');
         }
@@ -1804,6 +1784,7 @@ KR.API = function (options) {
         Get bbox-string for one or more norwegian counties
     */
     function getCountyBounds(counties, callback, errorCallback) {
+        var cartodbAPI = _getAPI('cartodb');
         if (!cartodbAPI) {
             throw new Error('CartoDB api not configured!');
         }
@@ -1832,7 +1813,10 @@ KR.API = function (options) {
         getMunicipalityBounds: getMunicipalityBounds,
         getCountyBounds: getCountyBounds,
         getItem: getItem,
-        getCollection: norvegianaAPI.getCollection
+        getCollection: function (collectionName, callback, errorCallback) {
+            var norvegianaAPI = _getAPI('norvegiana');
+            norvegianaAPI.getCollection(collectionName, callback, errorCallback);
+        }
     };
 
 };

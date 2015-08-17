@@ -2,9 +2,10 @@
 
 var KR = this.KR || {};
 
-KR.CartodbAPI = function (user, apiName) {
+KR.CartodbAPI = function (apiName, options) {
     'use strict';
 
+    var user = options.user;
     var BASE_URL = 'http://' + user + '.cartodb.com/api/v2/sql';
 
 

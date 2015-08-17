@@ -46,10 +46,11 @@ KR.Util = {};
         calls a callback
     */
     ns.sendRequest = function (url, parser, callback, errorCallback, headers) {
+
         headers = headers || {};
         return $.ajax({
             type: 'get',
-            beforeSend: function (request){
+            beforeSend: function (request) {
                 _.each(headers, function (value, key) {
                     request.setRequestHeader(key, value);
                 });

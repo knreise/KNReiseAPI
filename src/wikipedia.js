@@ -2,9 +2,12 @@
 
 var KR = this.KR || {};
 
-KR.WikipediaAPI = function (BASE_URL, MAX_RADIUS, linkBase, apiName) {
+KR.WikipediaAPI = function (apiName, options) {
     'use strict';
-    MAX_RADIUS = MAX_RADIUS || 10000;
+
+    var MAX_RADIUS = options.maxRadius || 10000;
+    var BASE_URL = options.url;
+    var linkBase = options.linkBase
 
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);

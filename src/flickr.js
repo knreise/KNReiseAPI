@@ -2,10 +2,11 @@
 
 var KR = this.KR || {};
 
-KR.FlickrAPI = function (apikey, apiName) {
+KR.FlickrAPI = function (apiName, options) {
     'use strict';
 
     var BASE_URL = 'https://api.flickr.com/services/rest/';
+    var apikey = options.apikey;
 
     var imageTemplate = _.template('https://farm<%= farm %>.staticflickr.com/<%= server %>/<%= id %>_<%= secret %>_<%= size %>.jpg');
 

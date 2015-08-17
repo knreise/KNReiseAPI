@@ -1,8 +1,10 @@
 /*global proj4:false, wellknown:false */
 var KR = this.KR || {};
 
-KR.SparqlAPI = function (BASE_URL, apiName) {
+KR.SparqlAPI = function (apiName, options) {
     'use strict';
+
+    var BASE_URL = options.url;
 
     if (typeof proj4 !== 'undefined') {
         proj4.defs([

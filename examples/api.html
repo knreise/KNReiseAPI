@@ -17,6 +17,7 @@
     <body>
 
         <h1>KNreise API - examples</h1>
+        <p>NB: This is not a complete list of all datasets and/or methods available!</p>
         <ul id="toc"></ul>
         <div id="demos" class="container-fluid"></div>
 
@@ -44,7 +45,7 @@
         <script src="../bower_components/wellknown/wellknown.js"></script>
         <script src="../bower_components/proj4/dist/proj4.js"></script>
 
-        <script src="../dist/KNreiseAPI.min.js"></script>
+        <script src="../dist/KNreiseAPI.js"></script>
 
         <script type="text/template" id="demo_template">
             <div>
@@ -322,6 +323,29 @@
 
         </script>
 
+        <script type="text/test" id="jernbanemuseet_code_template">
+                var api = new KR.API({
+                    jernbanemuseet: {
+                        apikey: '336a8e06-78d9-4d2c-84c9-ac4fab6e8871'
+                    }
+                });
+
+                var map = getMap('jernbanemuseet_map');
+
+               
+                var dataset = {
+                    api: 'jernbanemuseet'
+                };
+
+                $('#get_jernbanemuseet').on('click', function () {
+                    api.getData(dataset, function (geoJson) {
+                        $('#jernbanemuseet_data').html(JSON.stringify(geoJson, null, 4));
+                        map.fitBounds(L.geoJson(geoJson).addTo(map).getBounds());
+                    })
+                });
+
+        </script>
+
         <script type="text/javascript">
 
             function getMap(div) {
@@ -356,7 +380,8 @@
                     {id: 'kml', 'title': 'Get  KML file from url'},
                     {id: 'folketelling', 'title': 'Folketelling, properties by bbox'},
                     {id: 'sparql_point', 'title': 'Kulturminnedata, SPARQL, point'},
-                    {id: 'flickr', 'title': 'Flickr images'}
+                    {id: 'flickr', 'title': 'Flickr images'},
+                    {id: 'jernbanemuseet', title: 'Jernbanemuseet'}
                 ];
 
                 var examples = _.map(demos, function (demo) {

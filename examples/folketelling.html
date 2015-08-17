@@ -49,6 +49,7 @@
 
                 var bbox = map.getBounds().toBBoxString();
                 api.getBbox(folketelling, bbox, function (geoJson) {
+                    console.log(geoJson);
                     var l = L.geoJson(geoJson).addTo(map);
                 }, function (e) {console.log(e);});
 

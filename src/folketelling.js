@@ -13,8 +13,8 @@ KR.FolketellingAPI = function (apiName) {
         var features = _.map(response.results, function (item) {
             var properties = KR.Util.dictWithout(item, 'latitude', 'longitude');
             var geom = {
-                lat: item.latitude,
-                lng: item.longitude
+                lat: parseFloat(item.latitude),
+                lng: parseFloat(item.longitude)
             };
             return KR.Util.createGeoJSONFeature(geom, properties, apiName + '_' + item.autoid);
         });

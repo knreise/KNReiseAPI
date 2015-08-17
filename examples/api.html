@@ -108,6 +108,30 @@
                 });
         </script>
 
+            <script type="text/test" id="norvegiana_coll_code_template">
+                //create an API instance
+                var api = new KR.API();
+
+                //setup a map
+                var map = getMap('norvegiana_coll_map');
+
+
+                $('#get_norvegiana_coll').on('click', function () {
+
+                    //when button is clicked, call getNorvegianaCollection
+                    api.getCollection('test-collection', function (collection) {
+
+                        //show data
+                        $('#norvegiana_coll_data').html(JSON.stringify(collection, null, 4));
+
+                        //show map
+                        map.fitBounds(L.geoJson(collection.geo_json).addTo(map).getBounds());
+
+                    });
+
+                });
+        </script>
+
         <script type="text/test" id="wikipedia_code_template">
                 var api = new KR.API();
                 var map = getMap('wikipedia_map');
@@ -322,6 +346,7 @@
 
                 var demos = [
                     {id: 'norvegiana1', title: 'Norvegiana, dataset by bbox'},
+                    {id: 'norvegiana_coll', title: 'Norvegiana collection'},
                     {id: 'wikipedia', title: 'Wikipedia, dataset by bbox'},
                     {id: 'kulturminnedata', title: 'Kulturminnedata (ArcGIS REST), dataset by bbox'},
                     {id: 'verneomraader', title: 'Verneområder (CartoDB), dataset by bbox'},

@@ -92,7 +92,7 @@ Note: For some apis the getBbox uses the getWithin function, as bbox is not supp
             <function> errorCalback
         );
 
-* **getNorvegianaCollection**: Gets a norvegiana-Collection.
+* **getCollection**: Gets a norvegiana-Collection.
 
 ###Data types
 

@@ -93,18 +93,6 @@ KR.API = function (options) {
         jernbanemuseet: jernbanemuseetAPI
     };
 
-    var datasets = {
-        'Artsdatabanken': {name: 'Artsdatabanken', dataset: {api: 'norvegiana', dataset: 'Artsdatabanken'}},
-        'difo': {name: 'Digitalt fortalt', dataset: {api: 'norvegiana', dataset: 'difo'}},
-        'DiMu': {name: 'DigitaltMuseum', dataset: {api: 'norvegiana', dataset: 'DiMu'}},
-        'Industrimuseum': {name: 'Industrimuseum', dataset: {api: 'norvegiana', dataset: 'Industrimuseum'}},
-        'Kulturminnesøk': {name: 'Kulturminnesøk', dataset: {api: 'norvegiana', dataset: 'Kulturminnesøk'}},
-        'MUSIT': {name: 'Universitetsmuseene', dataset: {api: 'norvegiana', dataset: 'MUSIT'}},
-        'Naturbase': {name: 'Naturbase', dataset: {api: 'norvegiana', dataset: 'Naturbase'}},
-        'Stedsnavn': {name: 'Stedsnavn', dataset: {api: 'norvegiana', dataset: 'Stedsnavn'}},
-        'wikipedia': {name: 'Wikipedia', dataset: {api: 'wikipedia'}},
-        'search_1': {name: 'Byantikvaren i Oslo', dataset: {api: 'cartodb', table: 'search_1'}}
-    };
 
     function _distanceFromBbox(api, dataset, bbox, callback, errorCallback, options) {
         bbox = KR.Util.splitBbox(bbox);
@@ -226,9 +214,6 @@ KR.API = function (options) {
         getBbox: getBbox,
         getMunicipalityBounds: getMunicipalityBounds,
         getCountyBounds: getCountyBounds,
-        datasets: function () {
-            return _.extend({}, datasets);
-        },
         getItem: getItem,
         getCollection: norvegianaAPI.getCollection
     };

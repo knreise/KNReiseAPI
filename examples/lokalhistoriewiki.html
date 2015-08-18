@@ -53,7 +53,7 @@
 
                 var pos = {lng: 10.7461, lat: 59.912}
 
-                api.getWithin(wikipedia, pos, 10000, function (geoJson) {
+                api.getWithin(wikipedia, pos, 100000, function (geoJson) {
                     console.log(geoJson);
                     if (geoJson.features.length) {
                         var l = L.geoJson(geoJson).addTo(map);

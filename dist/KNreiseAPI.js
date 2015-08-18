@@ -191,6 +191,7 @@ KR.ArcgisAPI = function (apiName, options) {
                     if (_.has(feature.properties, 'Navn')) {
                         feature.properties.title = feature.properties.Navn;
                     }
+                    feature.id = apiName + '_' + feature.properties.OBJECTID;
                 });
                 callback(data);
             } else {

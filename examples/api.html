@@ -258,6 +258,23 @@
                 });
         </script>
 
+        <script type="text/test" id="gpx_code_template">
+                var api = new KR.API();
+                var map = getMap('gpx_map');
+
+                var tur = {
+                    api: 'gpx',
+                    url: 'http://ut.no/tur/2.8158/gpx/'
+                };
+
+                $('#get_gpx').on('click', function () {
+                    api.getData(tur, function (res) {
+                        $('#gpx_data').html(JSON.stringify(res, null, 4));
+                        map.fitBounds(L.geoJson(res).addTo(map).getBounds());
+                    });
+                });
+        </script>
+
 
         <script type="text/test" id="folketelling_code_template">
                 var map = getMap('folketelling_map');
@@ -377,6 +394,7 @@
                     {id: 'bbox', 'title': 'Get bounding box for municipality'},
                     {id: 'municipality', 'title': 'Get geometry for municipality'},
                     {id: 'utno', 'title': 'Get GPX file (from ut.no)'},
+                    {id: 'gpx', 'title': 'Get  GPX file from url'},
                     {id: 'kml', 'title': 'Get  KML file from url'},
                     {id: 'folketelling', 'title': 'Folketelling, properties by bbox'},
                     {id: 'sparql_point', 'title': 'Kulturminnedata, SPARQL, point'},

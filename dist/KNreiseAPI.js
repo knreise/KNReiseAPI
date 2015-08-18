@@ -1469,6 +1469,26 @@ KR.KmlAPI = function (apiName) {
 /*global toGeoJSON: false */
 var KR = this.KR || {};
 
+KR.GpxAPI = function (apiName) {
+    'use strict';
+
+    function getData(dataset, callback, errorCallback) {
+
+        if (typeof toGeoJSON === 'undefined') {
+            throw new Error('toGeoJSON not found!');
+        }
+        var url = dataset.url;
+        KR.Util.sendRequest(url, toGeoJSON.gpx, callback, errorCallback);
+    }
+
+    return {
+        getData: getData
+    };
+};
+
+/*global toGeoJSON: false */
+var KR = this.KR || {};
+
 KR.JernbanemuseetAPI = function (apiName, options) {
     'use strict';
 
@@ -1668,6 +1688,10 @@ KR.API = function (options) {
         },
         kml: {
             api: KR.KmlAPI,
+            params: {}
+        },
+        gpx: {
+            api: KR.GpxAPI,
             params: {}
         },
         lokalhistoriewiki: {

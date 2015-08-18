@@ -42,6 +42,10 @@ KR.API = function (options) {
             api: KR.KmlAPI,
             params: {}
         },
+        gpx: {
+            api: KR.GpxAPI,
+            params: {}
+        },
         lokalhistoriewiki: {
             api: KR.WikipediaAPI,
             params: {url: 'http://crossorigin.me/http://test.lokalhistoriewiki.no:8080/api.php', linkBase: 'http://lokalhistoriewiki.no/?curid='}

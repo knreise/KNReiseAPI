@@ -49,11 +49,11 @@
 
 
                 var wikipedia = {
-                    api: 'wikipedia'
+                    api: 'wikipediaNN'
                 };
 
                 var pos = {lng:16.575658 , lat:  68.833909}
-/*
+
                 api.getWithin(wikipedia, pos, 1000, function (geoJson) {
                     console.log(geoJson);
                     if (geoJson.features.length) {
@@ -61,19 +61,21 @@
                         map.fitBounds(l.getBounds());
                     }
                 }, function (e) {console.log(e);});
-*/
+
     
+    /*
+
                 var api = new KR.API();
         
                 console.time("a");
-                var dataset = {api: 'wikipedia', category: 'Kulturminner_i_Norge_fra_andre_verdenskrig'};
+                var dataset = {api: 'wikipediaNN', category: 'Kulturminner_i_Norge_fra_andre_verdenskrig'};
                 api.getData(dataset, function (res) {
                     console.timeEnd("a");
                     console.log(res)
                 });
         
-                api.getItem({'api': 'wikipedia', id: 246167}, function (res) {console.log(res)});
-
+                //api.getItem({'api': 'wikipediaNN', id: 246167}, function (res) {console.log(res)});
+*/
             }());
 
         </script>

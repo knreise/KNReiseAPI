@@ -50,8 +50,6 @@ KR.FlickrAPI = function (apiName, options) {
             accuracy: dataset.accuracy || 11
         })
 
-        console.log(params);
-
         if (_.has(dataset, 'tags')) {
             params.tags = dataset.tags.join(',');
             params.tag_mode = dataset.tag_mode || 'all';

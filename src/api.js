@@ -50,6 +50,10 @@ KR.API = function (options) {
             api: KR.GpxAPI,
             params: {}
         },
+        geojson: {
+            api: KR.GeoJsonAPI,
+            params: {}
+        },
         lokalhistoriewiki: {
             api: KR.WikipediaAPI,
             params: {

@@ -156,4 +156,12 @@ KR.Util = {};
         return bbox.split(',').map(parseFloat);
     };
 
+
+    ns.addCrossorigin = function (url) {
+        if (url.indexOf('http://crossorigin.me/') !== 0) {
+            return 'http://crossorigin.me/' + url;
+        }
+        return url;
+    };
+
 }(KR.Util));

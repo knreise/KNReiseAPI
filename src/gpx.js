@@ -9,7 +9,7 @@ KR.GpxAPI = function (apiName) {
         if (typeof toGeoJSON === 'undefined') {
             throw new Error('toGeoJSON not found!');
         }
-        var url = dataset.url;
+        var url = KR.Util.addCrossorigin(dataset.url);
         KR.Util.sendRequest(url, toGeoJSON.gpx, callback, errorCallback);
     }
 

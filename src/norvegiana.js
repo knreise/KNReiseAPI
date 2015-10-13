@@ -254,9 +254,9 @@ KR.NorvegianaAPI = function (apiName) {
         _get({}, parameters, callback, errorCallback, options);
     }
 
-    function getItem(id, callback, errorCallback) {
+    function getItem(dataset, callback, errorCallback) {
         var params = {
-            id: id,
+            id: dataset.id,
             format: 'json'
         };
         var url = BASE_URL + '?' + KR.Util.createQueryParameterString(params);

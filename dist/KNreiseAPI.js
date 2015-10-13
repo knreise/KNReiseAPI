@@ -1579,7 +1579,7 @@ KR.JernbanemuseetAPI = function (apiName, options) {
                     type: block.type
                 };
             }
-            if (block.type === 'image_video') {
+            if (block.type === 'image_video' || block.type === 'audio') {
                 var media = _.map(block.data, function (data) {
                     var url;
                     if (data.type === 'image') {
@@ -1588,6 +1588,10 @@ KR.JernbanemuseetAPI = function (apiName, options) {
                     if (data.type === 'video') {
                         url = data.url.mp4;
                     }
+                    if (data.type === 'audio') {
+                        url = data.url.ogg;
+                    }
+
                     var description = '';
                     var title = '';
                     if (_.has(data.contents, lang)) {
@@ -1607,6 +1611,13 @@ KR.JernbanemuseetAPI = function (apiName, options) {
                     type: block.type
                 };
             }
+            if (block.type === 'links') {
+                return {
+                    links: block.data,
+                    type: 'links'
+                }
+            }
+
         });
     }
 
@@ -1625,7 +1636,7 @@ KR.JernbanemuseetAPI = function (apiName, options) {
         });
 
         var images, thumbnail;
-        if (response.data.images) {
+        if (response.data.images.length) {
             images = _.pluck(response.data.images, 'url');
             thumbnail = response.data.images[0].thumbnail;
         }

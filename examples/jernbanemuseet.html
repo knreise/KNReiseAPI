@@ -59,7 +59,8 @@
                         map.fitBounds(l.getBounds());
                     }
                 }, function (e) {console.log(e);});
-    */            
+    */      
+    /*      
                 console.time("timer 1");
                 api.getData(jernbanemuseet, function (geoJson) {
                     console.timeEnd("timer 1");
@@ -70,12 +71,12 @@
                     }
                 }, function (e) {console.log(e);});
                 
-
-/*
-                api.getItem({'api': 'jernbanemuseet', id: 2581}, function (data) {
+            */
+//https://api.kulturpunkt.org/v2/owners/54/groups/264/records/2611
+                api.getItem({'api': 'jernbanemuseet', id: 2611, group: 264}, function (data) {
                     console.log(data);
                 });
-  */              
+
             }());
 
         </script>

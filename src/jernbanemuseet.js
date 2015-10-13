@@ -4,9 +4,18 @@ var KR = this.KR || {};
 KR.JernbanemuseetAPI = function (apiName, options) {
     'use strict';
 
+    var DEFAULT_GROUP = 192;
+
+    function _getGroup (dataset) {
+        if (_.has(dataset, 'group')) {
+            return dataset.group;
+        }
+        return DEFAULT_GROUP;
+    }
+
     var lang = options.lang || 'no';
 
-    var BASE_URL = 'https://api.kulturpunkt.org/v2/owners/54/groups/192';
+    var BASE_URL = 'https://api.kulturpunkt.org/v2/owners/54';
     var API_KEY = options.apikey;
     function _getHeaders() {
         return {
@@ -17,10 +26,22 @@ KR.JernbanemuseetAPI = function (apiName, options) {
     function _parser(response) {
         var features = _.map(response.data.records, function (item) {
             var properties = _.extend(item.contents[lang], {id: item.record_id});
-            var geom = {
-                lat: item.latitude,
-                lng: item.longitude
-            };
+
+            var geom;
+
+            if (_.has(item, 'latitude') && _.has(item, 'longitude')) {
+                geom = {
+                    lat: item.latitude,
+                    lng: item.longitude
+                };
+            } else if (_.has(item, 'location')) {
+                geom = {
+                    lat: item.location.latitude,
+                    lng: item.location.longitude
+                };
+            } else {
+                console.error('no geometry');
+            }
             return KR.Util.createGeoJSONFeature(geom, properties, apiName + '_' + item.record_id);
         });
 
@@ -100,8 +121,8 @@ KR.JernbanemuseetAPI = function (apiName, options) {
         return KR.Util.createGeoJSONFeature(geom, properties, apiName + '_' + id);
     }
 
-    function getItem(id, callback, errorCallback) {
-        var url = BASE_URL + '/records/' + id;
+    function getItem(dataset, callback, errorCallback) {
+        var url = BASE_URL + '/groups/' + _getGroup(dataset) + '/records/' + dataset.id;
         KR.Util.sendRequest(url, _parseItem, callback, errorCallback, _getHeaders());
     }
 
@@ -131,7 +152,7 @@ KR.JernbanemuseetAPI = function (apiName, options) {
             'radius': distance
         };
 
-        var url = BASE_URL + '/nearby?' + KR.Util.createQueryParameterString(params);
+        var url = BASE_URL + '/groups/' + _getGroup(dataset) + '/nearby?' + KR.Util.createQueryParameterString(params);
         if (options.getDetails) {
             KR.Util.sendRequest(url, null, function (response) {
                 _parseItems(response, callback, errorCallback);
@@ -142,12 +163,15 @@ KR.JernbanemuseetAPI = function (apiName, options) {
     }
 
     function getData(dataset, callback, errorCallback, options) {
-        var url = BASE_URL + '/geography';
+        var url = BASE_URL + '/groups/' + _getGroup(dataset) + '/geography';
         if (options.getDetails) {
             KR.Util.sendRequest(url, null, function (response) {
                 _parseItems(response, callback, errorCallback);
             }, null, _getHeaders());
         } else {
+            if (dataset.presentation) {
+                url = 'https://api.kulturpunkt.org/v2/owners/54/presentations/' + dataset.presentation;
+            }
             KR.Util.sendRequest(url, _parser, callback, errorCallback, _getHeaders());
         }
     }

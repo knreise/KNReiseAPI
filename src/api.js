@@ -188,7 +188,7 @@ KR.API = function (options) {
     function getItem(dataset, callback, errorCallback) {
         var api = _getAPI(dataset.api);
         if (_.has(api, 'getItem')) {
-            api.getItem(dataset.id, callback, errorCallback);
+            api.getItem(dataset, callback, errorCallback);
         } else if (errorCallback) {
             errorCallback('No getItem function for api ' + dataset.api);
         } else {

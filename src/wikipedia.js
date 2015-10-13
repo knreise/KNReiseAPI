@@ -220,10 +220,10 @@ KR.WikipediaAPI = function (apiName, options) {
         sendRequest({'continue': ''});
     }
 
-    function getItem(id, callback, errorCallback) {
+    function getItem(dataset, callback, errorCallback) {
         var params = {
             'action': 'query',
-            'pageids': id,
+            'pageids': dataset.id,
             'prop': 'coordinates|pageimages|extracts',
             'format': 'json'
         };

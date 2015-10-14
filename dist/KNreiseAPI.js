@@ -1710,7 +1710,7 @@ KR.JernbanemuseetAPI = function (apiName, options) {
     }
 
     function getItem(dataset, callback, errorCallback) {
-        var url = BASE_URL + '/groups/' + _getGroup(dataset) + '/records/' + dataset.id;
+        var url = BASE_URL + '/groups/' + _getGroup(dataset) + '/records/' + dataset.id + '?strip_html=true';
         KR.Util.sendRequest(url, _parseItem, callback, errorCallback, _getHeaders());
     }
 

@@ -231,7 +231,6 @@ KR.ArcgisAPI = function (apiName, options) {
 
         var url = BASE_URL + dataset.extraDataLayer + '/query?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, null, function (response) {
-            console.log(response);
             callback(_mapExtraData(features, response, dataset));
         }, errorCallback);
     }

@@ -1046,7 +1046,7 @@ KR.WikipediaAPI = function (apiName, options) {
         };
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, function (res) {
-            return _parseWikimediaItem(res.query.pages[id]);
+            return _parseWikimediaItem(res.query.pages[dataset.id]);
         }, callback, errorCallback);
     }
 

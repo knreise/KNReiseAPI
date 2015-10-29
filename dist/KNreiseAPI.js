@@ -314,9 +314,11 @@ var KR = this.KR || {};
 KR.CartodbAPI = function (apiName, options) {
     'use strict';
 
-    var user = options.user;
-    var BASE_URL = 'http://' + user + '.cartodb.com/api/v2/sql';
+    var USER = options.user;
 
+    function _getURL(user) {
+        return 'http://' + user + '.cartodb.com/api/v2/sql';
+    }
 
     function _createMapper(propertyMap) {
 
@@ -386,11 +388,12 @@ KR.CartodbAPI = function (apiName, options) {
         });
     }
 
-    function _executeSQL(sql, mapper, callback, errorCallback) {
+    function _executeSQL(sql, mapper, callback, errorCallback, user) {
         var params = {
             q: sql
         };
-        var url = BASE_URL + '?' + KR.Util.createQueryParameterString(params);
+        var cdbuser = user || USER;
+        var url = _getURL(cdbuser) + '?' + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, mapper, callback, errorCallback);
     }
 
@@ -440,7 +443,7 @@ KR.CartodbAPI = function (apiName, options) {
             'komm in (' + _toArray(municipalities).join(', ') + ')'
         );
 
-        _executeSQL(sql, _parseExtent, callback, errorCallback);
+        _executeSQL(sql, _parseExtent, callback, errorCallback, 'knreise');
     }
 
     function getCountyBounds(counties, callback, errorCallback) {
@@ -450,7 +453,7 @@ KR.CartodbAPI = function (apiName, options) {
             'fylkesnr in (' + _toArray(counties).join(', ') + ')'
         );
 
-        _executeSQL(sql, _parseExtent, callback, errorCallback);
+        _executeSQL(sql, _parseExtent, callback, errorCallback, 'knreise');
     }
 
     function getData(dataset, callback, errorCallback) {
@@ -459,12 +462,15 @@ KR.CartodbAPI = function (apiName, options) {
         if (dataset.query) {
             sql = dataset.query;
         } else if (dataset.table) {
-            var select = ['*'];
-            if (_.has(columnList, dataset.table)) {
-                select = _.keys(columnList[dataset.table]);
+            var columns = dataset.columns;
+            if (!columns) {
+                columns = ['*'];
             }
-            select.push('ST_AsGeoJSON(the_geom) as geom');
-            sql = 'SELECT ' + select.join(', ') + ' FROM ' + dataset.table;
+            if (_.has(columnList, dataset.table)) {
+                columns = _.keys(columnList[dataset.table]);
+            }
+            columns.push('ST_AsGeoJSON(the_geom) as geom');
+            sql = 'SELECT ' + columns.join(', ') + ' FROM ' + dataset.table;
         } else if (dataset.county) {
             sql = _createSelect(
                 'ST_AsGeoJSON(the_geom) as geom',

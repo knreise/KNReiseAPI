@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <script src="../bower_components/esri2geo/esri2geo.js"></script>
+        <style type="text/css">
+            #map {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../bower_components/underscore/underscore-min.js"></script>
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+        <script src="../dist/KNreiseAPI.js"></script>
+
+        <script type="text/javascript">
+
+            function getMap(div) {
+                var map = L.map(div);
+                L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>̈́'}).addTo(map);
+                return map;
+            }
+
+            (function () {
+                'use strict';
+
+                var randomApi = function (apiName, options) {
+
+                    function _getRandomInRange(from, to, fixed) {
+                        return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
+                    }
+
+
+                    function getBbox(dataset, bbox, callback, errorCallback, options) {
+                        var box = KR.Util.splitBbox(bbox);
+                        var features = _.chain(_.range(0, dataset.numFeatures - 1))
+                            .map(function (num) {
+                                var latLng = {
+                                    lat: _getRandomInRange(box[1], box[3], 5),
+                                    lng: _getRandomInRange(box[0], box[2], 5)
+                                };
+                                return KR.Util.createGeoJSONFeature(latLng, {}, num);
+                            })
+                            .value()
+                        callback(KR.Util.createFeatureCollection(features));
+                    }
+
+                    return {
+                        getBbox: getBbox
+                    };
+                };
+
+
+                var api = new KR.API();
+                api.addApi('random', randomApi);
+
+                var map = getMap('map');
+                var bbox = '7.108154296875,60.7000723265162,11.9091796875,62.27303454787818';
+
+                var randomDataset = {
+                    api: 'random',
+                    numFeatures: 10
+                };
+
+                api.getBbox(randomDataset, bbox, function (res) {
+                    console.log(res);
+                    $('#kulturminnedata_data').html(JSON.stringify(res, null, 4));
+                    map.fitBounds(L.geoJson(res).addTo(map).getBounds());
+                });
+
+            }());
+
+        </script>
+    </body>
+</html>
+

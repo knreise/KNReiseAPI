@@ -104,6 +104,13 @@ To enable dynamic options, set ```extend: true``` in apiConfig in api.js.
 The dynamic options extends the static ones, so a combination can be used.
 
 
+Adding an api at run-time
+-------------------------
+Instead of adding an api to the codebase and release it, it's also possible to 
+add an API at runtime. This is done using the ```api.addApi``` function. See 
+examples/api_extend.html for an example.
+
+
 API-code-template
 -----------------
 

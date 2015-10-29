@@ -1891,15 +1891,19 @@ KR.API = function (options) {
         }
     };
 
+    function _createApis() {
+        return _.reduce(apiConfig, function (acc, params, key) {
+            var apiOptions = params.params;
+            if (params.extend) {
+                apiOptions = _.extend(apiOptions, options[key]);
+            }
+            acc[key] = new params.api(key, apiOptions);
+            return acc;
+        }, {});
+    }
 
-    var apis = _.reduce(apiConfig, function (acc, params, key) {
-        var apiOptions = params.params;
-        if (params.extend) {
-            apiOptions = _.extend(apiOptions, options[key]);
-        }
-        acc[key] = new params.api(key, apiOptions);
-        return acc;
-    }, {});
+
+    var apis = _createApis();
 
 
     function _distanceFromBbox(api, dataset, bbox, callback, errorCallback, options) {
@@ -2028,6 +2032,17 @@ KR.API = function (options) {
         getCollection: function (collectionName, callback, errorCallback) {
             var norvegianaAPI = _getAPI('norvegiana');
             norvegianaAPI.getCollection(collectionName, callback, errorCallback);
+        },
+        addApi: function (name, api, params) {
+            if (_.has(apiConfig, name)) {
+                throw new Error('API with name ' + name + ' already exists');
+            }
+            params = params || {};
+            apiConfig[name] = {
+                api: api,
+                params: params
+            };
+            apis = _createApis();
         }
     };
 

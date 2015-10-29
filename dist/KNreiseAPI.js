@@ -1841,6 +1841,7 @@ KR.API = function (options) {
         },
         cartodb: {
             api: KR.CartodbAPI,
+            extend: true,
             params: {user: 'knreise'}
         },
         kulturminnedata: {

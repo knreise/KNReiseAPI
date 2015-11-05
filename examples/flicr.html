@@ -30,7 +30,7 @@
 
             function getMap(div) {
                 var map = L.map(div);
-                L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>̈́'}).addTo(map);
+                L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>'}).addTo(map);
                 return map;
             }
 
@@ -43,36 +43,46 @@
                     }
                 });
 
-                var bbox = '10.309982,63.412734,10.498123,63.453578';
+                var user = true;
 
-                var dataset = {
-                    api: 'flickr',
-                    user_id: 'trondheim_byarkiv',
-                    tags: ['nidaros', 'grave'],
-                    tag_mode: 'any'
-                };
-                var map = getMap('map');
+                if (user) {
 
-                map.setView([63.43, 10.39], 14);
+                    var bbox = '10.309982,63.412734,10.498123,63.453578';
 
-                api.getWithin(dataset, map.getCenter(), 1000, function (geoJson) {
-                    map.fitBounds(L.geoJson(geoJson, {
-                        onEachFeature: function (feature, layer) {
-                            layer.bindPopup('<h3>' + feature.properties.title + '</h3><img src="' + feature.properties.image + '" />');
-                        }
-                    }).addTo(map).getBounds());
-                });
+                    var dataset = {
+                        api: 'flickr',
+                        user_id: 'trondheim_byarkiv',
+                        tags: ['nidaros', 'grave'],
+                        tag_mode: 'any'
+                    };
+                    var map = getMap('map');
 
-                /*
-                api.getBbox(dataset, bbox, function (geoJson) {
+                    map.setView([63.43, 10.39], 14);
 
-                    map.fitBounds(L.geoJson(geoJson, {
-                        onEachFeature: function (feature, layer) {
-                            layer.bindPopup('<h3>' + feature.properties.title + '</h3><img src="' + feature.properties.image + '" />');
-                        }
-                    }).addTo(map).getBounds());
-                });
-                */
+                    api.getWithin(dataset, map.getCenter(), 1000, function (geoJson) {
+                        map.fitBounds(L.geoJson(geoJson, {
+                            onEachFeature: function (feature, layer) {
+                                layer.bindPopup('<h3>' + feature.properties.title + '</h3><img src="' + feature.properties.image + '" />');
+                            }
+                        }).addTo(map).getBounds());
+                    });
+                } else {
+                    var dataset = {
+                        api: 'flickr',
+                        group_id : '1426230@N24'
+                    };
+                    var map = getMap('map');
+
+                    map.setView([63.43, 10.39], 14);
+
+                    api.getData(dataset, function (geoJson) {
+                        map.fitBounds(L.geoJson(geoJson, {
+                            onEachFeature: function (feature, layer) {
+                                layer.bindPopup('<h3>' + feature.properties.title + '</h3><img src="' + feature.properties.image + '" />');
+                            }
+                        }).addTo(map).getBounds());
+                    });
+                }
 
             }());
 

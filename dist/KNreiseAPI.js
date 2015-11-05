@@ -1555,7 +1555,6 @@ KR.FlickrAPI = function (apiName, options) {
                 _sendRequest(params)
             } else {
                 var fc = KR.Util.createFeatureCollection(result);
-                console.log(fc);
                 callback(fc);
             }
         }

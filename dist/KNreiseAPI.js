@@ -1254,6 +1254,8 @@ var KR = this.KR || {};
 KR.SparqlAPI = function (apiName, options) {
     'use strict';
 
+    var license = options.licenseText || 'http://data.norge.no/nlod/no';
+
     var BASE_URL = options.url;
 
     if (typeof proj4 !== 'undefined') {
@@ -1307,6 +1309,10 @@ KR.SparqlAPI = function (apiName, options) {
                 attrs.img = false;
             }
             attrs.title = attrs.name;
+
+            if (!attrs.license) {
+                attrs.license = license;
+            }
 
             if (_.has(item, 'point')) {
                 return KR.Util.createGeoJSONFeatureFromGeom(

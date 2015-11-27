@@ -30,8 +30,6 @@
 
         <script src="../dist/KNreiseAPI.js"></script>
 
-
-
         <script type="text/javascript">
 
             function getMap(div) {
@@ -48,14 +46,15 @@
                 var sparql = {
                     //limit: 100,
                     api: 'kulturminnedataSparql',
-                    fylke: '01',
-                    //kommune: '1601',
-                   filter: 'FILTER regex(?loccatlabel, "^Arkeologisk", "i") .'
+                    //fylke: '01',
+                    kommune: '1601',
+                    //filter: 'FILTER regex(?loccatlabel, "^Arkeologisk", "i") .'
                    //filter: 'FILTER (!regex(?loccatlabel, "^Arkeologisk", "i"))'
                 };
 
                 api.getData(sparql, function (geoJson) {
                     console.log(geoJson);
+
                     var l = L.geoJson(geoJson).addTo(map);
 
                     map.fitBounds(l.getBounds());

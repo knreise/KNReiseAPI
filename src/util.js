@@ -1,4 +1,4 @@
-/*global L: false */
+/*global L:false, _:false */
 
 var KR = this.KR || {};
 KR.Util = {};
@@ -45,11 +45,12 @@ KR.Util = {};
         Sends a GET-request, optionally runs the result through a parser and 
         calls a callback
     */
-    ns.sendRequest = function (url, parser, callback, errorCallback, headers) {
-
+    ns.sendRequest = function (url, parser, callback, errorCallback, headers, method, ajaxOpts) {
+        ajaxOpts = ajaxOpts || {}
         headers = headers || {};
-        return $.ajax({
-            type: 'get',
+
+        var ajaxRequest = {
+            method: method || 'get',
             beforeSend: function (request) {
                 _.each(headers, function (value, key) {
                     request.setRequestHeader(key, value);
@@ -73,7 +74,9 @@ KR.Util = {};
                 }
             },
             error: errorCallback
-        });
+        };
+
+        return $.ajax(_.extend(ajaxRequest, ajaxOpts));
     };
 
 

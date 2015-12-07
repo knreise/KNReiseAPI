@@ -49,12 +49,14 @@
                     api: 'kulturminnedataSparql',
                     type: 'lokalitetpoly',
                     lokalitet: [
-                        'https://data.kulturminne.no/askeladden/lokalitet/173268 '
+                        'https://data.kulturminne.no/askeladden/lokalitet/173268',
+                        'https://data.kulturminne.no/askeladden/lokalitet/103673',
+                        'https://data.kulturminne.no/askeladden/lokalitet/155051'
                     ]
                 };
 
                 api.getData(sparql, function (geoJson) {
-                    console.log(geoJson);
+                    console.log(JSON.stringify(geoJson));
                     var l = L.geoJson(geoJson).addTo(map);
                     console.log(l.getBounds());
                     map.fitBounds(l.getBounds());

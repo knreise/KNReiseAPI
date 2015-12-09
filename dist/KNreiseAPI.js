@@ -1347,7 +1347,6 @@ KR.SparqlAPI = function (apiName, options) {
             debug: 'off'
         };
 
-        var headers = {'Content-Type': 'form-data'};
         var url = BASE_URL;
 
         var fd = new FormData();
@@ -1386,6 +1385,7 @@ KR.SparqlAPI = function (apiName, options) {
                 ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid) ' +
                 ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url) ' +
                 ' optional { ' +
+                ' {select sample(?picture) as ?picture ?id where {?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id}} ' +
                 '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id . ' +
                 '  ?picture <https://data.kulturminne.no/schema/source-link> ?link . ' +
                 '  ?picture rdfs:label ?picturelabel . ' +
@@ -1432,6 +1432,7 @@ KR.SparqlAPI = function (apiName, options) {
                 ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid) ' +
                 ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url) ' +
                 ' optional { ' +
+                ' {select sample(?picture) as ?picture ?id where {?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id}} ' +
                 '  ?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id . ' +
                 '  ?picture <https://data.kulturminne.no/schema/source-link> ?link . ' +
                 '  ?picture rdfs:label ?picturelabel . ' +

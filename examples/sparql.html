@@ -46,14 +46,18 @@
                 var sparql = {
                     //limit: 100,
                     api: 'kulturminnedataSparql',
-                    fylke: '01',
-                    //kommune: '1601',
+                    //fylke: '01',
+                    kommune: '1601',
                     //filter: 'FILTER regex(?loccatlabel, "^Arkeologisk", "i") .'
                    //filter: 'FILTER (!regex(?loccatlabel, "^Arkeologisk", "i"))'
                 };
 
                 api.getData(sparql, function (geoJson) {
                     console.log(geoJson);
+
+                    _.each(geoJson.features, function (feature) {
+                        console.log(feature.properties.id, feature.properties.img)
+                    })
 
                     var l = L.geoJson(geoJson).addTo(map);
 

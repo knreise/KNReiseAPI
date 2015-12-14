@@ -54,7 +54,13 @@
                 var query_enkeltminne = {
                     api: 'kulturminnedataSparql',
                     type: 'enkeltminner',
-                    lokalitet: ['https://data.kulturminne.no/askeladden/lokalitet/174603']
+                    lokalitet: 'https://data.kulturminne.no/askeladden/lokalitet/174603'
+                };
+
+                var query_images = {
+                    api: 'kulturminnedataSparql',
+                    type: 'images',
+                    lokalitet: 'https://data.kulturminne.no/askeladden/lokalitet/87551'
                 };
 
 
@@ -69,6 +75,12 @@
                     var l = L.geoJson(geoJson).addTo(map);
 
                     map.fitBounds(l.getBounds());
+                }, function (e) {console.log(e);});
+
+
+                api.getData(query_images, function (data) {
+                    console.log(data);
+                    
                 }, function (e) {console.log(e);});
 
             }());

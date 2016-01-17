@@ -211,12 +211,13 @@ KR.NorvegianaAPI = function (apiName) {
 
 
     function _get(params, parameters, callback, errorCallback, options) {
+        options = _.extend({checkCancel: true}, options || {});
         var dataset = _fixDataset(parameters.dataset);
 
         params = _.extend({
             query: dataset,
             format: 'json',
-            rows: 1000,
+            rows: 1000
         }, params);
         params.query += ' delving_hasGeoHash:true';
 
@@ -225,7 +226,10 @@ KR.NorvegianaAPI = function (apiName) {
             params.qf = parameters.query;
             requestId += parameters.query;
         }
-        _checkCancel(requestId);
+        if (options.checkCancel) {
+            _checkCancel(requestId);
+        }
+        
 
         var url = BASE_URL + '?'  + KR.Util.createQueryParameterString(params);
         if (options.allPages) {

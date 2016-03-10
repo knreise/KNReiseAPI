@@ -332,7 +332,7 @@ KR.SparqlAPI = function (apiName, options) {
         '?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id . ' +
         '?picture <https://data.kulturminne.no/schema/source-link> ?link . ' +
         '?picture rdfs:label ?picturelabel . ' +
-        '?picture dc:description ?picturedescription . ' +
+        'optional {?picture dc:description ?picturedescription .}' +
         '?picture <https://data.kulturminne.no/bildearkivet/schema/license> ?picturelicence . ' +
         'BIND(REPLACE(STR(?link), "http://kulturminnebilder.ra.no/fotoweb/default.fwx\\\\?search\\\\=", "") AS ?linkid) . ' +
         'BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=600&rs=0&pg=0&sr=", ?linkid) AS ?img) . ' +

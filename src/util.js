@@ -164,8 +164,8 @@ KR.Util = {};
         Add crossorigin proxy to an url
     */
     ns.addCrossorigin = function (url) {
-        if (url.indexOf('http://crossorigin.me/') !== 0) {
-            return 'http://crossorigin.me/' + url;
+        if (url.indexOf('http://www.knreise.no/miniProxy/miniProxy.php/') !== 0) {
+            return 'http://www.knreise.no/miniProxy/miniProxy.php/' + url;
         }
         return url;
     };

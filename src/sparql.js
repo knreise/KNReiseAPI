@@ -208,7 +208,7 @@ KR.SparqlAPI = function (apiName, options) {
                 'where { ' +
                 '?enk a <https://data.kulturminne.no/askeladden/schema/Enkeltminne> . ' +
                 '?enk rdfs:label ?name . ' +
-                '?enk <https://data.kulturminne.no/askeladden/schema/i-lokalitet> <' + lokalitet.trim() + '> . ' +
+                '?enk <https://data.kulturminne.no/askeladden/schema/lokalitet> <' + lokalitet.trim() + '> . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?desc . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/geo/area/etrs89> ?area . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/enkeltminnekategori> ?enkcat . ' +

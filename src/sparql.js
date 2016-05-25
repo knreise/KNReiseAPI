@@ -129,7 +129,7 @@ KR.SparqlAPI = function (apiName, options) {
                 ' optional { ?loccat rdfs:label ?loccatlabel .} ' +
                 ' optional { ?locart rdfs:label ?locartlabel .} ' +
                 ' optional { ?org rdfs:label ?orglabel .} ' +
-                ' optional { ?id <https://data.kulturminne.no/askeladden/schema/ksok> ?description .} ' +
+                ' optional { ?id <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description .} ' +
                 ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid) ' +
                 ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url) ' +
                 ' optional { ' +
@@ -176,7 +176,7 @@ KR.SparqlAPI = function (apiName, options) {
                 ' optional { ?loccat rdfs:label ?loccatlabel .} ' +
                 ' optional { ?locart rdfs:label ?locartlabel .} ' +
                 ' optional { ?org rdfs:label ?orglabel .} ' +
-                ' optional { ?id <https://data.kulturminne.no/askeladden/schema/ksok> ?description .} ' +
+                ' optional { ?id <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?description .} ' +
                 ' BIND(REPLACE(STR(?id), "https://data.kulturminne.no/askeladden/lokalitet/", "") AS ?lokid) ' +
                 ' BIND(bif:concat("http://www.kulturminnesok.no/kulturminnesok/kulturminne/?LOK_ID=", ?lokid) AS ?url) ' +
                 ' optional { ' +
@@ -209,7 +209,7 @@ KR.SparqlAPI = function (apiName, options) {
                 '?enk a <https://data.kulturminne.no/askeladden/schema/Enkeltminne> . ' +
                 '?enk rdfs:label ?name . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/lokalitet> <' + lokalitet.trim() + '> . ' +
-                '?enk <https://data.kulturminne.no/askeladden/schema/ksok> ?desc . ' +
+                '?enk <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?desc . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/geo/area/etrs89> ?area . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/enkeltminnekategori> ?enkcat . ' +
                 '?enkcat rdfs:label ?enkcatlabel . ' +

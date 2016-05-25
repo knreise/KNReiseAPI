@@ -28,7 +28,6 @@ KR.API = function (options) {
         },
         kulturminnedataSparql: {
             api: KR.SparqlAPI,
-            //params: {url: 'http://www.knreise.no/miniProxy/miniProxy.php/https://sparql.kulturminne.no/'}
             params: {url: 'https://sparql.kulturminne.no/'}
         },
         utno: {

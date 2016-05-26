@@ -1386,8 +1386,8 @@ KR.SparqlAPI = function (apiName, options) {
                 
                 ' <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?loccat ; ' +
                 ' <https://data.kulturminne.no/askeladden/schema/lokalitetsart> ?locart ; ' +
-                ' <https://data.kulturminne.no/askeladden/schema/AnsvarligOrganisasjon> ?org ; ' +
-                ' ?p <https://data.kulturminne.no/difi/geo/kommune/' + dataset.kommune + '> ; ' +
+                ' <https://data.kulturminne.no/askeladden/schema/ansvarligorganisasjon> ?org ; ' +
+                ' ?p <https://data.kulturminne.no/askeladden/kommune/' + dataset.kommune + '> ; ' +
                 ' <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point . ' +
                 ' optional { ?loccat rdfs:label ?loccatlabel .} ' +
                 ' optional { ?locart rdfs:label ?locartlabel .} ' +
@@ -1433,8 +1433,8 @@ KR.SparqlAPI = function (apiName, options) {
                 ' rdfs:label ?name ; ' +
                 ' <https://data.kulturminne.no/askeladden/schema/lokalitetskategori> ?loccat ; ' +
                 ' <https://data.kulturminne.no/askeladden/schema/lokalitetsart> ?locart ; ' +
-                ' <https://data.kulturminne.no/askeladden/schema/AnsvarligOrganisasjon> ?org ; ' +
-                ' <https://data.kulturminne.no/askeladden/schema/i-kommune> ?kommune ; ' +
+                ' <https://data.kulturminne.no/askeladden/schema/ansvarligorganisasjon> ?org ; ' +
+                ' <https://data.kulturminne.no/askeladden/schema/kommune> ?kommune ; ' +
                 ' <https://data.kulturminne.no/askeladden/schema/geo/point/etrs89> ?point . ' +
                 ' optional { ?loccat rdfs:label ?loccatlabel .} ' +
                 ' optional { ?locart rdfs:label ?locartlabel .} ' +
@@ -1471,8 +1471,8 @@ KR.SparqlAPI = function (apiName, options) {
                 'where { ' +
                 '?enk a <https://data.kulturminne.no/askeladden/schema/Enkeltminne> . ' +
                 '?enk rdfs:label ?name . ' +
-                '?enk <https://data.kulturminne.no/askeladden/schema/i-lokalitet> <' + lokalitet.trim() + '> . ' +
-                '?enk <https://data.kulturminne.no/askeladden/schema/beskrivelse> ?desc . ' +
+                '?enk <https://data.kulturminne.no/askeladden/schema/lokalitet> <' + lokalitet.trim() + '> . ' +
+                '?enk <https://data.kulturminne.no/askeladden/schema/ksok> ?desc . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/geo/area/etrs89> ?area . ' +
                 '?enk <https://data.kulturminne.no/askeladden/schema/enkeltminnekategori> ?enkcat . ' +
                 '?enkcat rdfs:label ?enkcatlabel . ' +
@@ -1595,7 +1595,7 @@ KR.SparqlAPI = function (apiName, options) {
         '?picture <https://data.kulturminne.no/bildearkivet/schema/lokalitet> ?id . ' +
         '?picture <https://data.kulturminne.no/schema/source-link> ?link . ' +
         '?picture rdfs:label ?picturelabel . ' +
-        '?picture dc:description ?picturedescription . ' +
+        'optional {?picture dc:description ?picturedescription .}' +
         '?picture <https://data.kulturminne.no/bildearkivet/schema/license> ?picturelicence . ' +
         'BIND(REPLACE(STR(?link), "http://kulturminnebilder.ra.no/fotoweb/default.fwx\\\\?search\\\\=", "") AS ?linkid) . ' +
         'BIND(bif:concat("http://kulturminnebilder.ra.no/fotoweb/cmdrequest/rest/PreviewAgent.fwx?ar=5001&sz=600&rs=0&pg=0&sr=", ?linkid) AS ?img) . ' +

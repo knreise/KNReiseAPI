@@ -67,6 +67,11 @@ KR.API = function (options) {
             api: KR.JernbanemuseetAPI,
             extend: true,
             params: {lang: 'no'}
+        },
+        europeana: {
+            api: KR.EuropeanaAPI,
+            extend: true,
+            params: {}
         }
     };
 

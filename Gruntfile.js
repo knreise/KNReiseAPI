@@ -13,6 +13,7 @@ module.exports = function(grunt) {
           'src/arcgis.js',
           'src/cartodb.js',
           'src/norvegiana.js',
+          'src/europeana.js',
           'src/wikipedia.js',
           'src/utno.js',
           'src/folketelling.js',

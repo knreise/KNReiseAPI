@@ -56,7 +56,7 @@
                     console.log(geoJson);
 
                     _.each(geoJson.features, function (feature) {
-                        console.log(feature.properties);
+                        console.log(feature.properties.country);
                     });
 
                     var l = L.geoJson(geoJson).addTo(map);

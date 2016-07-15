@@ -11,11 +11,6 @@ KR.KSamsokAPI = function (apiName, options) {
 
     var bboxTemplate = _.template('boundingBox=/WGS84 "<%= w %> <%= s %> <%= e %> <%= n %>"');
 
-    function _parseItems(response) {
-        var features = _.map(response.items, _parseEuropeanaItem);
-        return KR.Util.createFeatureCollection(features);
-    }
-
     function _bboxQuery(bbox) {
         bbox = KR.Util.splitBbox(bbox);
         return bboxTemplate({
@@ -44,9 +39,6 @@ KR.KSamsokAPI = function (apiName, options) {
         }, {});
 
         props.title = props.itemLabel;
-        if (_.has(props, 'thumbnail')) {
-            props.images = [props.thumbnail.replace('thumbnail', 'lowres')];
-        }
 
         return KR.Util.createGeoJSONFeature(
             {
@@ -111,6 +103,26 @@ KR.KSamsokAPI = function (apiName, options) {
         return KR.Util.createFeatureCollection(features);
     }
 
+
+    function _parseItem(response) {
+        var x2js = new X2JS();
+        var json = x2js.xml2json(response);
+        var item = json.RDF.Description[0].presentation.item;
+        var image;
+        if (_.has(item, 'image')) {
+            var img = _.find(item.image.src, function (src) {
+                return src._type === 'lowres';
+            });
+            if (img) {
+                image = img.__text;
+            }
+        }
+        return {
+            itemDescription: item.description.__text,
+            image: image
+        };
+    }
+
     function getBbox(parameters, bbox, callback, errorCallback, options) {
         var params = {
             method: 'search',
@@ -131,14 +143,15 @@ KR.KSamsokAPI = function (apiName, options) {
     function getData(parameters, callback, errorCallback, options) {
     }
 
-    function getItem() {
-
+    function getItem(dataset, callback, errorCallback) {
+        var url = 'http://www.knreise.no/miniProxy/miniProxy.php/' + dataset.itemId;
+        KR.Util.sendRequest(url, _parseItem, callback, errorCallback);
     }
 
     return {
-        getWithin: getWithin,
+        //getWithin: getWithin,
         getItem: getItem,
         getBbox: getBbox,
-        getData: getData
+        //getData: getData
     };
 };

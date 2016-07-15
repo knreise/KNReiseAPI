@@ -49,12 +49,21 @@
                     api: 'ksamsok'
                 };
 
+                console.log("!");
+                api.getItem({api: 'ksamsok', itemId: 'http://kulturarvsdata.se/raa/fmi/18000000068307'}, function (res) {
+                    console.log(res);
+                })
+
+/*
+
                 var bbox = map.getBounds().toBBoxString();
                 console.log(bbox)
                 api.getBbox(europeana, bbox, function (geoJson) {
                     console.log(geoJson);
                     map.fitBounds(L.geoJson(geoJson).addTo(map).getBounds());
                 }, function (e) {console.log(e);});
+
+*/
 
             }());
         </script>

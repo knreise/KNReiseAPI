@@ -2206,7 +2206,6 @@ KR.KSamsokAPI = function (apiName, options) {
     options = options || {};
     var requests = [];
 
-
     var BASE_URL = 'http://www.knreise.no/miniProxy/miniProxy.php/http://kulturarvsdata.se/ksamsok/api';
     var apikey = options.apikey;
 

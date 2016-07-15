@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/github-gist.min.css" rel="stylesheet">
+        <style type="text/css">
+            #map {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../bower_components/underscore/underscore-min.js"></script>
+        <script src="../bower_components/abdmob/x2js/xml2json.min.js"></script>
+        <script src="../dist/KNreiseAPI.js"></script>
+
+        <script type="text/javascript">
+
+            function getMap(div) {
+                var map = L.map(div);
+                L.tileLayer('https://api.mapbox.com/styles/v1/vemundolstad/ciptnvtke003dcxmbfp6twjlr/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidmVtdW5kb2xzdGFkIiwiYSI6ImNpcHRsNW8yOTAwMzVoem0yN3kyZ3B6eXcifQ.E8botDAcNDcki0fCncD4Gw').addTo(map);
+                return map;
+            }
+
+            (function () {
+                'use strict';
+                var map = getMap('map');
+                map.setView([59.335242, 18.0811696], 14);
+                var api = new KR.API({
+                    ksamsok: {
+                        apikey: 'test'
+                    }
+                });
+
+                var europeana = {
+                    api: 'ksamsok'
+                };
+
+                var bbox = map.getBounds().toBBoxString();
+                console.log(bbox)
+                api.getBbox(europeana, bbox, function (geoJson) {
+                    console.log(geoJson);
+                    map.fitBounds(L.geoJson(geoJson).addTo(map).getBounds());
+                }, function (e) {console.log(e);});
+
+            }());
+        </script>
+    </body>
+</html>

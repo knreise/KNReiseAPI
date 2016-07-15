@@ -72,6 +72,11 @@ KR.API = function (options) {
             api: KR.EuropeanaAPI,
             extend: true,
             params: {}
+        },
+        ksamsok: {
+            api: KR.KSamsokAPI,
+            extend: true,
+            params: {}
         }
     };
 

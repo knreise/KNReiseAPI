@@ -23,6 +23,7 @@ module.exports = function(grunt) {
           'src/gpx.js',
           'src/geojson.js',
           'src/jernbanemuseet.js',
+          'src/ksamsok.js',
           'src/api.js'
         ],
         dest: 'dist/<%= pkg.name %>.js'
@@ -42,7 +43,7 @@ module.exports = function(grunt) {
         files: ['./src/**/*.*'],
         tasks: ['default'],
         options: {
-          spawn: true,
+          spawn: true
         }
       }
     }

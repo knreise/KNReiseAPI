@@ -34,6 +34,8 @@
                 return map;
             }
 
+            http://www.europeana.eu/api/v2/search.json?wskey=pYEaya4fK&query=kyrka Eskilstuna&edmPreview=true&qf=DATA_PROVIDER:"Riksantikvarieämbetet"
+
             (function () {
                 'use strict';
                 var map = getMap('map');
@@ -46,7 +48,8 @@
 
                 var europeana = {
                     api: 'europeana',
-                    query: 'PROVIDER:"Europeana 280"'
+                    qf: 'DATA_PROVIDER:"Riksantikvarieämbetet"',
+                    query: 'kyrka Eskilstuna'
                     //collection: '2058626_Ag_EU_LoCloud_NRA-e'//'9200166_Ag_EU_TEL_a1062_Eu_Libraries_Zurich', '9200387_Ag_EU_TEL_a1225_British_Library'
                 };
 

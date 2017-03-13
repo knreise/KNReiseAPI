@@ -2422,7 +2422,7 @@ KR.API = function (options) {
         lokalhistoriewiki: {
             api: KR.WikipediaAPI,
             params: {
-                url: 'http://www.knreise.no/miniProxy/miniProxy.php/http://test.lokalhistoriewiki.no:8080/api.php',
+                url: 'http://www.knreise.no/miniProxy/miniProxy.php/http://lokalhistoriewiki.no/api.php',
                 linkBase: 'http://lokalhistoriewiki.no/?curid=',
                 maxRadius: 100000
             }

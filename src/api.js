@@ -11,11 +11,11 @@ KR.API = function (options) {
         },
         wikipedia: {
             api: KR.WikipediaAPI,
-            params: {url: 'http://www.knreise.no/miniProxy/miniProxy.php/https://no.wikipedia.org/w/api.php', linkBase: 'http://no.wikipedia.org/?curid='}
+            params: {url: 'http://kd-miniproxy.ra.no/miniProxy.php/https://no.wikipedia.org/w/api.php', linkBase: 'http://no.wikipedia.org/?curid='}
         },
         wikipediaNN: {
             api: KR.WikipediaAPI,
-            params: {url: 'http://www.knreise.no/miniProxy/miniProxy.php/https://nn.wikipedia.org/w/api.php', linkBase: 'http://nn.wikipedia.org/?curid='}
+            params: {url: 'http://kd-miniproxy.ra.no/miniProxy.php/https://nn.wikipedia.org/w/api.php', linkBase: 'http://nn.wikipedia.org/?curid='}
         },
         cartodb: {
             api: KR.CartodbAPI,
@@ -58,7 +58,7 @@ KR.API = function (options) {
         lokalhistoriewiki: {
             api: KR.WikipediaAPI,
             params: {
-                url: 'http://www.knreise.no/miniProxy/miniProxy.php/http://lokalhistoriewiki.no/api.php',
+                url: 'http://kd-miniproxy.ra.no/miniProxy.php/http://lokalhistoriewiki.no/api.php',
                 linkBase: 'http://lokalhistoriewiki.no/?curid=',
                 maxRadius: 100000
             }

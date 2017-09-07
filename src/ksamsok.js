@@ -6,7 +6,7 @@ KR.KSamsokAPI = function (apiName, options) {
     options = options || {};
     var requests = [];
 
-    var BASE_URL = 'http://www.knreise.no/miniProxy/miniProxy.php/http://kulturarvsdata.se/ksamsok/api';
+    var BASE_URL = 'http://kd-miniproxy.ra.no/miniProxy.php/http://kulturarvsdata.se/ksamsok/api';
     var apikey = options.apikey;
 
     var bboxTemplate = _.template('boundingBox=/WGS84 "<%= w %> <%= s %> <%= e %> <%= n %>"');
@@ -144,7 +144,7 @@ KR.KSamsokAPI = function (apiName, options) {
     }
 
     function getItem(dataset, callback, errorCallback) {
-        var url = 'http://www.knreise.no/miniProxy/miniProxy.php/' + dataset.itemId;
+        var url = 'http://kd-miniproxy.ra.no/miniProxy.php/' + dataset.itemId;
         KR.Util.sendRequest(url, _parseItem, callback, errorCallback);
     }
 

@@ -1,7 +1,5 @@
 /*global L:false, _:false */
 
-/* Replaced http://www.knreise.no/miniProxy/miniProxy.php with http://kd-miniproxy.ra.no/miniProxy.php */
-
 var KR = this.KR || {};
 KR.Util = {};
 

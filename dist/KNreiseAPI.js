@@ -58,6 +58,7 @@ KR.Util = {};
             },
             url: url,
             success: function (response) {
+                console.log(response)
                 if (parser) {
                     var parsed;
                     try {
@@ -170,6 +171,48 @@ KR.Util = {};
         return url;
     };
 
+
+    $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
+    // check for conditions and support for blob / arraybuffer response type
+    if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob)))))
+    {
+        return {
+            // create new XMLHttpRequest
+            send: function(headers, callback){
+        // setup all variables
+                var xhr = new XMLHttpRequest(),
+        url = options.url,
+        type = options.type,
+        async = options.async || true,
+        // blob or arraybuffer. Default is blob
+        dataType = options.responseType || "blob",
+        data = options.data || null,
+        username = options.username || null,
+        password = options.password || null;
+                    
+                xhr.addEventListener('load', function(){
+            var data = {};
+            data[options.dataType] = xhr.response;
+            // make callback and send data
+            callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
+                });
+ 
+                xhr.open(type, url, async, username, password);
+                
+        // setup custom headers
+        for (var i in headers ) {
+            xhr.setRequestHeader(i, headers[i] );
+        }
+                
+                xhr.responseType = dataType;
+                xhr.send(data);
+            },
+            abort: function(){
+                jqXHR.abort();
+            }
+        };
+    }
+});
 }(KR.Util));
 
 /*global L:false, esri2geo: false*/
@@ -2363,6 +2406,84 @@ KR.KSamsokAPI = function (apiName, options) {
 
 var KR = this.KR || {};
 
+KR.BrukerminnerAPI = function (apiName) {
+    'use strict';
+
+    var URL = 'http://beta.ra.no/data/brukerminner.geojson';
+
+    var cache = null;
+
+    function getJson(callback) {
+        if (cache !== null) {
+            callback(null, cache);
+        } else {
+            var url = KR.Util.addCrossorigin(URL);
+
+
+            var request = new XMLHttpRequest();
+            request.responseType = "text";
+            request.onload = function() {
+                try {
+                    callback(null, JSON.parse(this.response));
+                } catch(e) {
+                    callback(e, null);
+                }
+            }
+            request.open("GET", url);
+            request.send();
+        }
+    }
+
+
+    function getData(dataset, callback, errorCallback) {
+        //get all data, possibly filtered by a property in dataset
+        getJson(function (err, data) {
+            if (err) {
+                errorCallback(err);
+            } else {
+                callback(data);
+            }
+        });
+    }
+
+    function getWithin(dataset, latLng, distance, callback, errorCallback, options) {
+        callback();
+    }
+
+    function getBbox(dataset, bbox, callback, errorCallback, options) {
+        callback();
+    }
+
+    function getItem(dataset, callback, errorCallback) {
+        callback();
+    }
+
+    return {
+        getData: getData,
+        getWithin: getWithin,
+        getBbox: getBbox,
+        getItem: getItem
+    };
+};
+
+var KR = this.KR || {};
+
+KR.KulturminneAPI = function (apiName) {
+    'use strict';
+
+    var baseAPI = KR.ArcgisAPI('kulturminne', {url: 'http://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/'});
+
+    function getBbox(dataset, bbox, callback, errorCallback) {
+        baseAPI.getBbox(dataset, bbox, callback, errorCallback)
+    }
+
+    return {
+        getBbox: getBbox
+    };
+};
+
+var KR = this.KR || {};
+
 KR.API = function (options) {
     'use strict';
     options = options || {};
@@ -2388,6 +2509,10 @@ KR.API = function (options) {
         kulturminnedata: {
             api: KR.ArcgisAPI,
             params: {url: 'http://askeladden.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/'}
+        },
+        kulturminne: {
+            api: KR.KulturminneAPI,
+            params: {}
         },
         kulturminnedataSparql: {
             api: KR.SparqlAPI,
@@ -2439,6 +2564,10 @@ KR.API = function (options) {
         ksamsok: {
             api: KR.KSamsokAPI,
             extend: true,
+            params: {}
+        },
+        brukerminner: {
+            api: KR.BrukerminnerAPI,
             params: {}
         }
     };

@@ -26,6 +26,10 @@ KR.API = function (options) {
             api: KR.ArcgisAPI,
             params: {url: 'http://askeladden.ra.no/arcgis/rest/services/Husmann/Husmann/MapServer/'}
         },
+        kulturminne: {
+            api: KR.KulturminneAPI,
+            params: {}
+        },
         kulturminnedataSparql: {
             api: KR.SparqlAPI,
             params: {url: 'https://sparql.kulturminne.no/'}
@@ -76,6 +80,10 @@ KR.API = function (options) {
         ksamsok: {
             api: KR.KSamsokAPI,
             extend: true,
+            params: {}
+        },
+        brukerminner: {
+            api: KR.BrukerminnerAPI,
             params: {}
         }
     };

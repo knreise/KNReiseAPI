@@ -137,7 +137,7 @@ API-code-template
         }
 
         return {
-            getData: getData
+            getData: getData,
             getWithin: getWithin,
             getBbox: getBbox,
             getItem: getItem

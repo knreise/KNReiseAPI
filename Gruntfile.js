@@ -24,6 +24,8 @@ module.exports = function(grunt) {
           'src/geojson.js',
           'src/jernbanemuseet.js',
           'src/ksamsok.js',
+          'src/kulturminner_brukerminner.js',
+          'src/kulturminneregisteret.js',
           'src/api.js'
         ],
         dest: 'dist/<%= pkg.name %>.js'

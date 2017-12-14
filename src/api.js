@@ -88,6 +88,7 @@ KR.API = function (options) {
         }
     };
 
+
     function _createApis() {
         return _.reduce(apiConfig, function (acc, params, key) {
             var apiOptions = params.params;
@@ -219,6 +220,17 @@ KR.API = function (options) {
         }
     }
 
+    function getSublayer(dataset, callback, errorCallback) {
+        var api = _getAPI(dataset.api);
+        if (_.has(api, 'getSublayer')) {
+            api.getSublayer(dataset, callback, errorCallback);
+        } else if (errorCallback) {
+            errorCallback('No getSublayer function for api ' + dataset.api);
+        } else {
+            throw new Error('No getSublayer function for api ' + dataset.api);
+        }
+    }
+
     return {
         getData: getData,
         getWithin: getWithin,
@@ -226,6 +238,7 @@ KR.API = function (options) {
         getMunicipalityBounds: getMunicipalityBounds,
         getCountyBounds: getCountyBounds,
         getItem: getItem,
+        getSublayer: getSublayer,
         getCollection: function (collectionName, callback, errorCallback) {
             var norvegianaAPI = _getAPI('norvegiana');
             norvegianaAPI.getCollection(collectionName, callback, errorCallback);

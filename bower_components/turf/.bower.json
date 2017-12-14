@@ -1,0 +1,13 @@
+{
+  "name": "turf",
+  "_cacheHeaders": {
+    "ETag": "W/\"baff3-15f7f252e40\"",
+    "Last-Modified": "Thu, 02 Nov 2017 23:51:04 GMT",
+    "Content-Type": "application/javascript"
+  },
+  "_release": "e-tag:W/\"baff3-1",
+  "main": "index.js",
+  "_source": "https://npmcdn.com/@turf/turf@5.0.4/turf.min.js",
+  "_target": "*",
+  "_originalSource": "https://npmcdn.com/@turf/turf@5.0.4/turf.min.js"
+}

@@ -25,6 +25,7 @@
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="../bower_components/underscore/underscore-min.js"></script>
         <script src="../bower_components/esri2geo/esri2geo.js"></script>
+        <script src="../bower_components/turf/index.js"></script>
         <script src="../dist/KNreiseAPI.js"></script>
 
         <script type="text/javascript">
@@ -37,17 +38,19 @@
 
             (function () {
                 'use strict';
-                var map = getMap('map');
-                map.setView([63.429722, 10.393333], 5);
+                
                 var api = new KR.API({});
 
-                var bbox = map.getBounds().toBBoxString();
+                //var bbox = map.getBounds().toBBoxString();
+                var bbox = '9.312543869018555,62.227315990693896,9.387989044189453,62.25362062502279';
 
-                var kulturminne = {api: 'kulturminne', layer: 4};
+                var kulturminne = {api: 'kulturminne', dataset: 'lokaliteter', feature: {properties: {LokalitetID: 16692}}};
 
-                api.getBbox(kulturminne, bbox, function (geoJson) {
-                    console.log(geoJson);
-                }, function (e) {console.log(e);});
+                
+                api.getItem(kulturminne, function (data) {
+                    console.log("!", data);
+                    
+                }, function (e) {console.log("!???", e);});
 
 
             }());

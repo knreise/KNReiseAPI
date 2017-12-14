@@ -5,6 +5,10 @@ var KR = this.KR || {};
 KR.ArcgisAPI = function (apiName, options) {
     'use strict';
     var BASE_URL = options.url;
+    var ID_PROP = 'OBJECTID';
+    if (options && options.idProp) {
+        ID_PROP = options.idProp;
+    }
 
     function _parseBbox(bbox) {
         bbox = KR.Util.splitBbox(bbox);
@@ -49,26 +53,38 @@ KR.ArcgisAPI = function (apiName, options) {
             return feature.properties[dataset.matchId];
         });
 
+        var query = dataset.matchId + ' IN (' + ids.join(',') + ')';
+        var layer = dataset.extraDataLayer;
+
+        function mapper(response) {
+            return _mapExtraData(features, response, dataset);
+        }
+        getSubLayer(query, layer, mapper, false, callback, errorCallback);
+
+    }
+
+    function getSubLayer(query, layer, mapper, returnGeometry, callback, errorCallback) {
         var params = {
-            where: dataset.matchId + ' IN (' + ids.join(',') + ')',
+            where: query,
             outFields: '*',
-            returnGeometry: false,
+            returnGeometry: returnGeometry,
+            outSR: 4326,
             returnIdsOnly: false,
             returnCountOnly: false,
             returnZ: false,
             returnM: false,
             returnDistinctValues: false,
-            f: 'pjson',
+            f: 'pjson'
         };
 
-        var url = BASE_URL + dataset.extraDataLayer + '/query';
+        var url = BASE_URL + layer + '/query';
 
         $.ajax({
             type: 'POST',
             url: url,
             data: KR.Util.createQueryParameterString(params),
             success: function (response) {
-                callback(_mapExtraData(features, response, dataset));
+                callback(mapper(response));
             },
             error: function (response) {
                 callback(features);
@@ -76,7 +92,7 @@ KR.ArcgisAPI = function (apiName, options) {
         });
     }
 
-    function _parseArcGisResponse(response, callback, errorCallback, dataset) {
+    function parseArcGisResponse(response, callback, errorCallback, dataset) {
         try {
             response = JSON.parse(response);
         } catch (ignore) {}
@@ -91,9 +107,9 @@ KR.ArcgisAPI = function (apiName, options) {
                     if (_.has(feature.properties, 'Navn')) {
                         feature.properties.title = feature.properties.Navn;
                     }
-                    feature.id = apiName + '_' + feature.properties.OBJECTID;
+                    feature.id = apiName + '_' + feature.properties[ID_PROP];
                 });
-                if (dataset.getExtraData) {
+                if (dataset && dataset.getExtraData) {
                     _getExtraData(data, dataset, callback, errorCallback);
                 } else {
                     callback(data);
@@ -127,11 +143,13 @@ KR.ArcgisAPI = function (apiName, options) {
         var layer = dataset.layer;
         var url = BASE_URL + layer + '/query' +  '?'  + KR.Util.createQueryParameterString(params);
         KR.Util.sendRequest(url, null, function (response) {
-            _parseArcGisResponse(response, callback, errorCallback, dataset);
+            parseArcGisResponse(response, callback, errorCallback, dataset);
         }, errorCallback);
     }
 
     return {
-        getBbox: getBbox
+        getBbox: getBbox,
+        getSubLayer: getSubLayer,
+        parseArcGisResponse: parseArcGisResponse
     };
 };

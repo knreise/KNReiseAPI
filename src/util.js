@@ -58,7 +58,6 @@ KR.Util = {};
             },
             url: url,
             success: function (response) {
-                console.log(response)
                 if (parser) {
                     var parsed;
                     try {
@@ -74,7 +73,7 @@ KR.Util = {};
                     callback(response);
                 }
             },
-            error: errorCallback
+            error: function(err){errorCallback(err)}
         };
 
         return $.ajax(_.extend(ajaxRequest, ajaxOpts));

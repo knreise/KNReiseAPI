@@ -18,7 +18,9 @@ The "raw " API provides a uniform way of querying a range of APIs and datasets a
 ####Creation
 Create a new API instance like this (usually only done once):
 
-    var api = new KR.API({
+    import KNreiseAPI from 'knreise-api';
+
+    var api = KNreiseAPI({
         cartodb: {
             user: 'knreise'
         },
@@ -30,7 +32,7 @@ Create a new API instance like this (usually only done once):
         }
     });
 
-Note: The cartoDB, flickr and jernbanemuseet config is only needed iof you intend to use thse
+Note: The cartoDB, flickr and jernbanemuseet config is only needed if you intend to use thse
 APIS.
 
 

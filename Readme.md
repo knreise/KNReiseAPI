@@ -1,20 +1,34 @@
 KNReiseAPI
 ==========
 
-This library is a wrapper over various APIs used by "Kultur- og Naturreise".
+This library is a wrapper over various geospatial APIs used by "Kultur- og Naturreise".
+
+Note
+----
+The version 2.x.x branch is still experimental!
 
 Usage
 -----
 
-Either install using bower:
+Install using npm:
 
-    bower install KNreiseAPI -S
+    npm install knreise-api -S
 
-or, download manually.
+if using webpack, add this to your config:
 
-See [doc.md][doc] and the [live example][example] for more details.
+    node: {
+        console: true,
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty',
+        dns: 'empty',
+        dgram: 'empty'
+    }
 
-See also this  [codepen collection][codepen] for live examples of more advanced usage with Leaflet
+
+See [doc.md][doc] for more details.
+
+See also this [codepen collection][codepen] for old examples of more advanced usage with Leaflet
 
 License
 -------

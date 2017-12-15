@@ -1,25 +1,41 @@
 {
-  "name": "KNreiseAPI",
-  "version": "1.10.3",
+  "name": "knreise-api",
+  "version": "2.0.2",
   "description": "Api wrapper for KNreise",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "",
-    "start": "grunt watch"
+    "clean": "rimraf dist",
+    "prepublish": "npm run build",
+    "start": "grunt watch",
+    "build": "npm run clean && babel src --out-dir dist --source-maps inline --copy-files"
   },
   "author": "",
   "license": "Apache 1.1",
   "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "grunt": "^0.4.5",
     "grunt-bump-build-git": "^1.1.1",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-uglify": "^0.9.1",
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt-contrib-watch": "^0.6.1",
+    "rimraf": "^2.6.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/knreise/KNReiseAPI.git"
   },
-  "homepage": "https://github.com/knreise/KNReiseAPI"
+  "homepage": "https://github.com/knreise/KNReiseAPI",
+  "dependencies": {
+    "@mapbox/togeojson": "^0.16.0",
+    "crypto-js": "^3.1.2",
+    "esri2geo": "^0.1.3",
+    "x2js": "^2.0.0"
+  }
 }

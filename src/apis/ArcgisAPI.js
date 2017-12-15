@@ -1,5 +1,5 @@
 import * as _ from 'underscore';
-import esri2geo from 'esri2geo';
+import toGeoJSON from 'esri2geo';
 
 import sendRequest from '../util/sendRequest';
 import handleError from '../util/handleError';
@@ -109,7 +109,7 @@ export default function ArcgisAPI(apiName, options) {
             return;
         }
 
-        esri2geo.toGeoJSON(response, function (err, data) {
+        toGeoJSON(response, function (err, data) {
             if (!err) {
                 _.each(data.features, function (feature) {
                     if (_.has(feature.properties, 'Navn')) {

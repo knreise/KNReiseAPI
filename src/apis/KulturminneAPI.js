@@ -13,7 +13,7 @@ export default function KulturminneAPI(apiName) {
     var mapData = Mapper(apiName);
 
     var API_URL = 'http://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/';
-    var IMAGE_API_BASE = 'http://kulturminnebilder.ra.no';
+    var IMAGE_API_BASE = 'https://kulturminnebilder.ra.no';
 
     var baseAPI = ArcgisAPI(
         'kulturminne',
@@ -36,7 +36,8 @@ export default function KulturminneAPI(apiName) {
         },
         kulturmiljoer: {
             layer: 7,
-            photoId: 'KulturmiljoID'
+            photoId: 'KulturmiljoID',
+            photoIdTemplate: _.template('K<%= id %>')
         }
     };
 
@@ -126,7 +127,14 @@ export default function KulturminneAPI(apiName) {
         if (!parsedDataset) {
             return;
         }
+        
+
         var id = dataset.feature.properties[parsedDataset.photoId];
+        if (parsedDataset.photoIdTemplate) {
+            id = parsedDataset.photoIdTemplate({id: id});
+        }
+
+
 
         //var data = _parseItem(mockData, callback);
 

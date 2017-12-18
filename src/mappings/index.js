@@ -29,7 +29,7 @@ export default function Mapper(dataset) {
         var features = _.map(featureCollection.features, function (feature) {
 
             _.each(mappingForFeatures, function (data, key) {
-                if (feature.properties[key]) {
+                if (feature.properties[key] && data.mapper) {
                     feature.properties[data.newKey] = data.mapper(feature.properties[key]);
                 }
             });
@@ -61,6 +61,9 @@ export default function Mapper(dataset) {
                 $.ajax({
                     method: 'get',
                     url: mappingData.url,
+                    error: function (err) {
+                        finished();
+                    },
                     success: function (data) {
                         csv({noheader: false, delimiter: 'auto'})
                             .fromString(data)

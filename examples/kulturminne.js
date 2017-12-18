@@ -2,14 +2,23 @@ import KNReiseApi from '../src/index.js';
 
 var api = KNReiseApi({});
 
-var kulturminne = {api: 'kulturminne', dataset: 'lokaliteter'};
-var kulturmiljo = {api: 'kulturminne', dataset: 'kulturmiljoer'};
-
-
 var bbox = '10.749607086181639,59.91590263019011,10.759949684143066,59.922355662817154';
+var kulturminne = {api: 'kulturminne', dataset: 'lokaliteter'};
+var kulturminneItem = {
+    api: 'kulturminne',
+    dataset: 'lokaliteter',
+    feature: {properties: {LokalitetID: 16692}}
+};
+
+var kulturmiljo = {api: 'kulturminne', dataset: 'kulturmiljoer'};
+var kulturmiljoItem = {
+    api: 'kulturminne',
+    dataset: 'kulturmiljoer',
+    feature: {properties: {KulturmiljoID: 124}}
+};
 
 api.getBbox(kulturminne, bbox, function (data) {
-    console.log('!', data);
+    console.log('lokaliteter', data);
 
 }, function (e) {
     console.error(e);
@@ -17,22 +26,29 @@ api.getBbox(kulturminne, bbox, function (data) {
 
 
 api.getBbox(kulturmiljo, bbox, function (data) {
-    console.log('!!!!', data);
+    console.log('kulturmiljøer', data);
 
 }, function (e) {
     console.error(e);
 });
 
 
-var kulturminneItem = {api: 'kulturminne', dataset: 'lokaliteter', feature: {properties: {LokalitetID: 16692}}};
-
-/*
 api.getItem(kulturminneItem, function (data) {
-    console.log('!!', data);
+    console.log('bilder for lokalitet', data);
 
-}, function (e) {console.error(e);});
-*/
+}, function (e) {
+    console.error(e);
+});
+
 
 api.getSublayer(kulturminneItem, function (data) {
-    console.log('!!!', data);
-}); 
+    console.log('Enkeltminner for lokalitet', data);
+});
+
+
+api.getItem(kulturmiljoItem, function (data) {
+    console.log('bilder for kulturmiljø', data);
+
+}, function (e) {
+    console.error(e);
+});

@@ -1,9 +1,16 @@
 import * as _ from 'underscore';
 import ArcgisAPI from './ArcgisAPI';
 
-import mockData from '../mockdata/fotoweb';
+import sendRequest from '../util/sendRequest';
+import handleError from '../util/handleError';
+import Mapper from '../mappings';
+//import mockData from '../mockdata/fotoweb';
+
+
 
 export default function KulturminneAPI(apiName) {
+
+    var mapData = Mapper(apiName);
 
     var API_URL = 'http://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/';
     var IMAGE_API_BASE = 'http://kulturminnebilder.ra.no';
@@ -36,7 +43,7 @@ export default function KulturminneAPI(apiName) {
     function _getDataset(dataset, errorCallback) {
 
         if (! _.has(types, dataset.dataset)) {
-            KR.Util.handleError(errorCallback, 'Unknown dataset ' + dataset.dataset);
+            handleError(errorCallback, 'Unknown dataset ' + dataset.dataset);
         }
         return _.extend({}, dataset, types[dataset.dataset]);
     }
@@ -49,7 +56,16 @@ export default function KulturminneAPI(apiName) {
         var layer = types.enkeltminner.layer;
         var query = key + ' IN (' + id + ')';
         baseAPI.getSubLayer(query, layer, _parseEnkeltminer, true, function (response) {
-            baseAPI.parseArcGisResponse(response, callback, errorCallback);
+            baseAPI.parseArcGisResponse(response, function (data) {
+                mapData(data, {api: apiName, dataset: 'enkeltminner'}, function (err, data) {
+                    if (err) {
+                        errorCallback(err);
+                        return;
+                    }
+                    callback(data);
+                });
+
+            }, errorCallback);
         }, errorCallback);
     }
 
@@ -59,7 +75,15 @@ export default function KulturminneAPI(apiName) {
         if (!parsedDataset) {
             return;
         }
-        baseAPI.getBbox(parsedDataset, bbox, callback, errorCallback);
+        baseAPI.getBbox(parsedDataset, bbox, function (data) {
+            mapData(data, parsedDataset, function (err, data) {
+                if (err) {
+                    errorCallback(err);
+                    return;
+                }
+                callback(data);
+            });
+        }, errorCallback);
     }
 
     function _parseItem(data, callback) {
@@ -104,20 +128,20 @@ export default function KulturminneAPI(apiName) {
         }
         var id = dataset.feature.properties[parsedDataset.photoId];
 
-        var data = _parseItem(mockData, callback);
+        //var data = _parseItem(mockData, callback);
 
-        callback(data);
+        //callback(data);
 
-        /*
+
         var url = IMAGE_API_BASE + '/fotoweb/archives/5001-Alle%20kulturminnebilder/?212=' + id;
-        return KR.Util.sendRequest(
+        return sendRequest(
             url,
             _parseItem,
             callback,
             errorCallback,
             {'Accept': 'application/vnd.fotoware.assetlist+json'}
         );
-        */
+
     }
 
     function getSublayer(dataset, callback, errorCallback) {
@@ -126,7 +150,7 @@ export default function KulturminneAPI(apiName) {
             return;
         }
         if (!_.has(parsedDataset, 'subLayerFunc')) {
-            KR.Util.handleError(errorCallback, 'No subLayerFunc ' + dataset.dataset);
+            handleError(errorCallback, 'No subLayerFunc ' + dataset.dataset);
             return;
         }
         var key = parsedDataset.subLayerId;

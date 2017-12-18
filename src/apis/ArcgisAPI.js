@@ -1,5 +1,6 @@
 import * as _ from 'underscore';
 import toGeoJSON from 'esri2geo';
+import $ from 'jquery';
 
 import sendRequest from '../util/sendRequest';
 import handleError from '../util/handleError';
@@ -86,6 +87,8 @@ export default function ArcgisAPI(apiName, options) {
         };
 
         var url = BASE_URL + layer + '/query';
+
+
 
         $.ajax({
             type: 'POST',

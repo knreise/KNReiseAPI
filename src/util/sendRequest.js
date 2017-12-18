@@ -1,5 +1,6 @@
 import * as _ from 'underscore';
 import handleError from './handleError';
+import $ from 'jquery';
 
 $.ajaxTransport('+binary', function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type

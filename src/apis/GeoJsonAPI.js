@@ -1,20 +1,8 @@
-import sendRequest from '../util/sendRequest';
-import {addCrossorigin} from '../util';
+import FileAPI from './FileAPI';
 
 export default function GeoJsonAPI(apiName) {
-
-    function parse(d) {
-        return JSON.parse(d);
+    function parser(data) {
+        return JSON.parse(data);
     }
-
-    function getData(dataset, callback, errorCallback) {
-        var url = dataset.corsProxy
-        ? addCrossorigin(dataset.url)
-        : dataset.url;
-        sendRequest(url, parse, callback, errorCallback);
-    }
-
-    return {
-        getData: getData
-    };
+    return FileAPI(apiName, {parser: parser});
 };

@@ -1,20 +1,9 @@
 import toGeoJSON from '@mapbox/togeojson';
-
-import sendRequest from '../util/sendRequest';
-import {addCrossorigin} from '../util';
+import FileAPI from './FileAPI';
 
 export default function GpxAPI(apiName) {
-
-    function getData(dataset, callback, errorCallback) {
-
-        if (typeof toGeoJSON === 'undefined') {
-            throw new Error('toGeoJSON not found!');
-        }
-        var url = addCrossorigin(dataset.url);
-        sendRequest(url, toGeoJSON.gpx, callback, errorCallback);
+    function parser(data) {
+        return toGeoJSON.gpx(data);
     }
-
-    return {
-        getData: getData
-    };
+    return FileAPI(apiName, {parser: parser});
 };

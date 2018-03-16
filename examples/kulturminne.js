@@ -7,16 +7,23 @@ var kulturminne = {api: 'kulturminne', dataset: 'lokaliteter'};
 var kulturminneItem = {
     api: 'kulturminne',
     dataset: 'lokaliteter',
-    feature: {properties: {LokalitetID: 16692}}
+    feature: {properties: {LokalitetID: 88460}}
 };
 
 var kulturmiljo = {api: 'kulturminne', dataset: 'kulturmiljoer'};
 var kulturmiljoItem = {
     api: 'kulturminne',
     dataset: 'kulturmiljoer',
-    feature: {properties: {KulturmiljoID: 124}}
+    feature: {properties: {KulturmiljoID: 122}}
 };
 
+var enkeltminneItem = {
+    api: 'kulturminne',
+    dataset: 'enkeltminner',
+    feature: {properties: {KulturminneID: '158591-1'}}
+};
+
+/*
 api.getBbox(kulturminne, bbox, function (data) {
     console.log('lokaliteter', data);
 
@@ -31,7 +38,7 @@ api.getBbox(kulturmiljo, bbox, function (data) {
 }, function (e) {
     console.error(e);
 });
-
+*/
 
 api.getItem(kulturminneItem, function (data) {
     console.log('bilder for lokalitet', data);
@@ -39,12 +46,11 @@ api.getItem(kulturminneItem, function (data) {
 }, function (e) {
     console.error(e);
 });
-
-
+/*
 api.getSublayer(kulturminneItem, function (data) {
     console.log('Enkeltminner for lokalitet', data);
 });
-
+*/
 
 api.getItem(kulturmiljoItem, function (data) {
     console.log('bilder for kulturmiljø', data);
@@ -52,3 +58,12 @@ api.getItem(kulturmiljoItem, function (data) {
 }, function (e) {
     console.error(e);
 });
+
+
+api.getItem(enkeltminneItem, function (data) {
+    console.log('bilder for enkeltminne', data);
+
+}, function (e) {
+    console.error(e);
+});
+

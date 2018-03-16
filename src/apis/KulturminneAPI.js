@@ -1,11 +1,11 @@
 import * as _ from 'underscore';
 import ArcgisAPI from './ArcgisAPI';
-
 import sendRequest from '../util/sendRequest';
 import handleError from '../util/handleError';
 import Mapper from '../mappings';
-//import mockData from '../mockdata/fotoweb';
-
+import {
+    createQueryParameterString
+} from '../util';
 
 
 export default function KulturminneAPI(apiName) {
@@ -26,23 +26,31 @@ export default function KulturminneAPI(apiName) {
     var types = {
         enkeltminner: {
             layer: 4,
-            photoId: 'KulturminneID'
+            photoId: 'KulturminneID',
+            descriptionId: 'KulturminneID',
+            descriptionLayer: 8,
+            descriptionFields: ['Beskrivelse']
         },
         lokaliteter: {
             layer: 5,
             photoId: 'LokalitetID',
             subLayerId: 'LokalitetID',
+            descriptionId: 'LokalitetID',
+            descriptionLayer: 10,
+            descriptionFields: ['Beskrivelse', 'Kulturminnesok'],
             subLayerFunc: _getEnkeltminner
         },
         kulturmiljoer: {
             layer: 7,
             photoId: 'KulturmiljoID',
+            descriptionId: 'KulturmiljoID',
+            descriptionLayer: 9,
+            descriptionFields: ['Beskrivelse', 'Beskrivelse2'],
             photoIdTemplate: _.template('K<%= id %>')
         }
     };
 
     function _getDataset(dataset, errorCallback) {
-
         if (! _.has(types, dataset.dataset)) {
             handleError(errorCallback, 'Unknown dataset ' + dataset.dataset);
         }
@@ -100,46 +108,18 @@ export default function KulturminneAPI(apiName) {
                 };
             })
         };
-
-
-        //lenke: href
-
-        //metadata
-            //opphavsperson: 116
-            //lisens: 315
-
-        /*
-        •   navn- tittel på det objektet som vises
-        •   selve mediefila – bilde, video eller lydfil
-        •   beskrivelse
-        •   opphavsperson / rettighetshaver
-        •   lisens
-        •   lenke til original publisering
-        */
-
-        //bilde
-        //previews where size == 600
-
     }
 
-    function getItem(dataset, callback, errorCallback) {
+    function getItemImage(dataset, callback, errorCallback) {
         var parsedDataset = _getDataset(dataset);
         if (!parsedDataset) {
-            return;
+            errorCallback('invalid dataset');
         }
-        
 
         var id = dataset.feature.properties[parsedDataset.photoId];
         if (parsedDataset.photoIdTemplate) {
             id = parsedDataset.photoIdTemplate({id: id});
         }
-
-
-
-        //var data = _parseItem(mockData, callback);
-
-        //callback(data);
-
 
         var url = IMAGE_API_BASE + '/fotoweb/archives/5001-Alle%20kulturminnebilder/?212=' + id;
         return sendRequest(
@@ -149,7 +129,86 @@ export default function KulturminneAPI(apiName) {
             errorCallback,
             {'Accept': 'application/vnd.fotoware.assetlist+json'}
         );
+    }
 
+    function getQuery(name, value) {
+
+        var escapedValue = _.isString(value)
+            ? '\'' + value + '\''
+            : value;
+
+        return name + ' IN (' + escapedValue + ')';
+    }
+
+    function getItemDescription(dataset, callback, errorCallback) {
+        var parsedDataset = _getDataset(dataset);
+        if (!parsedDataset) {
+            errorCallback('invalid dataset');
+        }
+        if (!parsedDataset.descriptionLayer) {
+            callback({});
+            return;
+        }
+
+        var id = dataset.feature.properties[parsedDataset.descriptionId];
+        var params = {
+            where: getQuery(parsedDataset.photoId, id),
+            outFields: parsedDataset.descriptionFields.join(','),
+            returnGeometry: false,
+            outSR: 4326,
+            returnIdsOnly: false,
+            returnCountOnly: false,
+            returnZ: false,
+            returnM: false,
+            returnDistinctValues: false,
+            f: 'pjson'
+        };
+
+        var url = API_URL + parsedDataset.descriptionLayer + '/query';
+
+        return sendRequest(
+            url,
+            function (response) {
+                response = JSON.parse(response);
+                return response.features.length
+                    ? response.features[0].attributes
+                    : {};
+            },
+            callback,
+            errorCallback,
+            {'Accept': 'application/json'},
+            'POST',
+            {data: createQueryParameterString(params)}
+        );
+
+    }
+
+    function getItem(dataset, callback, errorCallback) {
+        var responses = [];
+        var errors = [];
+
+        var extraCalls = [getItemDescription, getItemImage];
+        var finished = _.after(extraCalls.length, function () {
+            if (responses.length) {
+                callback(_.reduce(responses, function (acc, res) {
+                    return _.extend({}, acc, res);
+                }, {}));
+            } else {
+                errorCallback(errors);
+            }
+        });
+        _.each(extraCalls, function (func) {
+            func(
+                dataset,
+                function (data) {
+                    responses.push(data);
+                    finished();
+                }, function (err) {
+                    errors.push(err);
+                    finished();
+                }
+            );
+        });
     }
 
     function getSublayer(dataset, callback, errorCallback) {

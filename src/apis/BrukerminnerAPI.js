@@ -43,6 +43,7 @@ export default function BrukerminnerAPI(apiName) {
             }, []);
             features = _.map(features, function (feature) {
                 feature.id = apiName + '_' + feature._id;
+                feature.properties.title = feature.properties.name;
                 return feature;
             });
             originalCallback(createFeatureCollection(features));

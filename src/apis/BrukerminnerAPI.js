@@ -1,60 +1,71 @@
-import {addCrossorigin} from '../util';
+import * as _ from 'underscore';
+
+import sendRequest from '../util/sendRequest';
+import {
+    createFeatureCollection,
+    splitBbox
+} from '../util';
 
 export default function BrukerminnerAPI(apiName) {
 
-    var URL = 'http://beta.ra.no/data/brukerminner.geojson';
+    var URL_BASE = 'http://beta.ra.no/api/';
 
-    var cache = null;
-
-    function getJson(callback) {
-        if (cache !== null) {
-            callback(null, cache);
-        } else {
-            var url = addCrossorigin(URL);
-
-
-            var request = new XMLHttpRequest();
-            request.responseType = 'text';
-            request.onload = function () {
-                try {
-                    callback(null, JSON.parse(this.response));
-                } catch (e) {
-                    callback(e, null);
-                }
-            };
-            request.open('GET', url);
-            request.send();
-        }
+    function _toGeom(bbox) {
+        var bounds = splitBbox(bbox);
+        var ll = bounds.slice(0, 2);
+        var ur = bounds.slice(2, 4);
+        var coordinates = [[
+            ll,
+            [ll[0], ur[1]],
+            ur,
+            [ur[0], ll[1]],
+            ll
+        ]];
+        return {type: 'Polygon', coordinates: coordinates};
     }
 
-
-    function getData(dataset, callback, errorCallback) {
-        //get all data, possibly filtered by a property in dataset
-        getJson(function (err, data) {
-            if (err) {
-                errorCallback(err);
-            } else {
-                callback(data);
+    function _acc(url, originalCallback, errorCallback) {
+        var data = [];
+        return function callback(responseData) {
+            data.push(responseData._items);
+            if (responseData._links.next) {
+                sendRequest(
+                    URL_BASE + responseData._links.next.href,
+                    null,
+                    callback,
+                    errorCallback
+                );
+                return;
             }
-        });
+
+            var features = _.reduce(data, function (acc, subFeatures) {
+                return acc.concat(subFeatures);
+            }, []);
+            features = _.map(features, function (feature) {
+                feature.id = apiName + '_' + feature._id;
+                return feature;
+            });
+            originalCallback(createFeatureCollection(features));
+        };
     }
 
-    function getWithin(dataset, latLng, distance, callback, errorCallback, options) {
-        callback();
+    function _getAllPages(url, callback, errorCallback) {
+        return sendRequest(
+            url,
+            null,
+            _acc(url, callback, errorCallback),
+            errorCallback
+        );
     }
 
     function getBbox(dataset, bbox, callback, errorCallback, options) {
-        callback();
-    }
-
-    function getItem(dataset, callback, errorCallback) {
-        callback();
+        var geom = _toGeom(bbox);
+        var query = {'geometry': {'$geoWithin': {'$geometry': geom}}};
+        var url = URL_BASE + 'brukerminner?where=' + JSON.stringify(query);
+        _getAllPages(url, callback, errorCallback);
     }
 
     return {
-        getData: getData,
-        getWithin: getWithin,
-        getBbox: getBbox,
-        getItem: getItem
+        getBbox: getBbox
     };
 };

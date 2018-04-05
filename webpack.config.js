@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        kulturminne: './examples/kulturminne.js'
+        kulturminne: './examples/kulturminne.js',
+        brukerminner: './examples/brukerminner.js'
     },
     devtool: 'inline-source-map',
     devServer: {

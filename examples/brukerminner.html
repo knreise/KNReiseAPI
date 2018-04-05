@@ -14,48 +14,11 @@
                 top: 0;
                 bottom: 0;
             }
-
         </style>
     </head>
     <body>
         <div id="map"></div>
+        <script type='text/javascript' src='../script/brukerminner.js'></script>
 
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/languages/javascript.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/languages/json.min.js"></script>
-        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="../bower_components/underscore/underscore-min.js"></script>
-
-        <script src="../dist/KNreiseAPI.js"></script>
-
-
-
-        <script type="text/javascript">
-
-            function getMap(div) {
-                var map = L.map(div);
-                L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>̈́'}).addTo(map);
-                return map;
-            }
-
-
-
-            (function () {
-                'use strict';
-
-                var api = new KR.API();
-
-                var tur = {
-                    api: 'brukerminner'
-                   
-                };
-                api.getData(tur, function (geoJson) {
-                    console.log("!!", geoJson);
-                }, console.error);
-
-            }());
-
-        </script>
     </body>
 </html>

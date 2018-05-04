@@ -6,13 +6,15 @@ import Mapper from '../mappings';
 import {
     createQueryParameterString
 } from '../util';
-
+import BrukerbilderAPI from './BrukerbilderAPI';
 
 export default function KulturminneAPI(apiName) {
 
     var mapData = Mapper(apiName);
+    var brukerbilderAPI = BrukerbilderAPI();
 
-    var API_URL = 'http://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/';
+    var API_URL = 'http://kd-miniproxy.ra.no/miniProxy.php/http://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/';
+    //var API_URL = 'https://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/';
     var IMAGE_API_BASE = 'https://kulturminnebilder.ra.no';
 
     var baseAPI = ArcgisAPI(
@@ -34,19 +36,23 @@ export default function KulturminneAPI(apiName) {
         lokaliteter: {
             layer: 5,
             photoId: 'LokalitetID',
+            userPhotoId: 'LokalitetID',
             subLayerId: 'LokalitetID',
             descriptionId: 'LokalitetID',
             descriptionLayer: 10,
             descriptionFields: ['Beskrivelse', 'Kulturminnesok'],
-            subLayerFunc: _getEnkeltminner
+            subLayerFunc: _getEnkeltminner,
+            userPhotoIdTemplate: _.template('https://data.kulturminne.no/askeladden/lokalitet/<%= id %>')
         },
         kulturmiljoer: {
             layer: 7,
             photoId: 'KulturmiljoID',
+            userPhotoId: 'KulturmiljoID',
             descriptionId: 'KulturmiljoID',
             descriptionLayer: 9,
             descriptionFields: ['Beskrivelse', 'Beskrivelse2'],
-            photoIdTemplate: _.template('K<%= id %>')
+            photoIdTemplate: _.template('K<%= id %>'),
+            userPhotoIdTemplate: _.template('https://data.kulturminne.no/askeladden/kulturmiljo/K<%= id %>')
         }
     };
 
@@ -131,6 +137,25 @@ export default function KulturminneAPI(apiName) {
         );
     }
 
+    function getItemUserImage(dataset, callback, errorCallback) {
+        var parsedDataset = _getDataset(dataset);
+        if (!parsedDataset) {
+            errorCallback('invalid dataset');
+        }
+        console.log(parsedDataset)
+        if (!parsedDataset.userPhotoId) {
+            callback({});
+            return;
+        }
+        var id = dataset.feature.properties[parsedDataset.userPhotoId];
+        if (parsedDataset.userPhotoIdTemplate) {
+            id = parsedDataset.userPhotoIdTemplate({id: id});
+        }
+        brukerbilderAPI.getImages(id, function(images) {
+            callback({media: images});
+        }, errorCallback);
+    }
+
     function getQuery(name, value) {
 
         var escapedValue = _.isString(value)
@@ -187,11 +212,24 @@ export default function KulturminneAPI(apiName) {
         var responses = [];
         var errors = [];
 
-        var extraCalls = [getItemDescription, getItemImage];
+        var extraCalls = [getItemDescription, getItemImage, getItemUserImage];
         var finished = _.after(extraCalls.length, function () {
             if (responses.length) {
                 callback(_.reduce(responses, function (acc, res) {
-                    return _.extend({}, acc, res);
+                    _.each(res, function (value, key) {
+
+                        if (!acc[key]) {
+                            acc[key] = value;
+                        } else {
+                            if (_.isArray(acc[key]) && _.isArray(value)) {
+                                acc[key] = acc[key].concat(value);
+                            }
+                            if (_.isObject(acc[key]) && _.isObject(value)) {
+                                acc[key] = _.extend({}, acc[key], value)
+                            }
+                        }
+                    });
+                    return acc;
                 }, {}));
             } else {
                 errorCallback(errors);

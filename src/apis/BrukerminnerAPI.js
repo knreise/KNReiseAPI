@@ -1,5 +1,6 @@
 import * as _ from 'underscore';
 
+import BrukerbilderAPI from './BrukerbilderAPI';
 import sendRequest from '../util/sendRequest';
 import {
     createFeatureCollection,
@@ -9,6 +10,7 @@ import {
 export default function BrukerminnerAPI(apiName) {
 
     var URL_BASE = 'http://beta.ra.no/api/';
+    var brukerbilderAPI = BrukerbilderAPI();
 
     function _toGeom(bbox) {
         var bounds = splitBbox(bbox);
@@ -66,7 +68,15 @@ export default function BrukerminnerAPI(apiName) {
         _getAllPages(url, callback, errorCallback);
     }
 
+    function getItem(dataset, callback, errorCallback) {
+        var id = dataset.feature.properties.uri;
+        brukerbilderAPI.getImages(id, function(images) {
+            callback({media: images});
+        }, errorCallback);
+    }
+
     return {
-        getBbox: getBbox
+        getBbox: getBbox,
+        getItem: getItem
     };
 };

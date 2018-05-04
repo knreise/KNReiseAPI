@@ -1,6 +1,6 @@
 {
   "name": "knreise-api",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "Api wrapper for KNreise",
   "main": "dist/index.js",
   "scripts": {

@@ -15,6 +15,12 @@ var kulturminneItem = {
     feature: {properties: {LokalitetID: 88460}}
 };
 
+var kulturminneItemMedBrukerbilde = {
+    api: 'kulturminne',
+    dataset: 'lokaliteter',
+    feature: {properties: {LokalitetID: 166042}}
+};
+
 var kulturmiljo = {api: 'kulturminne', dataset: 'kulturmiljoer'};
 var kulturmiljoItem = {
     api: 'kulturminne',
@@ -28,14 +34,14 @@ var enkeltminneItem = {
     feature: {properties: {KulturminneID: '158591-1'}}
 };
 
-
+/*
 api.getBbox(kulturminne, bbox, function (data) {
     console.log('lokaliteter', data);
 
 }, function (e) {
     console.error(e);
 });
-
+*/
 /*
 api.getBbox(kulturmiljo, bbox, function (data) {
     console.log('kulturmiljøer', data);
@@ -45,14 +51,20 @@ api.getBbox(kulturmiljo, bbox, function (data) {
 });
 */
 
-/*
+api.getItem(kulturminneItemMedBrukerbilde, function (data) {
+    console.log('bilder for lokalitet', data);
+
+}, function (e) {
+    console.error(e);
+});
+
 api.getItem(kulturminneItem, function (data) {
     console.log('bilder for lokalitet', data);
 
 }, function (e) {
     console.error(e);
 });
-*/
+
 /*
 api.getSublayer(kulturminneItem, function (data) {
     console.log('Enkeltminner for lokalitet', data);

@@ -13,18 +13,16 @@ export default function BrukerbilderAPI() {
                 description: item.description,
                 creator: item.photographer,
                 license: item.license,
-                image: `${item.contentUrl}?fitIn=400x400`
+                image: `${item.contentUrl}?fitIn=400x400`,
+                fullsize: item.contentUrl
             };
         });
 
     }
 
     function getImages(id, callback, errorCallback, options) {
-        console.log(id);
         var query = JSON.stringify({'heritageId': id});
-        console.log(query)
         var url = `${URL_BASE}?where=${query}`;
-        console.log(url)
         return sendRequest(url, _parser, callback, errorCallback);
     }
 

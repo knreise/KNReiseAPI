@@ -142,7 +142,6 @@ export default function KulturminneAPI(apiName) {
         if (!parsedDataset) {
             errorCallback('invalid dataset');
         }
-        console.log(parsedDataset)
         if (!parsedDataset.userPhotoId) {
             callback({});
             return;

@@ -127,7 +127,7 @@ export default function KulturminneAPI(apiName) {
             id = parsedDataset.photoIdTemplate({id: id});
         }
 
-        var url = IMAGE_API_BASE + '/fotoweb/archives/5001-Alle%20kulturminnebilder/?212=' + id;
+        var url = IMAGE_API_BASE + '/fotoweb/archives/5001-Alle%20kulturminnebilder/?212=' + id + '*';
         return sendRequest(
             url,
             _parseItem,
@@ -215,18 +215,13 @@ export default function KulturminneAPI(apiName) {
         var finished = _.after(extraCalls.length, function () {
             if (responses.length) {
                 callback(_.reduce(responses, function (acc, res) {
-                    console.log(res);
                     _.each(res, function (value, key) {
-                        console.log(value, key);
                         if (!acc[key]) {
                             acc[key] = value;
                         } else {
-                            console.log("??")
                             if (_.isArray(acc[key]) && _.isArray(value)) {
-                                console.log("array")
                                 acc[key] = acc[key].concat(value);
                             } else if (_.isObject(acc[key]) && _.isObject(value)) {
-                                console.log("object")
                                 acc[key] = _.extend({}, acc[key], value);
                             }
                         }

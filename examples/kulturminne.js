@@ -51,7 +51,7 @@ api.getBbox(kulturmiljo, bbox, function (data) {
 });
 */
 
-api.getItem(kulturminneItemMedBrukerbilde, function (data) {
+api.getItem(kulturminneItem, function (data) {
     //console.log('bilder for lokalitet', data);
     console.log(JSON.stringify(data, null, 4));
 

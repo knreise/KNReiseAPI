@@ -18,7 +18,7 @@ var kulturminneItem = {
 var kulturminneItemMedBrukerbilde = {
     api: 'kulturminne',
     dataset: 'lokaliteter',
-    feature: {properties: {LokalitetID: 166042}}
+    feature: {properties: {LokalitetID: 86685}}
 };
 
 var kulturmiljo = {api: 'kulturminne', dataset: 'kulturmiljoer'};
@@ -52,19 +52,20 @@ api.getBbox(kulturmiljo, bbox, function (data) {
 */
 
 api.getItem(kulturminneItemMedBrukerbilde, function (data) {
-    console.log('bilder for lokalitet', data);
+    //console.log('bilder for lokalitet', data);
+    console.log(JSON.stringify(data, null, 4));
 
 }, function (e) {
     console.error(e);
 });
-
+/*
 api.getItem(kulturminneItem, function (data) {
     console.log('bilder for lokalitet', data);
 
 }, function (e) {
     console.error(e);
 });
-
+*/
 /*
 api.getSublayer(kulturminneItem, function (data) {
     console.log('Enkeltminner for lokalitet', data);

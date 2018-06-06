@@ -100,7 +100,7 @@ export default function WikipediaAPI(apiName, options) {
                 creator = s[3].replace(/\[/g, '').replace(/\]/g, '');
             }
             if (s.length > 4) {
-                year = s[4]
+                year = s[4];
             }
 
             return {
@@ -110,7 +110,7 @@ export default function WikipediaAPI(apiName, options) {
                 creator: creator,
                 image: `${urlBase}/images/thumb/${encodeURIComponent(filename)}/350px-${encodeURIComponent(filename)}`,
                 fullsize: `${urlBase}/images/${encodeURIComponent(filename)}`,
-                link: `${urlBase}/wiki/Fil:${encodeURIComponent(filename)}`
+                href: `${urlBase}/wiki/Fil:${encodeURIComponent(filename)}`
             };
         });
     }
@@ -124,9 +124,9 @@ export default function WikipediaAPI(apiName, options) {
         if (extra && _.has(extra, 'revisions')) {
             var wikitext = extra.revisions[0]['*'];
             var doc = wtf(wikitext);
-            extraData.images = _getThumbnails(wikitext).concat(_getImages(doc.images()));
-            extraData.thumbnail = extraData.images.length > 0
-                ? extraData.images[0].image
+            extraData.media = _getThumbnails(wikitext).concat(_getImages(doc.images()));
+            extraData.thumbnail = extraData.media.length > 0
+                ? extraData.media[0].image
                 : null;
 
 

@@ -43,6 +43,7 @@
     "esri2geo": "^0.1.4",
     "jquery": "^2.1.4",
     "request": "^2.79.0",
+    "wtf_wikipedia": "^4.2.0",
     "x2js": "^2.0.0"
   }
 }

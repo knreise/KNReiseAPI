@@ -3,7 +3,8 @@ const path = require('path');
 module.exports = {
     entry: {
         kulturminne: './examples/kulturminne.js',
-        brukerminner: './examples/brukerminner.js'
+        brukerminner: './examples/brukerminner.js',
+        lokalhistoriewiki: './examples/lokalhistoriewiki.js'
     },
     devtool: 'inline-source-map',
     devServer: {

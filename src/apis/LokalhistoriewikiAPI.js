@@ -1,5 +1,6 @@
 import * as _ from 'underscore';
-import CryptoJS from 'crypto-js';
+
+import wtf from 'wtf_wikipedia';
 
 import sendRequest from '../util/sendRequest';
 import handleError from '../util/handleError';
@@ -12,7 +13,8 @@ import {
 export default function WikipediaAPI(apiName, options) {
     var MAX_RADIUS = options.maxRadius || 10000;
     var BASE_URL = options.url;
-    var linkBase = options.linkBase;
+    var urlBase = options.urlBase;
+    var BLACKLIST = options.blacklist || [];
 
     function _wikiquery(params, callback) {
         var url = BASE_URL + '?' + createQueryParameterString(params);
@@ -62,11 +64,6 @@ export default function WikipediaAPI(apiName, options) {
         _wikiquery(params, gotResponse);
     }
 
-    function _getWikimediaImageUrl(filename) {
-        var base = 'http://upload.wikimedia.org/wikipedia/commons/';
-        var hash = CryptoJS.MD5(filename).toString();
-        return base + hash.substr(0, 1) + '/' + hash.substr(0, 2) + '/' + filename;
-    }
 
     function _getWikimediaDetails(pageIds, callback) {
 
@@ -75,7 +72,8 @@ export default function WikipediaAPI(apiName, options) {
         //see wikiGeneratorQuery
         var params = {
             action: 'query',
-            prop: 'extracts|pageimages',
+            prop: 'revisions',
+            rvprop: 'content',
             exlimit: 'max',
             exintro: '',
             pilimit: 'max',
@@ -86,39 +84,68 @@ export default function WikipediaAPI(apiName, options) {
         _wikiGeneratorQuery(params, callback);
     }
 
-    function _parseWikimediaItem(item, extdaDataDict) {
-        extdaDataDict = extdaDataDict || {};
-        var extraData = extdaDataDict[item.pageid];
-        if (extraData) {
-            item = _.extend(item, extraData);
+    function _getThumbnails(text) {
+        const file_reg = new RegExp('{{thumb(.*)}}', 'i');
+        var res = text.match(file_reg);
+        if (res === null) {
+            return [];
         }
+        return _.map(_.rest(res), m => {
+            var s = m.split('|');
+            var filename = s[1].replace(/ /g, '_');
+            return {
+                type: 'wiki_image',
+                description: s[2],
+                year: s[4],
+                creator: s[3].replace(/\[/g, '').replace(/\]/g, ''),
+                image: `${urlBase}/images/thumb/${encodeURIComponent(filename)}/350px-${encodeURIComponent(filename)}`,
+                fullsize: `${urlBase}/images/${encodeURIComponent(filename)}`,
+                link: `${urlBase}/wiki/Fil:${encodeURIComponent(filename)}`
+            };
+        });
+    }
 
-        var thumbnail;
-        if (_.has(item, 'thumbnail')) {
-            thumbnail = item.thumbnail.source;
-        }
+    function _getImages(wikiImages) {
+        return [];
+    }
 
-        var images = null;
-        if (item.pageimage) {
-            images = [_getWikimediaImageUrl(item.pageimage)];
+    function _parseWikimediaItem(item, extra) {
+        var extraData = {};
+        if (extra && _.has(extra, 'revisions')) {
+            var wikitext = extra.revisions[0]['*'];
+            var doc = wtf(wikitext);
+            extraData.images = _getThumbnails(wikitext).concat(_getImages(doc.images()));
+            extraData.thumbnail = extraData.images.length > 0
+                ? extraData.images[0].image
+                : null;
+
+
+            var text = _.chain(doc.sections())
+                .filter(s => {
+                    return BLACKLIST.indexOf(s.title().toLowerCase()) == -1;
+                }).map(s => `${s.title()}\n${s.plaintext()}`)
+                .value()
+                .join('\n\n');
+
+
+
+            console.log(text);
+
+            extraData.text = doc.plaintext();
         }
-        var link = linkBase + item.pageid;
+        var link = `${urlBase}?curid=${item.pageid}`;
         var params = {
-            thumbnail: thumbnail,
-            images: images,
             title: item.title,
-            content: item.extract,
             link: link,
-            dataset: 'Wikipedia',
-            provider: 'Wikipedia',
-            contentType: 'TEXT',
             id: item.pageid
         };
+
         return createGeoJSONFeature(
             {lat: item.lat, lng: item.lon},
-            params,
+            _.extend({}, params, extraData),
             apiName + '_' + item.pageid
         );
+
     }
 
     function _parseWikimediaItems(response, callback, errorCallback) {
@@ -137,7 +164,10 @@ export default function WikipediaAPI(apiName, options) {
             } else {
                 _getWikimediaDetails(pageIds.join('|'), function (pages) {
                     var features = _.map(response.query.geosearch, function (item) {
-                        return _parseWikimediaItem(item, pages);
+                        var extra = _.has(pages, item.pageid)
+                            ? pages[item.pageid]
+                            : null;
+                        return _parseWikimediaItem(item, extra);
                     });
                     callback(createFeatureCollection(features));
                 });
@@ -225,22 +255,8 @@ export default function WikipediaAPI(apiName, options) {
         sendRequest({'continue': ''});
     }
 
-    function getItem(dataset, callback, errorCallback) {
-        var params = {
-            'action': 'query',
-            'pageids': dataset.id,
-            'prop': 'coordinates|pageimages|extracts',
-            'format': 'json'
-        };
-        var url = BASE_URL + '?' + createQueryParameterString(params);
-        sendRequest(url, function (res) {
-            return _parseWikimediaItem(res.query.pages[dataset.id]);
-        }, callback, errorCallback);
-    }
-
     return {
         getWithin: getWithin,
-        getData: getData,
-        getItem: getItem
+        getData: getData
     };
 };

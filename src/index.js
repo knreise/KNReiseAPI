@@ -8,6 +8,7 @@ import {
 
 import NorvegianaAPI from './apis/NorvegianaAPI';
 import WikipediaAPI from './apis/WikipediaAPI';
+import LokalhistoriewikiAPI from './apis/LokalhistoriewikiAPI';
 import CartodbAPI from './apis/CartodbAPI';
 import ArcgisAPI from './apis/ArcgisAPI';
 import KulturminneAPI from './apis/KulturminneAPI';
@@ -86,11 +87,12 @@ export default function KnreiseAPI(options) {
             params: {}
         },
         lokalhistoriewiki: {
-            api: WikipediaAPI,
+            api: LokalhistoriewikiAPI,
             params: {
                 url: 'http://kd-miniproxy.ra.no/miniProxy.php/http://lokalhistoriewiki.no/api.php',
-                linkBase: 'http://lokalhistoriewiki.no/?curid=',
-                maxRadius: 100000
+                urlBase: 'http://lokalhistoriewiki.no/',
+                maxRadius: 100000,
+                blacklist: ['kjelder', 'kilder', 'eigedomar', 'eigedommar', 'galleri']
             }
         },
         jernbanemuseet: {

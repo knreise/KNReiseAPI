@@ -13,7 +13,7 @@ export default function FolketellingAPI(apiName) {
 
     var BASE_URL = 'http://api.digitalarkivet.arkivverket.no/v1/census/1910/';
 
-    var MAX_DISTANCE = 5000;
+    var MAX_RADIUS = 5000;
 
     function _parser(response) {
         var features = _.map(response.results, function (item) {
@@ -35,8 +35,8 @@ export default function FolketellingAPI(apiName) {
             return;
         }
 
-        if (distance > MAX_DISTANCE) {
-            handleError(errorCallback, 'to wide search radius');
+        if (distance > MAX_RADIUS) {
+            handleError(errorCallback, 'too wide search radius: ' + distance + ' (max is ' + MAX_RADIUS + 'm)');
             return;
         }
         var params = {

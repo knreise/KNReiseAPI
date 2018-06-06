@@ -93,11 +93,21 @@ export default function WikipediaAPI(apiName, options) {
         return _.map(_.rest(res), m => {
             var s = m.split('|');
             var filename = s[1].replace(/ /g, '_');
+
+            var year = null;
+            var creator = null;
+            if (s.length > 3) {
+                creator = s[3].replace(/\[/g, '').replace(/\]/g, '');
+            }
+            if (s.length > 4) {
+                year = s[4]
+            }
+
             return {
                 type: 'wiki_image',
                 description: s[2],
-                year: s[4],
-                creator: s[3].replace(/\[/g, '').replace(/\]/g, ''),
+                year: year,
+                creator: creator,
                 image: `${urlBase}/images/thumb/${encodeURIComponent(filename)}/350px-${encodeURIComponent(filename)}`,
                 fullsize: `${urlBase}/images/${encodeURIComponent(filename)}`,
                 link: `${urlBase}/wiki/Fil:${encodeURIComponent(filename)}`
@@ -127,11 +137,7 @@ export default function WikipediaAPI(apiName, options) {
                 .value()
                 .join('\n\n');
 
-
-
-            console.log(text);
-
-            extraData.text = doc.plaintext();
+            extraData.text = text;
         }
         var link = `${urlBase}?curid=${item.pageid}`;
         var params = {

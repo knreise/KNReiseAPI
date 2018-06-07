@@ -164,7 +164,7 @@ export default function WikipediaAPI(apiName, options) {
             gsradius: distance,
             gscoord: latLng.lat + '|' + latLng.lng,
             format: 'json',
-            gslimit: 50
+            gslimit: 500
         };
         var url = BASE_URL + '?' + createQueryParameterString(params);
         sendRequest(url, null, function (response) {

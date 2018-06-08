@@ -4,7 +4,8 @@ module.exports = {
     entry: {
         kulturminne: './examples/kulturminne.js',
         brukerminner: './examples/brukerminner.js',
-        lokalhistoriewiki: './examples/lokalhistoriewiki.js'
+        lokalhistoriewiki: './examples/lokalhistoriewiki.js',
+        wikipedia: './examples/wikipedia.js'
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -30,7 +31,15 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader'
-            }/*,
+            },
+            {
+              test: /\.(jpg|png)$/,
+              
+                loader: "url-loader"
+                
+              
+            }
+            /*,
             {
                 test: require.resolve('jquery'),
                 use: [

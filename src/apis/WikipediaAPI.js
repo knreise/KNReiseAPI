@@ -1,13 +1,58 @@
 import * as _ from 'underscore';
 import CryptoJS from 'crypto-js';
+import booleanContains from '@turf/boolean-contains';
 
 import sendRequest from '../util/sendRequest';
 import handleError from '../util/handleError';
 import {
     createGeoJSONFeature,
     createFeatureCollection,
-    createQueryParameterString
+    createQueryParameterString,
+    haversine,
+    splitBbox
 } from '../util';
+
+function toPoly(bbox) {
+    bbox = splitBbox(bbox);
+    var minLon = bbox[0];
+    var minLat = bbox[1];
+    var maxLon = bbox[2];
+    var maxLat = bbox[3];
+    return {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+            type: 'Polygon',
+            coordinates: [[
+                [minLon, minLat], //se
+                [maxLon, minLat], //sw
+                [maxLon, maxLat], //nw
+                [minLon, maxLat], //ne
+                [minLon, minLat] //se
+            ]]
+        }
+    };
+}
+
+function toRadius(bbox) {
+    bbox = splitBbox(bbox);
+
+    var lng1 = bbox[0],
+        lat1 = bbox[1],
+        lng2 = bbox[2],
+        lat2 = bbox[3];
+
+    var centerLng = (lng1 + lng2) / 2;
+    var centerLat = (lat1 + lat2) / 2;
+
+    var radius = _.max([
+        haversine(lat1, lng1, centerLat, centerLng),
+        haversine(lat2, lng2, centerLat, centerLng)
+    ]);
+
+    return {lat: centerLat, lng: centerLng, radius: radius};
+}
+
 
 export default function WikipediaAPI(apiName, options) {
     var MAX_RADIUS = options.maxRadius || 10000;
@@ -121,6 +166,18 @@ export default function WikipediaAPI(apiName, options) {
         );
     }
 
+    function chunk(arr, len) {
+
+        var chunks = [],
+            i = 0,
+            n = arr.length;
+
+        while (i < n) {
+            chunks.push(arr.slice(i, i += len));
+        }
+      return chunks;
+    }
+
     function _parseWikimediaItems(response, callback, errorCallback) {
         try {
             response = JSON.parse(response);
@@ -135,42 +192,30 @@ export default function WikipediaAPI(apiName, options) {
             if (!pageIds.length) {
                 callback(createFeatureCollection([]));
             } else {
-                _getWikimediaDetails(pageIds.join('|'), function (pages) {
+                var chunks = chunk(pageIds, 50);
+
+                var res = {};
+                var finished = _.after(chunks.length, function () {
                     var features = _.map(response.query.geosearch, function (item) {
-                        return _parseWikimediaItem(item, pages);
+                        return _parseWikimediaItem(item, res);
                     });
                     callback(createFeatureCollection(features));
                 });
+
+                _.each(chunks, function (pageIds) {
+                    _getWikimediaDetails(pageIds.join('|'), function (pages) {
+                        _.extend(res, pages);
+                        finished();
+                    });
+                });
+
             }
         } catch (error) {
             handleError(errorCallback, response.error.info);
         }
     }
 
-    /*
-        Get georeferenced Wikipedia articles within a radius of given point.
-        Maps data to format similar to norvegiana api.
-    */
-    function getWithin(query, latLng, distance, callback, errorCallback) {
 
-        if (distance > MAX_RADIUS) {
-            handleError(errorCallback, 'too wide search radius: ' + distance + ' (max is ' + MAX_RADIUS + 'm)');
-            return;
-        }
-
-        var params = {
-            action: 'query',
-            list: 'geosearch',
-            gsradius: distance,
-            gscoord: latLng.lat + '|' + latLng.lng,
-            format: 'json',
-            gslimit: 500
-        };
-        var url = BASE_URL + '?' + createQueryParameterString(params);
-        sendRequest(url, null, function (response) {
-            _parseWikimediaItems(response, callback, errorCallback);
-        }, errorCallback);
-    }
 
     function _parseCategoryResult(results) {
 
@@ -198,6 +243,34 @@ export default function WikipediaAPI(apiName, options) {
         return createFeatureCollection(features);
     }
 
+    function _filterItems(response, bbox) {
+        try {
+            response = JSON.parse(response);
+        } catch (ignore) {}
+
+        var boundsPoly = toPoly(bbox);
+
+        var filtered = _.chain(response.query.geosearch)
+            .map(function (item) {
+                return createGeoJSONFeature(
+                    {lat: item.lat, lng: item.lon},
+                    {item: item}
+                );
+            })
+            .filter(function (feature) {
+                return booleanContains(boundsPoly, feature);
+            })
+            .map(function (feature) {
+                return feature.properties.item;
+            })
+            .value();
+
+        return {
+            query: {
+                geosearch: filtered
+            }
+        };
+    }
 
     function getData(parameters, callback, errorCallback, options) {
         var params = {
@@ -217,12 +290,52 @@ export default function WikipediaAPI(apiName, options) {
                 if (_.has(response, 'continue')) {
                     sendRequest(response['continue']);
                 } else {
-
                     callback(_parseCategoryResult(result));
                 }
             }, errorCallback);
         }
         sendRequest({'continue': ''});
+    }
+
+
+    function _getRadius(latLng, distance, callback, errorCallback) {
+
+        if (distance > MAX_RADIUS) {
+            handleError(errorCallback, 'too wide search radius: ' + distance + ' (max is ' + MAX_RADIUS + 'm)');
+            return;
+        }
+
+        var params = {
+            action: 'query',
+            list: 'geosearch',
+            gsradius: distance,
+            gscoord: latLng.lat + '|' + latLng.lng,
+            format: 'json',
+            gslimit: 500
+        };
+        var url = BASE_URL + '?' + createQueryParameterString(params);
+        sendRequest(url, null, callback, errorCallback);
+    }
+
+
+    /*
+        Get georeferenced Wikipedia articles within a radius of given point.
+        Maps data to format similar to norvegiana api.
+    */
+    function getWithin(query, latLng, distance, callback, errorCallback) {
+        _getRadius(latLng, distance, function (response) {
+            _parseWikimediaItems(response, callback, errorCallback);
+        }, errorCallback);
+    }
+
+    function getBbox(dataset, bbox, callback, errorCallback) {
+        var radiusData = toRadius(bbox);
+        var radius = radiusData.radius;
+        _getRadius(radiusData, radius, function (response) {
+            response = _filterItems(response, bbox);
+            _parseWikimediaItems(response, callback, errorCallback);
+        }, errorCallback);
+
     }
 
     function getItem(dataset, callback, errorCallback) {
@@ -241,6 +354,7 @@ export default function WikipediaAPI(apiName, options) {
     return {
         getWithin: getWithin,
         getData: getData,
-        getItem: getItem
+        getItem: getItem,
+        getBbox: getBbox
     };
 };

@@ -48,7 +48,7 @@ L.rectangle.fromBounds(bounds).addTo(map);
 
 L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=norges_grunnkart_graatone&zoom={z}&x={x}&y={y}', {attribution: '&copy; <a href="http://kartverket.no">Kartverket</a>'}).addTo(map);
 
-/*
+
 var c = { lat: 63.43083324528713, lng: 10.283203124999986 }
 var r = 6183.9878774041135;
 
@@ -59,8 +59,7 @@ api.getWithin(dataset, c, r, function (data) {
 }, function (e) {
     console.error(e);
 });
-*/
-
+/*
 
 
 api.getBbox(dataset, bbox, function (data) {
@@ -70,7 +69,7 @@ api.getBbox(dataset, bbox, function (data) {
 }, function (e) {
     console.error(e);
 });
-
+*/
 
 
 

@@ -72,7 +72,12 @@ export default function sendRequest(url, parser, callback, errorCallback,
             }
         },
         error: function (err) {
-            errorCallback(err);
+            if (errorCallback) {
+                errorCallback(err);
+            } else {
+                console.error(err);
+            }
+
         }
     };
 

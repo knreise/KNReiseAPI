@@ -14,7 +14,7 @@ export default function EuropeanaAPI(apiName, options) {
     options = options || {};
     //var requests = [];
 
-    var BASE_URL = 'http://www.europeana.eu/api/v2/search.json';
+    var BASE_URL = options.baseUrl;
     var apikey = options.apikey;
 
     var queryTemplate = _.template('pl_wgs84_pos_lat:[<%= minLat %> TO <%= maxLat %>] AND pl_wgs84_pos_long:[<%= minLng %> TO <%= maxLng %>]');

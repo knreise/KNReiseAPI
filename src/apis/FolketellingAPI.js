@@ -9,9 +9,9 @@ import {
     dictWithout
 } from '../util';
 
-export default function FolketellingAPI(apiName) {
+export default function FolketellingAPI(apiName, options) {
 
-    var BASE_URL = 'http://api.digitalarkivet.arkivverket.no/v1/census/1910/';
+    var BASE_URL = options.baseUrl;
 
     var MAX_RADIUS = 5000;
 

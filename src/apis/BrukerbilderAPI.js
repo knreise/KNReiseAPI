@@ -2,9 +2,9 @@ import * as _ from 'underscore';
 
 import sendRequest from '../util/sendRequest';
 
-export default function BrukerbilderAPI() {
+export default function BrukerbilderAPI(options) {
 
-    var URL_BASE = 'http://beta.ra.no/api/brukerbilder';
+    var URL_BASE = options.baseUrl;
 
     function _parser(data) {
         return _.map(data._items, function (item) {

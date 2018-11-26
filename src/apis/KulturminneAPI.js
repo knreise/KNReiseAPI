@@ -8,14 +8,13 @@ import {
 } from '../util';
 import BrukerbilderAPI from './BrukerbilderAPI';
 
-export default function KulturminneAPI(apiName) {
+export default function KulturminneAPI(apiName, options) {
 
     var mapData = Mapper(apiName);
-    var brukerbilderAPI = BrukerbilderAPI();
+    var brukerbilderAPI = BrukerbilderAPI(options.brukerbilder);
 
-    var API_URL = 'http://kd-miniproxy.ra.no/miniProxy.php/http://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/';
-    //var API_URL = 'https://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/';
-    var IMAGE_API_BASE = 'https://kulturminnebilder.ra.no';
+    var API_URL = options.baseUrl;
+    var IMAGE_API_BASE = options.imageApiBase;
 
     var baseAPI = ArcgisAPI(
         'kulturminne',
@@ -42,7 +41,7 @@ export default function KulturminneAPI(apiName) {
             descriptionLayer: 10,
             descriptionFields: ['Beskrivelse', 'Kulturminnesok'],
             subLayerFunc: _getEnkeltminner,
-            userPhotoIdTemplate: _.template('https://data.kulturminne.no/askeladden/lokalitet/<%= id %>')
+            userPhotoIdTemplate: _.template(options.lokalitetImageTemplate)
         },
         kulturmiljoer: {
             layer: 7,
@@ -52,7 +51,7 @@ export default function KulturminneAPI(apiName) {
             descriptionLayer: 9,
             descriptionFields: ['Beskrivelse', 'Beskrivelse2'],
             photoIdTemplate: _.template('K<%= id %>'),
-            userPhotoIdTemplate: _.template('https://data.kulturminne.no/askeladden/kulturmiljo/K<%= id %>')
+            userPhotoIdTemplate: _.template(options.kulturmiljoImageTemplate)
         }
     };
 

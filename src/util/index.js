@@ -66,9 +66,9 @@ function dictWithout(dict) {
     }, {});
 };
 
-function addCrossorigin(url) {
-    if (url.indexOf('http://kd-miniproxy.ra.no/miniProxy.php/') !== 0) {
-        return 'http://kd-miniproxy.ra.no/miniProxy.php/' + url;
+function addCrossorigin(url, proxyUrl) {
+    if (url.indexOf(proxyUrl) !== 0) {
+        return proxyUrl + url;
     }
     return url;
 };

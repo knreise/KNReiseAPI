@@ -15,7 +15,7 @@ export default function FileAPI(apiName, options) {
             : true;
 
         var url = useCorsproxy
-            ? addCrossorigin(dataset.url)
+            ? addCrossorigin(dataset.url, options.proxyUrl)
             : dataset.url;
 
         var parser = options.parser || defaultParser;

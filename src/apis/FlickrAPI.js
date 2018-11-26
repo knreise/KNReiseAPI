@@ -11,10 +11,10 @@ import {
 
 export default function FlickrAPI(apiName, options) {
 
-    var BASE_URL = 'https://api.flickr.com/services/rest/';
+    var BASE_URL = options.baseUrl;
     var apikey = options.apikey;
 
-    var imageTemplate = _.template('https://farm<%= farm %>.staticflickr.com/<%= server %>/<%= id %>_<%= secret %>_<%= size %>.jpg');
+    var imageTemplate = _.template(options.imageTemplate);
 
     function getImageUrl(photo, size) {
         return imageTemplate(_.extend({size: size}, photo));
@@ -36,7 +36,7 @@ export default function FlickrAPI(apiName, options) {
 
                 //see https://www.flickr.com/services/api/misc.urls.html for sizes
                 properties.thumbnail = getImageUrl(item, 's');
-                properties.image = getImageUrl(item, 'z')
+                properties.image = getImageUrl(item, 'z');
                 return createGeoJSONFeature(
                     {
                         lat: parseFloat(item.latitude),

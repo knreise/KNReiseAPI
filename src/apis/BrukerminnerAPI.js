@@ -7,10 +7,10 @@ import {
     splitBbox
 } from '../util';
 
-export default function BrukerminnerAPI(apiName) {
+export default function BrukerminnerAPI(apiName, options) {
 
-    var URL_BASE = 'http://beta.ra.no/api/';
-    var brukerbilderAPI = BrukerbilderAPI();
+    var URL_BASE = options.baseUrl;
+    var brukerbilderAPI = BrukerbilderAPI(options.brukerbilder);
 
     function _toGeom(bbox) {
         var bounds = splitBbox(bbox);
@@ -70,7 +70,7 @@ export default function BrukerminnerAPI(apiName) {
 
     function getItem(dataset, callback, errorCallback) {
         var id = dataset.feature.properties.uri;
-        brukerbilderAPI.getImages(id, function(images) {
+        brukerbilderAPI.getImages(id, function (images) {
             callback({media: images});
         }, errorCallback);
     }

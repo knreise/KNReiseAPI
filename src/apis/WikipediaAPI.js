@@ -19,7 +19,7 @@ export default function WikipediaAPI(apiName, options) {
     var MAX_RADIUS = options.maxRadius || 10000;
     var BASE_URL = options.url;
     var linkBase = options.linkBase;
-
+    var imageBase = options.imageBase;
 
 
     function createChunks(arr, len) {
@@ -34,7 +34,7 @@ export default function WikipediaAPI(apiName, options) {
     }
 
     function getWikipediaImageUrl(filename) {
-        var base = 'http://upload.wikimedia.org/wikipedia/commons/';
+        var base = imageBase;
         var hash = CryptoJS.MD5(filename).toString();
         return base + hash.substr(0, 1) + '/' + hash.substr(0, 2) + '/' + filename;
     }

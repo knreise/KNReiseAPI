@@ -10,12 +10,12 @@ import {
 } from '../util';
 
 
-export default function NorvegianaAPI(apiName) {
+export default function NorvegianaAPI(apiName, options) {
 
     var requests = [];
 
-    var BASE_URL = 'http://kulturnett2.delving.org/api/search';
-    var BASE_COLLECTION_URL = 'http://acc.norvegiana.delving.org/en/api/knreise-collection/';
+    var BASE_URL = options.baseUrl;
+    var BASE_COLLECTION_URL = options.baseCollectionUrl;
 
     function _formatLatLng(latLng) {
         return latLng.lat + ',' + latLng.lng;

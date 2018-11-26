@@ -20,7 +20,7 @@ export default function JernbanemuseetAPI(apiName, options) {
 
     var lang = options.lang || 'no';
 
-    var BASE_URL = 'https://api.kulturpunkt.org/v2/owners/54';
+    var BASE_URL = options.baseUrl;
     var API_KEY = options.apikey;
     function _getHeaders() {
         return {
@@ -186,7 +186,7 @@ export default function JernbanemuseetAPI(apiName, options) {
             }, null, _getHeaders());
         } else {
             if (dataset.presentation) {
-                url = 'https://api.kulturpunkt.org/v2/owners/54/presentations/' + dataset.presentation;
+                url = options.presentationUrl + dataset.presentation;
             }
             sendRequest(url, _parser, callback, errorCallback, _getHeaders());
         }

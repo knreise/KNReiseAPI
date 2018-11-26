@@ -27,22 +27,29 @@ import BrukerminnerAPI from './apis/BrukerminnerAPI';
 export default function KnreiseAPI(options) {
     options = options || {};
 
+    var proxyUrl = options.proxyUrl || 'http://kd-miniproxy.ra.no/miniProxy.php/';
+
     var apiConfig = {
         norvegiana: {
             api: NorvegianaAPI,
-            params: {}
+            params: {
+                baseUrl: 'http://kulturnett2.delving.org/api/search',
+                baseCollectionUrl: 'http://acc.norvegiana.delving.org/en/api/knreise-collection/'
+            }
         },
         wikipedia: {
             api: WikipediaAPI,
             params: {
-                url: 'http://kd-miniproxy.ra.no/miniProxy.php/https://no.wikipedia.org/w/api.php',
+                url: proxyUrl + 'https://no.wikipedia.org/w/api.php',
+                imageBase: 'http://upload.wikimedia.org/wikipedia/commons/',
                 linkBase: 'http://no.wikipedia.org/?curid='
             }
         },
         wikipediaNN: {
             api: WikipediaAPI,
             params: {
-                url: 'http://kd-miniproxy.ra.no/miniProxy.php/https://nn.wikipedia.org/w/api.php',
+                url: proxyUrl + 'https://nn.wikipedia.org/w/api.php',
+                imageBase: 'http://upload.wikimedia.org/wikipedia/commons/',
                 linkBase: 'http://nn.wikipedia.org/?curid='
             }
         },
@@ -59,38 +66,54 @@ export default function KnreiseAPI(options) {
         },
         kulturminne: {
             api: KulturminneAPI,
-            params: {}
+            params: {
+                brukerbilder: {
+                    baseUrl: 'http://beta.ra.no/api/brukerbilder'
+                },
+                baseUrl: proxyUrl + 'http://kart.ra.no/arcgis/rest/services/Distribusjon/Kulturminner/MapServer/',
+                imageApiBase: 'https://kulturminnebilder.ra.no',
+                lokalitetImageTemplate: 'https://data.kulturminne.no/askeladden/lokalitet/<%= id %>',
+                kulturmiljoImageTemplate: 'https://data.kulturminne.no/askeladden/kulturmiljo/K<%= id %>'
+            }
         },
         utno: {
             api: UtnoAPI,
-            params: {}
+            params: {
+                baseUrl: 'http://ut.no/tur/'
+            }
         },
         folketelling: {
             api: FolketellingAPI,
-            params: {}
+            params: {
+                baseUrl: 'http://api.digitalarkivet.arkivverket.no/v1/census/1910/'
+            }
         },
         flickr: {
             api: FlickrAPI,
             extend: true,
-            params: {}
+            params: {
+                baseUrl: 'https://api.flickr.com/services/rest/',
+                imageTemplate: 'https://farm<%= farm %>.staticflickr.com/<%= server %>/<%= id %>_<%= secret %>_<%= size %>.jpg'
+            }
         },
         kml: {
             api: KmlAPI,
-            params: {}
+            params: {proxyUrl: proxyUrl}
         },
         gpx: {
             api: GpxAPI,
-            params: {}
+            params: {proxyUrl: proxyUrl}
         },
         geojson: {
             api: GeoJsonAPI,
-            params: {}
+            params: {proxyUrl: proxyUrl}
         },
         lokalhistoriewiki: {
             api: LokalhistoriewikiAPI,
             params: {
-                url: 'http://kd-miniproxy.ra.no/miniProxy.php/http://lokalhistoriewiki.no/api.php',
+                url: proxyUrl + 'http://lokalhistoriewiki.no/api.php',
                 urlBase: 'http://lokalhistoriewiki.no/',
+                imageBase: 'http://upload.wikimedia.org/wikipedia/commons/',
                 maxRadius: 100000,
                 blacklist: ['kjelder', 'kilder', 'eigedomar', 'eigedommar', 'galleri']
             }
@@ -98,21 +121,35 @@ export default function KnreiseAPI(options) {
         jernbanemuseet: {
             api: JernbanemuseetAPI,
             extend: true,
-            params: {lang: 'no'}
+            params: {
+                lang: 'no',
+                baseUrl: 'https://api.kulturpunkt.org/v2/owners/54',
+                presentationUrl: 'https://api.kulturpunkt.org/v2/owners/54/presentations/'
+            }
         },
         europeana: {
             api: EuropeanaAPI,
             extend: true,
-            params: {}
+            params: {
+                baseUrl: 'http://www.europeana.eu/api/v2/search.json'
+            }
         },
         ksamsok: {
             api: KSamsokAPI,
             extend: true,
-            params: {}
+            params: {
+                proxyUrl: proxyUrl,
+                baseUrl: proxyUrl + 'http://kulturarvsdata.se/ksamsok/api'
+            }
         },
         brukerminner: {
             api: BrukerminnerAPI,
-            params: {}
+            params: {
+                brukerbilder: {
+                    baseUrl: 'http://beta.ra.no/api/brukerbilder'
+                },
+                baseUrl: 'http://beta.ra.no/api/'
+            }
         }
     };
 

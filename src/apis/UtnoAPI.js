@@ -3,7 +3,9 @@ import toGeoJSON from '@mapbox/togeojson';
 import sendRequest from '../util/sendRequest';
 import handleError from '../util/handleError';
 
-export default function UtnoAPI(apiName) {
+export default function UtnoAPI(apiName, options) {
+
+    var BASE_URL = options.baseUrl;
 
     function getData(dataset, callback, errorCallback) {
 
@@ -12,7 +14,7 @@ export default function UtnoAPI(apiName) {
         }
 
         if (dataset.type === 'gpx') {
-            var url = 'http://ut.no/tur/' + dataset.id + '/gpx/';
+            var url = BASE_URL + dataset.id + '/gpx/';
             sendRequest(url, toGeoJSON.gpx, callback, errorCallback);
         } else {
             handleError(errorCallback, 'Unknown type ' + dataset.type);

@@ -3,7 +3,7 @@ import * as _ from 'underscore';
 import sendRequest from '../util/sendRequest';
 import {
     createFeatureCollection,
-    createQueryParameterString,
+    createQueryParameterString
 } from '../util';
 
 export default function CartodbAPI(apiName, options) {
